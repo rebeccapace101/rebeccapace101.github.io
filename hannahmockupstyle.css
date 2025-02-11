@@ -1,16 +1,54 @@
 * {
-    padding: 0;
-    margin: 0;
+    padding: 20;
+    margin: 20;
 }
 
 body {
-    display: flex;
+    display: block;
 }
 
-.button {
-    position: absolute;
-    top: 50%;
+h1 {
+    margin-top: 3rem;
+    text-align: center;
+    color: blue
+}
+
+h2 {
+    text-align: center;
+    font-size: 16px;
+    font-weight: normal;
+    padding: 6px;
+
+}
+
+p {
+    text-align: center;
+    max-width: 75%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%/3, max(80px, 100%/4)), 1fr));
+    border: 1px solid black;
+    padding: 6px;
+    margin: auto;
+}
+
+
+input {
+    display: block;
+    margin: auto;
+}
+
+button {
+    display: block;
+    margin: auto;
+    top: 75%;
     border: none;
     border-radius: 10px;
-    background-color: bisque
+    margin-top: 1rem;
+    padding: 6px;
+}
+
+button:hover {
+    background-color: #002ead;
+    transition: 0.7s;
+    color: white
 }
