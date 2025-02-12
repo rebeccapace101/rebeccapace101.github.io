@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <div id = "background">
+
+        <head>
+            <title>Journal Entry Mockup</title>
+            <link rel="stylesheet" href="newPagemockupstyle.css">
+        </head>
+
+        <body>
+
+            <h1>Succsess!</h1>
+
+            <h2 id ="welcomeMessage">Welcome, Guest!</h2>
+
+        </body>
+
+    <script>
+        function getUsernameFromURL() {
+            let params = new URLSearchParams(window.location.search);
+            let username = params.get("name"); 
+            if (username) {
+                document.getElementById("welcomeMessage").textContent = "Welcome, " + decodeURIComponent(username) + "!";
+            }
+        }
+        getUsernameFromURL(); 
+    </script>
+
+    </div>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <div id = "background">
+
+        <head>
+            <title>Journal Entry Mockup</title>
+            <link rel="stylesheet" href="laurenmockupstyle.css">
+        </head>
+
+            <body>
+
+                <h1>Login Page Mockup</h1>
+
+                <div id = "loginbox">
+
+                    <h2>Username</h2>
+
+                    <div id="inputbox">
+                        <input type="text" id="user-input" placeholder="Type a message...">
+                    </div>
+
+                    <h2>Password</h2>
+
+                    <div id="inputbox">
+                        <input type="text" id="pass-input" placeholder="Type a message...">
+                    </div>
+                    
+                    <button id="loginButton" onclick="login()">login</button>
+
+                </div>
+
+                <script>
+
+                    function login(){
+
+                        //change page
+                        //display login and password
+                        const usernameFeild = document.getElementById("user-input").value;
+                        const passwordFeild = document.getElementById("pass-input").value;
+                        window.location.href = "newPage.html?name=" + encodeURIComponent(usernameFeild);
+
+                    }
+
+                </script>
+
+            </body>
+
+    </div>
+
+</html>
