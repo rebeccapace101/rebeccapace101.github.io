@@ -1,18 +1,89 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-    <title>Login Page</title>
-    <link rel="stylesheet" href="styles.css">
-    <script type="module" src="login.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Document</title>
 
 </head>
 
-
 <body>
-    <h1>Login</h1>
-    <button onClick={googleSignIn}>Sign In With Google</button>
+    <button id="signInButton">Sign In With Google</button>
+    <button id="signOutButton">Sign Out</button>
+
+    <div id="message">
+        <p>You have signed in as <span id="userName"></span></p>
+    </div>
+
+    <script type="module">
+
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
+
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIXaXxuONi2pds9lpsfilESYs_PAYkv7Y",
+            authDomain: "momentum-f225c.firebaseapp.com",
+            projectId: "momentum-f225c",
+            storageBucket: "momentum-f225c.firebasestorage.app",
+            messagingSenderId: "292176368363",
+            appId: "1:292176368363:web:7821e3251883d25ec924ae",
+            measurementId: "G-RC4FF63NNJ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth();
+        const provider = new GoogleAuthProvider();
+
+        const signInButton = document.getElementById("signInButton");
+        const signOutButton = document.getElementById("signOutButton");
+        const message = document.getElementById("message");
+        const userName = document.getElementById("userName");
+
+        signOutButton.style.display = "none";
+        message.style.display = "none";
+
+        const userSignIn = async () => {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user
+                    console.log(user);
+                }).catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message
+                })
+        }
+
+        const userSignOut = async () => {
+            signOut(auth).then(() => {
+                alert("You have signed out successfully!");
+            }).catch((error) => { })
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                signOutButton.style.display = "block";
+                message.style.display = "block";
+                userName.innerHTML = user.displayName;
+            } else {
+                signOutButton.style.display = "none";
+                message.style.display = "none";
+            }
+        })
+
+        signInButton.addEventListener('click', userSignIn);
+        signOutButton.addEventListener('click', userSignOut);
+
+    </script>
 
 </body>
 
