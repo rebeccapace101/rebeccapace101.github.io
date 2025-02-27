@@ -1,124 +1,151 @@
+/* Global Styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
-}
-
-body {
+  }
+  
+  @font-face {
+    font-family: 'Emizen';
+    src: url('fonts/Emizen.otf') format('opentype'),
+         url('fonts/Emizen.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  
+  body {
     background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding: 20px;
-    flex-direction: column;
-}
-
-.container {
-    width: 100%;
-    max-width: 1200px;
-    background: #fff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 1.2s ease-in-out;
-}
-
-.login-section {
-    width: 100%;
-    padding: 20px;
-    display: flex;
-    justify-content: flex-end;
-    background: #333;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-}
-
-.login-section a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 1.1rem;
-    font-weight: 600;
-    padding: 12px 25px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.4));
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
-}
-
-.login-section a:hover {
-    background: rgba(255, 255, 255, 0.8);
     color: #333;
-    transform: translateY(-5px);
-}
-
-.hero-section {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50vh;
+    line-height: 1.6;
+  }
+  
+  /* Container */
+  .container {
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  /* Logo Animation */
+  @keyframes revealLogo {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  
+  .logo {
+    font-family: 'Emizen', sans-serif;
+    color: #FFE6A9;
+    letter-spacing: 0.1em;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 15px rgba(255, 230, 169, 0.8);
+    display: inline-block;
+    animation: revealLogo 1s ease-out forwards;
+    
+    /* Added border and padding for a cleaner look */
+    padding: 15px 30px; /* Adjust padding for a balanced spacing */
+    
+    border-radius: 10px; /* Slightly rounded edges for a modern look */
+    
+  }
+  
+  /* Navbar */
+  .navbar {
+    background: transparent;
+    padding: 15px 0;
+    position: fixed;
     width: 100%;
-    background: url('helping hand.png') center/cover no-repeat;
-    margin-top: 80px;
-}
-
-.hero-overlay {
-    position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-}
-
-.hero-content {
-    position: relative;
-    text-align: center;
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end; /* Aligns login button to the right */
+    padding-right: 30px;
+  }
+  
+  /* Login Button */
+  .navbar .btn {
+    background: #659287;
     color: #fff;
-    z-index: 2;
-}
-
-.hero-content h1 {
-    font-size: 4rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    animation: slideIn 1s ease-in-out;
-}
-
-@keyframes fadeIn {
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+  }
+  
+  .navbar .btn:hover {
+    background: #4a7265;
+    transform: scale(1.1);
+  }
+  
+  /* Hero Section */
+  .hero {
+    background: url('helpinghand.png') no-repeat center center/cover;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: white;
+  }
+  
+  .hero .container {
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s ease-out forwards 0.5s;
+  }
+  
+  /* Fade-in effect for hero text */
+  @keyframes fadeInUp {
     from {
-        opacity: 0;
+      opacity: 0;
+      transform: translateY(30px);
     }
     to {
-        opacity: 1;
+      opacity: 1;
+      transform: translateY(0);
     }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-
-    .login-section a {
-        font-size: 1rem;
-        padding: 10px 20px;
-    }
-}
+  }
+  
+  /* Footer */
+  footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 20px;
+  }
+  /* Signup/Login Button Styles */
+  .btn-signup {
+    background: transparent;
+    color: #FFE6A9;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    border: 3px solid #FFE6A9;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 0px 10px rgba(255, 230, 169, 0.6);
+    position: absolute;
+    top: 15px;
+    right: 30px;
+  }
+  
+  .btn-signup:hover {
+    background: #FFE6A9;
+    color: #333;
+    box-shadow: 0px 0px 20px rgba(255, 230, 169, 1);
+    transform: scale(1.1);
+  }
