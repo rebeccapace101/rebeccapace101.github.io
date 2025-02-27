@@ -20,7 +20,7 @@
     width: 50%;
     justify-content: space-evenly;
     height: 100%;
-    background-color: lightblue;
+    background-color: rgb(255, 251, 240);
 
 }
 #habits{
@@ -28,7 +28,7 @@
     text-align: center;
     width: 30%;
     height: 100%;
-    background-color: bisque;
+    background-color: rgb(177, 194, 158);
 
 }
 #metrics{
@@ -36,7 +36,7 @@
     text-align: center;
     width: 30%;
     height: 100%;
-    background-color:cornflowerblue;
+    background-color:rgb(101, 146, 135);
 
 }
 .journalSection{
@@ -46,13 +46,13 @@
     text-align: center;
     width: 50%;
     height: 100vh;
-    background-color: lightcoral;
+    background-color: rgb(255, 230, 169);
 
 }
 .journalBox {
     width: 60%;  /* Adjust size as needed */
     height: 40%;
-    background-color: white ;
+    background-color: rgb(255, 251, 240);
     position: relative;
     z-index: 10;
     padding: 10px;
