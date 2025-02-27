@@ -1,0 +1,60 @@
+*{
+
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+
+}
+
+.container{
+
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.habitsMetrics{
+
+    display: flex;
+    width: 50%;
+    justify-content: space-evenly;
+    height: 100%;
+    background-color: lightblue;
+
+}
+#habits{
+
+    text-align: center;
+    width: 30%;
+    height: 100%;
+    background-color: bisque;
+
+}
+#metrics{
+
+    text-align: center;
+    width: 30%;
+    height: 100%;
+    background-color:cornflowerblue;
+
+}
+.journalSection{
+
+    display: grid;
+    place-items: center; 
+    text-align: center;
+    width: 50%;
+    height: 100vh;
+    background-color: lightcoral;
+
+}
+.journalBox {
+    width: 60%;  /* Adjust size as needed */
+    height: 40%;
+    background-color: white ;
+    position: relative;
+    z-index: 10;
+    padding: 10px;
+    text-align: center;
+}
