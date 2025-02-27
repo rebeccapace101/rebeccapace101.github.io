@@ -5,7 +5,10 @@
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
   }
-  
+  html {
+    scroll-behavior: smooth;
+}
+
   @font-face {
     font-family: 'Emizen';
     src: url('fonts/Emizen.otf') format('opentype'),
@@ -50,14 +53,19 @@
     text-shadow: 2px 2px 15px rgba(255, 230, 169, 0.8);
     display: inline-block;
     animation: revealLogo 1s ease-out forwards;
-    
+    position: absolute;
     /* Added border and padding for a cleaner look */
     padding: 15px 30px; /* Adjust padding for a balanced spacing */
-    
     border-radius: 10px; /* Slightly rounded edges for a modern look */
-    
+    position: fixed; /* Keeps it always visible */
+    top: 20px; /* Adjust as needed */
+    left: 20px; /* Adjust as needed */
+    z-index: 10000; /* Ensures it stays above everything */
+    padding: 10px 20px; /* Keeps spacing around the logo */
+    border-radius: 8px; /* Optional: smooth edges */
+   font-weight: bold; /* Keeps text crisp */
   }
-  
+
   /* Navbar */
   .navbar {
     background: transparent;
@@ -97,7 +105,6 @@
     text-align: center;
     color: white;
   }
-  
   .hero .container {
     max-width: 600px;
     margin: 0 auto;
@@ -105,7 +112,90 @@
     transform: translateY(30px);
     animation: fadeInUp 1s ease-out forwards 0.5s;
   }
-  
+ 
+  .hero2 {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+.hero2-right {
+    background: url('placeholder.png') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+}   
+
+.hero2-left {
+    width: 50%;
+    background-color: #659287;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 50px;
+}
+
+.hero2-left h2{
+    max-width: 80%;
+    color: white;
+}
+
+.hero2-right {
+    width: 50%;
+    background-color: #B1C29E; /* Placeholder for image */
+}
+
+.hero3 {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+.hero3-left {
+    width: 50%;
+    background: url('placeholder.png') no-repeat center center/cover;
+}
+
+.hero3-right {
+    width: 50%;
+    background-color: #DEAA79;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 50px;
+}
+
+.hero3-right h2 {
+    max-width: 80%;
+    color: white;
+}
+
+.hero4 {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+.hero4-right {
+    width: 50%;
+    background: url('placeholder.png') no-repeat center center/cover;
+}
+
+.hero4-left {
+    width: 50%;
+    background-color: #659287;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 50px;
+}
+
+.hero4-left h2 {
+    max-width: 80%;
+    color: white;
+}
+
   /* Fade-in effect for hero text */
   @keyframes fadeInUp {
     from {
@@ -149,3 +239,13 @@
     box-shadow: 0px 0px 20px rgba(255, 230, 169, 1);
     transform: scale(1.1);
   }
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
