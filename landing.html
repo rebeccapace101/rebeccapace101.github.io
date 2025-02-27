@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script src="landing.js" defer></script>
     <meta charset="UTF-8">
@@ -8,11 +9,14 @@
     <link rel="stylesheet" href="landing.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <header class="navbar">
         <div class="container">
             <a class="logo">Momentum</a>
-            <a href="login.html" class="btn-signup">Sign Up/Login</a>
+            <button id="signInButton" class="btn-signup">Sign Up/Log In</button>
+            <button id="signOutButton" class="btn-signup">Log Out</button>
+            <script type="module" src="login.mjs"></script>
         </div>
     </header>
 
@@ -20,25 +24,33 @@
         <div class="container">
             <h2>Welcome to <em>Momentum</em></h2>
             <p>Small steps fuel unstoppable progress—keep your habits in motion.</p>
-            
+
         </div>
     </section>
     <section class="hero2 fade-in">
         <div class="hero2-left">
-            <h2>Momentum is a habit tracker app designed to help users build and maintain positive routines. With an intuitive interface and seamless progress tracking, Momentum keeps users motivated by providing visual streaks, reminders, and personalized insights.</h2>
+            <h2>Momentum is a habit tracker app designed to help users build and maintain positive routines. With an
+                intuitive interface and seamless progress tracking, Momentum keeps users motivated by providing visual
+                streaks, reminders, and personalized insights.</h2>
         </div>
         <div class="hero2-right"></div>
     </section>
     <section class="hero3 fade-in">
-        <div class="hero3-left"></div>  <!-- Image on the left now -->
+        <div class="hero3-left"></div> <!-- Image on the left now -->
         <div class="hero3-right">
-            <h2>a 1-on-1 accountability partner is someone you’re paired with to help you stay on track with your habits. They check in with you regularly, offer encouragement, and make sure you’re staying consistent. This personalized support helps keep you motivated and accountable, making it easier to stick with your goals and stay committed throughout your journey.</h2>
+            <h2>a 1-on-1 accountability partner is someone you’re paired with to help you stay on track with your
+                habits. They check in with you regularly, offer encouragement, and make sure you’re staying consistent.
+                This personalized support helps keep you motivated and accountable, making it easier to stick with your
+                goals and stay committed throughout your journey.</h2>
         </div>
     </section>
     <section>
         <section class="hero4 fade-in">
             <div class="hero4-left">
-                <h2>the statistics feature tracks your habit streaks and visualizes your progress through graphs. It helps you see how consistent you've been over time, making it easier to stay motivated. The graphs provide a clear view of your achievements, showing trends and patterns in your habits, so you can celebrate milestones and identify areas for improvement.</h2>
+                <h2>the statistics feature tracks your habit streaks and visualizes your progress through graphs. It
+                    helps you see how consistent you've been over time, making it easier to stay motivated. The graphs
+                    provide a clear view of your achievements, showing trends and patterns in your habits, so you can
+                    celebrate milestones and identify areas for improvement.</h2>
             </div>
             <div class="hero4-right"></div>
         </section>
@@ -49,4 +61,5 @@
         </div>
     </footer>
 </body>
+
 </html>

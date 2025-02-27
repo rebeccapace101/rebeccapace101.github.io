@@ -12,13 +12,14 @@ const userName = document.getElementById("userName");
 const db = getFirestore(app);
 
 signOutButton.style.display = "none";
-message.style.display = "none";
 
 const userSignIn = async () => {
     signInWithPopup(auth, provider)
         .then((result) => {
             const user = result.user
             console.log(user);
+            signInButton.style.display = "none";
+
         }).catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message
@@ -34,11 +35,12 @@ const userSignOut = async () => {
 onAuthStateChanged(auth, (user) => {
     if (user) {
         signOutButton.style.display = "block";
-        message.style.display = "block";
         userName.innerHTML = user.displayName;
+        signInButton.style.display = "none";
+
     } else {
+        signInButton.style.display = "block";
         signOutButton.style.display = "none";
-        message.style.display = "none";
     }
 })
 
