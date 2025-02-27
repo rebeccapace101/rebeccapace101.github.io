@@ -4,26 +4,24 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChang
 
 
 const userName = document.getElementById("userName");
-const Email = document.getElementById("Email");
+const email = document.getElementById("email");
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
-const signInButton = document.getElementById("signInButton");
-const signOutButton = document.getElementById("signOutButton");
-const changeuser = document.getElementById("changeuser");
+const changeUser = document.getElementById("changeUser");
+const userNameBody = document.getElementById("userNameBody");
 const db = getFirestore(app);
-
-signOutButton.style.display = "none";
-changeuser.style.display = "none";
+const signOutButton = document.getElementById("signOutButton");
 
 
+changeUser.style.display = "none";
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        signOutButton.style.display = "block";
+        console.log(user);
         userName.innerHTML = user.displayName;
-        changeuser.style.display = "block";
+        email.innerHTML = user.email;
+        changeUser.style.display = "block";
     } else {
-        signOutButton.style.display = "none";
     }
 })
 
@@ -34,6 +32,8 @@ onAuthStateChanged(auth, async (user) => {
         const userRef = doc(db, "users", user.uid); // user.uid is the document ID
         try {
             userName.innerHTML = user.displayName;
+            userNameBody.innerHTML = user.displayName;
+            email.innerHTML = user.email;
         } catch (error) {
             console.error("Error adding document: ", error);
         }
@@ -43,29 +43,15 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-const userSignIn = async () => {
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            const user = result.user;
-            console.log(user);
-        }).catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-        })
-}
-
-const userSignOut = async () => {
-    signOut(auth).then(() => {
-        alert("You have signed out successfully!");
-    }).catch((error) => { })
-}
-
 const userNameChange = async () => {
+
+    const inputField = document.getElementById("userNameInput").value;
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            updateProfile(user, { displayName: "New User Name" }).then(() => {
+            updateProfile(user, { displayName: inputField }).then(() => {
                 userName.innerHTML = user.displayName;
+                userNameBody.innerHTML = user.displayName;
             }).catch((error) => {
                 console.error("Error updating username ", error);
             });
@@ -75,11 +61,14 @@ const userNameChange = async () => {
         }
     });
 
-
 }
 
-const user = auth.currentUser;
+const userSignOut = async () => {
+    signOut(auth).then(() => {
+        alert("You have signed out successfully!");
+        window.location.href = "./landing.html";
+    }).catch((error) => { })
+}
 
-signInButton.addEventListener('click', userSignIn);
+changeUser.addEventListener('click', userNameChange);
 signOutButton.addEventListener('click', userSignOut);
-changeuser.addEventListener('click', userNameChange);
