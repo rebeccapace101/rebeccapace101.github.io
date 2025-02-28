@@ -72,3 +72,4 @@ const userSignOut = async () => {
 
 changeUser.addEventListener('click', userNameChange);
 signOutButton.addEventListener('click', userSignOut);
+
