@@ -88,10 +88,10 @@ body {
   top: 0;
   left: 0;
   z-index: 1000;
-  display: flex;
+  display: flex-end;
   justify-content: flex-end;
   /* Aligns login button to the right */
-  padding-right: 30px;
+  padding-left: 1030px;
 
 }
 
@@ -252,7 +252,7 @@ footer {
   position: absolute;
   top: 15px;
   right: 30px;
-
+  width: 150px;
 }
 
 
@@ -272,6 +272,7 @@ footer {
   text-decoration: none;
   border: 3px solid #FFE6A9;
   border-radius: 10px;
+  width: 100px;
   transition: all 0.3s ease-in-out;
   box-shadow: 0px 0px 10px rgba(255, 230, 169, 0.6);
   position: sticky;
