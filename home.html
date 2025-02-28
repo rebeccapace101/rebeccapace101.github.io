@@ -12,15 +12,16 @@
             <li class="active">Home</li>
             <li>Journal</li>
             <li>Statistics</li>
-            <li>Account</li>
+            <li><a href = "./profile.html">Profile</a></li>
         </ul>
     </nav>
 
     <header class="header">
         <div class="profile-container">
-            <img src="circle.png" alt="Profile Picture" class="profile-pic">
+            <img src="circle.png" alt="Profile Picture" class="profile-pic" id="profile-pic">
         </div>
-        <h1>Welcome Back, Caleb!</h1>
+        <h1>Welcome Back, <span id="userName"></span>!</h1>
     </header>
+    <script type="module" src="./home.js"></script>   
 </body>
 </html>
