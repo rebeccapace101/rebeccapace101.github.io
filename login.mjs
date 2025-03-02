@@ -74,3 +74,30 @@ onAuthStateChanged(auth, async (user) => {
 
 signInButton.addEventListener('click', userSignIn);
 signOutButton.addEventListener('click', userSignOut);
+
+
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/auth/admin/manage-users
+        const userRef = doc(db, "habits", user.uid); // user.uid is the document ID
+        try {
+            await setDoc(userRef, {
+                Monday: null,
+                Tuesday: null,
+                Wednesday: null,
+                Thursday: null,
+                Friday: null,
+                Saturday: null,
+                Sunday: null
+            });
+            console.log("User data written with ID: ", user.uid);
+        } catch (error) {
+            console.error("Error adding document: ", error);
+        }
+    } else {
+        // User is signed out
+        console.log("User is signed out");
+    }
+});
