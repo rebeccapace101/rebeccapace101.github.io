@@ -82,17 +82,44 @@ onAuthStateChanged(auth, async (user) => {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/auth/admin/manage-users
         const userRef = doc(db, "habits", user.uid); // user.uid is the document ID
-        try {
-            const Monday = doc(db, "habits", user.uid, "Monday", "habits");
-            await setDoc(Monday, {
-                habits: []
-            });
-            console.log("User data written with ID: ", user.uid);
-        } catch (error) {
-            console.error("Error adding document: ", error);
-        }
+        const Monday = doc(db, "habits", user.uid, "Monday", "habits");
+        await setDoc(Monday, {
+            habits: []
+        }, { merge: true });
+
+        const Tuesday = doc(db, "habits", user.uid, "Tuesday", "habits");
+        await setDoc(Tuesday, {
+            habits: []
+        }, { merge: true });
+
+        const Wednesday = doc(db, "habits", user.uid, "Wednesday", "habits");
+        await setDoc(Wednesday, {
+            habits: []
+        }, { merge: true });
+
+        const Thursday = doc(db, "habits", user.uid, "Thursday", "habits");
+        await setDoc(Thursday, {
+            habits: []
+        }, { merge: true });
+
+        const Friday = doc(db, "habits", user.uid, "Friday", "habits");
+        await setDoc(Friday, {
+            habits: []
+        }, { merge: true });
+
+        const Saturday = doc(db, "habits", user.uid, "Saturday", "habits");
+        await setDoc(Saturday, {
+            habits: []
+        }, { merge: true });
+
+        const Sunday = doc(db, "habits", user.uid, "Sunday", "habits");
+        await setDoc(Sunday, {
+            habits: []
+        }, { merge: true });
+
     } else {
         // User is signed out
         console.log("User is signed out");
     }
 });
+

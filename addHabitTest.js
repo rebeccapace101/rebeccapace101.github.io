@@ -1,12 +1,10 @@
 import './habitStorage.mjs';
 import { app } from './init.mjs';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { user } from "./login.mjs";
+import { getFirestore, Timestamp, FieldValue, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
 
-import { getFirestore, Timestamp, FieldValue, Filter, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
-
-import { habit } from './habitStorage.mjs';
 // Import Admin SDK
-initializeApp();
 
 const db = getFirestore();
 const auth = getAuth();
@@ -20,12 +18,15 @@ const Saturday = document.getElementById('Saturday');
 const Sunday = document.getElementById('Sunday');
 const submitted = document.getElementById('addHabit');
 
-const habitSubmitted = () => {
-    const habitName = document.getElementById('habitInput').getInput();
+const habitSubmitted = async () => {
+    const habitName = document.getElementById('habitInput').value;
 
     if (Monday.checked) {
-        newHabit = new habit(habitName, false);
-
+        const Monday = doc(db, "habits", user.uid, "Monday", "habits");
+        await setDoc(Monday, {
+            habits: [habitName]
+        }, { merge: true });
+        console.log("Added habit to monday");
     }
 
 }
