@@ -10,12 +10,10 @@ const db = getFirestore();
 const auth = getAuth();
 
 
-class habit {
-    constructor(name, type, schedule) {
+export class habit {
+    constructor(name, completed) {
         this.name = name;
-        this.type = type;
-        this.schedule = schedule;
+        this.completed = completed;
     }
 }
 
-const sleep = new habit(sleep, numberScale, [1, 1, 1, 1, 1, 1, 1]);

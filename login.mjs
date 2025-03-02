@@ -83,14 +83,9 @@ onAuthStateChanged(auth, async (user) => {
         // https://firebase.google.com/docs/auth/admin/manage-users
         const userRef = doc(db, "habits", user.uid); // user.uid is the document ID
         try {
-            await setDoc(userRef, {
-                Monday: null,
-                Tuesday: null,
-                Wednesday: null,
-                Thursday: null,
-                Friday: null,
-                Saturday: null,
-                Sunday: null
+            const Monday = doc(db, "habits", user.uid, "Monday", "habits");
+            await setDoc(Monday, {
+                habits: []
             });
             console.log("User data written with ID: ", user.uid);
         } catch (error) {
