@@ -8,6 +8,10 @@ body{
 }
 h1{
 
+    box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.4);
+    display: inline-block;
+    border-radius: 20px;
+    padding: 10px;
     font-family: roca;
     font-size:larger;
 
@@ -30,8 +34,19 @@ h1{
     background-color: rgb(255, 251, 240);
 
 }
+#habitsBox{
+    display: flex;
+    flex-direction: column;
+}
+#up{
+
+    
+}
 #habits{
 
+
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
     margin: 2.5%;
     justify-content: center;
     text-align: center;
@@ -42,6 +57,8 @@ h1{
 }
 #metrics{
 
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
     margin: 2.5%;
     align-items: center;
     justify-content: center;
@@ -63,13 +80,16 @@ h1{
 
 }
 #journalBox {
-    width: 60%;  /* Adjust size as needed */
-    height: 40%;
-    padding: 10px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    width: 34vw;  /* Adjust size as needed */
+    height: 66vh;
+    /* padding: 10px; */
     background-color:rgb(101, 146, 135);
-    border-color: green;
-    position: relative;
-    z-index: 10;
+    /*position: relative;*/
+    justify-content: center;
     padding: 10px;
     text-align: center;
 }
@@ -77,23 +97,31 @@ h1{
 
     display: flex;
     flex-direction: column;
-    align-items: center;
-    background: white;
+    justify-content: space-around;
+    background: red;
+   
 }
 button {
     padding: 8px 12px;
+    margin: 2px;
     border: none;
-    background-color: #007bff;
+    font-family: roca;
+    background-color: rgb(222,170,121);
     color: white;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
 }
-input[type="text"] {
-    padding: 8px;
-    height: 20vh;
-    width: 20vw;
+textarea {
+    text-align: left;
+    resize: none;
+    vertical-align: top;
+    margin: 2%;
+    padding: 10px;
+    height: 56vh;
+    width: 31vw;
+    background-color: rgb(255, 251, 240);
     border: 2px solid #ccc;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 16px;
 }
