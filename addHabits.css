@@ -1,5 +1,5 @@
 .container {
-    margin-top: 80px;;
+    margin-top: 80px;
 }
 .navbar {
     background-color: #EDE9DD;
@@ -9,14 +9,13 @@
     gap: 20px;
     width: fit-content;
     border-radius: 20px;
-    position: absolute;
+    position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
 
 .navbar ul {
     list-style: none;

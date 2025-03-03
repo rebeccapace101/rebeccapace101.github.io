@@ -16,13 +16,53 @@ h1{
     font-size:larger;
 
 }
-.container{
+.navbar {
+    background-color: #EDE9DD;
+    padding: 10px 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: fit-content;
+    border-radius: 20px;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
+
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar li {
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar .active, .navbar li:hover {
+    background-color: #CFCAB2;
+}
+
+.container {
+    margin-top: 80px; /* Creates space below navbar */
     justify-content: space-evenly;
     margin: 2vh;
     display: flex;
     width: 97.5vw;
     height: 96vh;
+}
+
+.habitsMetrics, .journalSection {
+    padding-top: 80px; /* Extends background behind navbar */
 }
 
 .habitsMetrics{

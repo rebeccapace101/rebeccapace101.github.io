@@ -5,23 +5,34 @@
     <meta charset="UTF-8">
     <link ref="stylesheet" href="stats.css">
 </head>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><a href="./home.html">Home</a></li>
+            <li><a href="./addHabitTest.html">Track Habits</a></li>
+            <li><a href="./journalPage.html">Journal</a> </li>
+            <li><a href="./stats.html">Stats</a></li>
+            <li><a href="./profile.html">Profile</a></li>
+        </ul>
+    </nav>
+    <div class="container"
+        <! ~habit~ will be replaced by the selected habit>
+        <h1>
+            The selected habit is ~habit~
+        </h1>
 
-<! ~habit~ will be replaced by the selected habit>
-<h1>
-    The selected habit is ~habit~
-</h1>
+        <!dropdown menu will pull from firebase once it is set up>
+        <select name="tracker" id="tracker">
+            <option value="sleep">Sleep</option>
+            <option value="Make bed">Make bed</option>
+            <option value="feed the furry menace">Feed The Furry Menace</option>
+            <option value="water plants">Water Plants</option>
+            <option value="screen time">Screen Time</option>
+        </select>
 
-<!dropdown menu will pull from firebase once it is set up>
-<select name="tracker" id="tracker">
-    <option value="sleep">Sleep</option>
-    <option value="Make bed">Make bed</option>
-    <option value="feed the furry menace">Feed The Furry Menace</option>
-    <option value="water plants">Water Plants</option>
-    <option value="screen time">Screen Time</option>
-</select>
-
-<button type="button">select habit</button>
-
-<!once a habit is selected there will be a graph containing the data about that habit that will be loded here>
+        <button type="button">select habit</button>
+    ></div>
+</body>
+<!once a habit is selected there will be a graph containing the data about that habit that will be loaded here>
 
 </html>

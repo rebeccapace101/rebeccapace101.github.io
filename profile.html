@@ -2,20 +2,31 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="profile.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Profile Page</title>
     <script type="module" src="./profile.js"></script>
 </head>
 
-<h1>Welcome, <span id="userName"></span></h1>
+
 
 <body>
-    <h2>Username: <span id="userNameBody"></span></h1>
+    <nav class="navbar">
+        <ul>
+            <li><a href="./home.html">Home</a></li>
+            <li><a href="./addHabitTest.html">Track Habits</a></li>
+            <li><a href="./journalPage.html">Journal</a> </li>
+            <li><a href="./stats.html">Stats</a></li>
+            <li><a href="./profile.html">Profile</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Welcome, <span id="userName"></span></h1>
+        <h2>Username: <span id="userNameBody"></span></h1>
         <input type="text" id="userNameInput" placeholder="Input New Username">
         <button id="changeUser">Change Username</button>
         <h2>Email: <span id="email"></span></h1>
-
-            <button id="signOutButton">Log Out</button>
-
+        <button id="signOutButton">Log Out</button>
+    </div>
 </body>
