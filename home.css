@@ -81,3 +81,33 @@ h1 {
     font-size: 2rem;
     margin: 0;
 }
+.left-container, .right-container, .center-container {
+    background-color: #8C9474; /* Same green as the header */
+    border-radius: 20px; /* Rounded edges */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    align-items: center;
+    justify-content: center; /* Center items within each container */
+    width: 30%; /* Each container takes up 30% of the available space */
+    margin: 10px; /* Space between containers */
+}
+.container {
+    display: flex;
+    justify-content: space-between; /* Evenly spaces out the containers */
+    gap: 20px;
+    width: 80%; /* Ensure containers are aligned within the page */
+    max-width: 1200px; /* Limit container size */
+    margin: 40px 0; /* Vertical margin to add space above and below */
+}
+h2 {
+    color: white; /* Make heading text white */
+    font-size: 1.5rem; /* Adjust heading size */
+    margin-bottom: 10px; /* Space below the heading */
+}
+
+p {
+    color: white; /* White text for readability */
+    font-size: 1rem; /* Adjust font size */
+}
