@@ -1,7 +1,7 @@
 
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { app } from './init.mjs';
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
+import { getFirestore, doc, setDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
 
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
@@ -84,37 +84,37 @@ onAuthStateChanged(auth, async (user) => {
         const userRef = doc(db, "habits", user.uid); // user.uid is the document ID
         const Monday = doc(db, "habits", user.uid, "Monday", "habits");
         await setDoc(Monday, {
-            habits: []
+            habits: arrayUnion()
         }, { merge: true });
 
         const Tuesday = doc(db, "habits", user.uid, "Tuesday", "habits");
         await setDoc(Tuesday, {
-            habits: []
+            habits: arrayUnion()
         }, { merge: true });
 
         const Wednesday = doc(db, "habits", user.uid, "Wednesday", "habits");
         await setDoc(Wednesday, {
-            habits: []
+            habits: arrayUnion()
         }, { merge: true });
 
         const Thursday = doc(db, "habits", user.uid, "Thursday", "habits");
         await setDoc(Thursday, {
-            habits: []
+            habits: arrayUnion()
         }, { merge: true });
 
         const Friday = doc(db, "habits", user.uid, "Friday", "habits");
         await setDoc(Friday, {
-            habits: []
+            habits: arrayUnion()
         }, { merge: true });
 
         const Saturday = doc(db, "habits", user.uid, "Saturday", "habits");
         await setDoc(Saturday, {
-            habits: []
+            habits: arrayUnion()
         }, { merge: true });
 
         const Sunday = doc(db, "habits", user.uid, "Sunday", "habits");
         await setDoc(Sunday, {
-            habits: []
+            habits: arrayUnion(null)
         }, { merge: true });
 
     } else {

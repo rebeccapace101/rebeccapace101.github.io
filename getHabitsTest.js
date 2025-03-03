@@ -16,9 +16,12 @@ onAuthStateChanged(auth, async (user) => {
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
         const habitsDoc = await getDoc(dayDoc);
         const habits = habitsDoc.data().habits;
-        const newParagraph = document.createElement('p');
-        newParagraph.textContent = habits;
-        parentElement.appendChild(newParagraph);
+        habits.forEach(element => {
+            const newParagraph = document.createElement('p');
+            newParagraph.textContent = element;
+            parentElement.appendChild(newParagraph);
+        });
+
         console.log(habits)
 
     } else {
