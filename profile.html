@@ -26,19 +26,37 @@
         <h2><span id="userNameBody"></span></h1>
             <button id="changeUser">Change Username</button>
             <h2>Email: <span id="email"></span></h1>
+                <!-- <button id="changePFP">Change Profile Picture</button>-->
+
                 <button id="signOutButton">Log Out</button>
     </div>
 
-    <div class="popup-overlayUser" id="popupOverlayUser">
-        <div class="popupUser" id="popupUser">
-            <span class="closeUser" id="closePopupUser">&times;</span>
-            <div class="popup-contentUser">
+    <div class="popup-overlay" id="popupOverlayUser">
+        <div class="popup" id="popupUser">
+            <span class="close" id="closePopupUser">&times;</span>
+            <div class="popup-content">
                 <p>Enter New Username:</p>
                 <input type="text" placeholder="new username" id="userNameInput">
                 <button id="submitNewUsername">Submit Change</button>
             </div>
         </div>
     </div>
+
+    <!--
+    <div class="popup-overlay" id="popupOverlayPFP">
+        <div class="popup" id="popupPFP">
+            <span class="close" id="closePopupPFP">&times;</span>
+            <div class="popup-content">
+                <p>Upload new profile picture:</p>
+                <input type="file" id="imageUpload" name="imageUpload" accept="image/*">
+                <button id="submitNewPFP">Submit Change</button>
+            </div>
+        </div>
+    </div>
+    -->
+
+
     <script type="module" src="./nav.js"></script>
+
 
 </body>
