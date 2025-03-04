@@ -52,6 +52,28 @@ h1{
     background-color: #CFCAB2;
 }
 
+#habitInput{
+
+padding: 6%;
+margin: 2%;
+
+}
+#addHabit{
+
+    width: 5vw;
+}
+
+.containerOther{
+
+background-color: rgb(255, 230, 169);
+display: flex;
+width: 30wh;
+height: 33.5vh;
+margin: 3%;
+flex-direction: column;
+align-items: center;
+}
+
 .container {
     margin-top: 80px; /* Creates space below navbar */
     justify-content: space-evenly;
@@ -80,10 +102,9 @@ h1{
 }
 #up{
 
-    
+
 }
 #habits{
-
 
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
     border-radius: 15px;
