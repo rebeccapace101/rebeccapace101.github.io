@@ -12,7 +12,6 @@ const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 
-
 onAuthStateChanged(auth, async (user) => {
     if (user) {
 
@@ -41,7 +40,7 @@ const Friday = document.getElementById('Friday');
 const Saturday = document.getElementById('Saturday');
 const Sunday = document.getElementById('Sunday');
 const submitted = document.getElementById('addHabit');
-
+const subJournal = document.getElementById('submitBtn');
 const habitSubmitted = async () => {
 
     onAuthStateChanged(auth, async (user) => {
