@@ -63,7 +63,7 @@ const userNameChange = async () => {
     const inputField = document.getElementById("userNameInput").value;
 
     onAuthStateChanged(auth, async (user) => {
-        popUp.style.display = "none";
+        popUpUser.style.display = "none";
         if (user) {
             updateProfile(user, { displayName: inputField }).then(() => {
                 userName.innerHTML = user.displayName;
