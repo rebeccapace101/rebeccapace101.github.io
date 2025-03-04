@@ -71,3 +71,4 @@ const loadJournalEntry = async (userId) => {
         console.error("Error loading journal entry:", error);
     }
 };
+
