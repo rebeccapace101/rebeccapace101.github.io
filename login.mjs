@@ -114,7 +114,7 @@ onAuthStateChanged(auth, async (user) => {
 
         const Sunday = doc(db, "habits", user.uid, "Sunday", "habits");
         await setDoc(Sunday, {
-            habits: arrayUnion(null)
+            habits: arrayUnion()
         }, { merge: true });
 
     } else {
