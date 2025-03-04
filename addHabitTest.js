@@ -28,7 +28,7 @@ const habitSubmitted = async () => {
                 await setDoc(Monday, {
                     habits: arrayUnion(habitName)
                 }, { merge: true });
-                console.log("Added habit to monday");
+                console.log("Added habit to Monday");
             }
             if (Tuesday.checked) {
                 const Tuesday = doc(db, "habits", user.uid, "Tuesday", "habits");
