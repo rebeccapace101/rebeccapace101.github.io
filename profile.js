@@ -1,5 +1,5 @@
 import { app } from './init.mjs';
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
 
@@ -11,14 +11,14 @@ const changeUser = document.getElementById("changeUser");
 const userNameBody = document.getElementById("userNameBody");
 const db = getFirestore(app);
 const signOutButton = document.getElementById("signOutButton");
-
+const submitNewUsername = document.getElementById("submitNewUsername");
 
 changeUser.style.display = "none";
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
         console.log(user);
-        userName.innerHTML = user.displayName;
+        userNameBody.innerHTML = user.displayName;
         email.innerHTML = user.email;
         changeUser.style.display = "block";
     } else {
@@ -31,7 +31,6 @@ onAuthStateChanged(auth, async (user) => {
         // https://firebase.google.com/docs/auth/admin/manage-users
         const userRef = doc(db, "users", user.uid); // user.uid is the document ID
         try {
-            userName.innerHTML = user.displayName;
             userNameBody.innerHTML = user.displayName;
             email.innerHTML = user.email;
         } catch (error) {
@@ -42,12 +41,29 @@ onAuthStateChanged(auth, async (user) => {
         console.log("User is signed out");
     }
 });
+const popUpUser = document.getElementById("popupOverlayUser");
+const closePopupUser = document.getElementById("closePopupUser");
+
+const callNewUser = async () => {
+
+    popUpUser.style.display = "block";
+
+}
+
+const closeUserWindow = async () => {
+
+    popUpUser.style.display = "none";
+}
+
+closePopupUser.addEventListener('click', closeUserWindow);
+
 
 const userNameChange = async () => {
 
     const inputField = document.getElementById("userNameInput").value;
 
     onAuthStateChanged(auth, async (user) => {
+        popUp.style.display = "none";
         if (user) {
             updateProfile(user, { displayName: inputField }).then(() => {
                 userName.innerHTML = user.displayName;
@@ -59,6 +75,7 @@ const userNameChange = async () => {
             // User is signed out
             console.log("User is signed out");
         }
+
     });
 
 }
@@ -70,6 +87,39 @@ const userSignOut = async () => {
     }).catch((error) => { })
 }
 
-changeUser.addEventListener('click', userNameChange);
+changeUser.addEventListener('click', callNewUser)
+submitNewUsername.addEventListener('click', userNameChange);
 signOutButton.addEventListener('click', userSignOut);
+
+
+//for displaying and changing profile picture
+
+const profilePic = document.getElementById("profile-pic");
+
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+
+        try {
+            // Reference to the user's Firestore document
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const photoURL = userData.photoURL || user.photoURL; // Get from Firestore or fallback to Firebase Auth
+
+                if (photoURL && profilePic) {
+                    profilePic.src = photoURL;
+                }
+            } else {
+                console.log("No user document found in Firestore.");
+            }
+        } catch (error) {
+            console.error("Error retrieving user photo URL:", error);
+        }
+    } else {
+        console.log("No user is signed in.");
+    }
+});
 
