@@ -11,12 +11,10 @@
 <body>
     <nav class="navbar">
         <ul>
-            <li><a href="./home.html">Home</a></li>
-            <li><a href="./addHabitTest.html">Track Habits</a></li>
-            <li><a href="./journalPage.html">Journal</a> </li>
-            <li><a href="./stats.html">Stats</a></li>
-            <li><a href="./getHabitsTest.html">get test</a></li>
-            <li><a href="./profile.html">Profile</a></li>
+            <li><button class="nav-btn" data-page="home.html">Home</button></li>
+            <li><button class="nav-btn" data-page="journalPage.html">Journal</button></li>
+            <li><button class="nav-btn" data-page="stats.html">Stats</button></li>
+            <li><button class="nav-btn" data-page="profile.html">Profile</button></li>
         </ul>
     </nav>
 
@@ -26,14 +24,15 @@
         </div>
         <h1>Welcome Back, <span id="userName"></span>!</h1>
     </header>
+
     <div class="container">
         <div class="left-container">
             <h2>Current Habit</h2>
             <p>Content for the left container.</p>
         </div>
-        <div class="center-container">
+        <div class="center-container" id="journal-container">
             <h2>Current Journal Entry</h2>
-            <p>Content for the center container.</p>
+            <p>Loading...</p>
         </div>
         <div class="right-container">
             <h2>Recent Statistics</h2>
@@ -42,6 +41,6 @@
     </div>
 
     <script type="module" src="./home.js"></script>
-</body>
+    <script type="module" src="./nav.js"></script>
 
 </html>

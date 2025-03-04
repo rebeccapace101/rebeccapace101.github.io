@@ -9,10 +9,8 @@ const signInButton = document.getElementById("signInButton");
 const signOutButton = document.getElementById("signOutButton");
 const message = document.getElementById("message");
 const db = getFirestore(app);
-const profile = document.getElementById("profile");
 
 signOutButton.style.display = "none";
-profile.style.display = "none";
 
 const userSignIn = async () => {
     signInWithPopup(auth, provider)
@@ -20,8 +18,7 @@ const userSignIn = async () => {
             const user = result.user
             console.log(user);
             signInButton.style.display = "none";
-            profile.style.display = "block";
-
+            window.location.href = "home.html";
         }).catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message
@@ -30,7 +27,6 @@ const userSignIn = async () => {
 
 const userSignOut = async () => {
     signOut(auth).then(() => {
-        profile.style.display = "none";
         alert("You have signed out successfully!");
     }).catch((error) => { })
 }
@@ -39,7 +35,6 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         signOutButton.style.display = "block";
         signInButton.style.display = "none";
-        profile.style.display = "block";
 
 
     } else {

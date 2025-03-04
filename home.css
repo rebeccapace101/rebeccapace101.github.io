@@ -34,6 +34,34 @@ body {
     gap: 20px;
 }
 
+.navbar li {
+    cursor: pointer;
+    padding: 0;
+}
+
+.nav-btn {
+    background-color: #CFCAB2; /* Default button color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn:hover {
+    background-color: #B8B29E; /* Slightly darker green on hover */
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.nav-btn.active {
+    background-color: #8C9474; /* Highlight color for active page */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
+}
+
 #profile-pic {
     width: 100px;
     /* Adjust size as needed */
@@ -50,17 +78,28 @@ body {
     /* Removes inline spacing issues */
 }
 
-.navbar li {
-    cursor: pointer;
+button {
+    background-color: #CFCAB2; /* Green color */
+    color: white;
+    border: none;
     padding: 10px 15px;
-    border-radius: 10px;
-    transition: background-color 0.3s ease;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle drop shadow */
 }
 
-.navbar .active,
-.navbar li:hover {
-    background-color: #CFCAB2;
+button:hover {
+    background-color: #CFCAB0; /* Slightly darker green on hover */
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3); /* Slightly larger shadow on hover */
 }
+
+button:active {
+    transform: scale(0.98); /* Slight press effect */
+}
+
 
 .header {
     background-color: #8C9474;
