@@ -1,4 +1,4 @@
-body{
+body {
 
     margin: 0;
     padding: 0;
@@ -6,16 +6,18 @@ body{
     width: 100%;
 
 }
-h1{
+
+h1 {
 
     box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.4);
     display: inline-block;
     border-radius: 20px;
     padding: 10px;
     font-family: roca;
-    font-size:larger;
+    font-size: larger;
 
 }
+
 .navbar {
     background-color: #EDE9DD;
     padding: 10px 30px;
@@ -46,7 +48,8 @@ h1{
 }
 
 .nav-btn {
-    background-color: #CFCAB2; /* Default button color */
+    background-color: #CFCAB2;
+    /* Default button color */
     color: white;
     border: none;
     padding: 10px 15px;
@@ -59,40 +62,36 @@ h1{
 }
 
 .nav-btn:hover {
-    background-color: #B8B29E; /* Slightly darker green on hover */
+    background-color: #B8B29E;
+    /* Slightly darker green on hover */
     box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .nav-btn.active {
-    background-color: #8C9474; /* Highlight color for active page */
+    background-color: #8C9474;
+    /* Highlight color for active page */
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
 }
 
-
-#habitInput{
-
-padding: 6%;
-margin: 2%;
-
-}
-#addHabit{
+#addHabit {
 
     width: 5vw;
 }
 
-.containerOther{
+.containerOther {
 
-background-color: rgb(255, 230, 169);
-display: flex;
-width: 30wh;
-height: 33.5vh;
-margin: 3%;
-flex-direction: column;
-align-items: center;
+    background-color: rgb(255, 230, 169);
+    display: flex;
+    width: 30wh;
+    height: 33.5vh;
+    margin: 3%;
+    flex-direction: column;
+    align-items: center;
 }
 
 .container {
-    margin-top: 80px; /* Creates space below navbar */
+    margin-top: 80px;
+    /* Creates space below navbar */
     justify-content: space-evenly;
     margin: 2vh;
     display: flex;
@@ -100,11 +99,13 @@ align-items: center;
     height: 96vh;
 }
 
-.habitsMetrics, .journalSection {
-    padding-top: 80px; /* Extends background behind navbar */
+.habitsMetrics,
+.journalSection {
+    padding-top: 80px;
+    /* Extends background behind navbar */
 }
 
-.habitsMetrics{
+.habitsMetrics {
 
     display: flex;
     width: 50%;
@@ -113,15 +114,15 @@ align-items: center;
     background-color: rgb(255, 251, 240);
 
 }
-#habitsBox{
+
+#habitsBox {
     display: flex;
     flex-direction: column;
 }
-#up{
 
+#up {}
 
-}
-#habits{
+#habits {
 
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
     border-radius: 15px;
@@ -133,7 +134,8 @@ align-items: center;
     background-color: rgb(177, 194, 158);
 
 }
-#metrics{
+
+#metrics {
 
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
     border-radius: 15px;
@@ -143,10 +145,11 @@ align-items: center;
     text-align: center;
     width: 30%;
     height: 95%;
-    background-color:rgb(101, 146, 135);
+    background-color: rgb(101, 146, 135);
 
 }
-.journalSection{
+
+.journalSection {
 
     display: flex;
     flex-direction: column;
@@ -157,39 +160,44 @@ align-items: center;
     background-color: rgb(255, 230, 169);
 
 }
+
 #journalBox {
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
     border-radius: 15px;
     display: flex;
     flex-direction: column;
-    width: 34vw;  /* Adjust size as needed */
+    width: 34vw;
+    /* Adjust size as needed */
     height: 66vh;
     /* padding: 10px; */
-    background-color:rgb(101, 146, 135);
+    background-color: rgb(101, 146, 135);
     /*position: relative;*/
     justify-content: center;
     padding: 10px;
     text-align: center;
 }
-#textBoxContainer{
+
+#textBoxContainer {
 
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     background: red;
-   
+
 }
+
 button {
     padding: 8px 12px;
     margin: 2px;
     border: none;
     font-family: roca;
-    background-color: rgb(222,170,121);
+    background-color: rgb(222, 170, 121);
     color: white;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
 }
+
 textarea {
     text-align: left;
     resize: none;
@@ -202,4 +210,44 @@ textarea {
     border: 2px solid #ccc;
     border-radius: 10px;
     font-size: 16px;
+}
+
+.popup-overlay {
+    display: none;
+    /* Initially hidden */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black background with opacity */
+}
+
+.popup {
+    background-color: #fefefe;
+    /* White content background */
+    margin: 15% auto;
+    /* Center the popup */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* Adjust as needed */
+    position: relative;
+    /* For absolute positioning of close button */
+}
+
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
 }

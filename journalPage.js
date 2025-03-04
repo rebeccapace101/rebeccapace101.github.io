@@ -44,6 +44,8 @@ const subJournal = document.getElementById('submitBtn');
 const habitSubmitted = async () => {
 
     onAuthStateChanged(auth, async (user) => {
+        popUp.style.display = "none";
+
         if (user) {
             const habitName = document.getElementById('habitInput').value;
             if (Monday.checked) {
@@ -104,3 +106,25 @@ const habitSubmitted = async () => {
 
 }
 submitted.addEventListener('click', habitSubmitted);
+
+
+
+const newHabit = document.getElementById("newHabit");
+
+const popUp = document.getElementById("popupOverlay");
+const closePopup = document.getElementById("closePopup");
+
+const callNewHabits = async () => {
+
+    popUp.style.display = "block";
+
+}
+
+const closeWindow = async () => {
+
+    popUp.style.display = "none";
+}
+
+closePopup.addEventListener('click', closeWindow);
+newHabit.addEventListener('click', callNewHabits)
+
