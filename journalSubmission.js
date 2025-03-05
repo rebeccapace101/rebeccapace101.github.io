@@ -26,7 +26,7 @@ const journalSubmission = async () => {
             try {
                 const todayDate = getTodayDate();
                 const journalRef = doc(db, "journals", user.uid, "journalEntry", todayDate);
-
+                
                 await setDoc(journalRef, {
                     text: entryText,
                     date: todayDate

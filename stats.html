@@ -2,10 +2,12 @@
 <html lang="en">
 
 <head>
-    <script src="stats.js" defer></script>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Stats</title>
     <link rel="stylesheet" href="stats.css">
 </head>
+
 <body>
     <nav class="navbar">
         <ul>
@@ -15,22 +17,24 @@
             <li><button class="nav-btn" data-page="profile.html">Profile</button></li>
         </ul>
     </nav>
-    <div class="container">
-        <!-- ~habit~ will be replaced by the selected habit -->
-        <h1>
-            Habit stats
-        </h1>
 
-        <!-- dropdown menu will pull from firebase once it is set up -->
-        <select name="habit" id="habit">
-            <option value="sleep">Sleep</option>
-            <option value="Make bed">Make bed</option>
-            <option value="feed the furry menace">Feed The Furry Menace</option>
-            <option value="water plants">Water Plants</option>
-            <option value="screen time">Screen Time</option>
+    <div class="container">
+        <h1>Habit Stats</h1>
+
+        <!-- Dropdown for selecting a habit -->
+        <label for="habitDropdown">Select a Habit:</label>
+        <select id="habitDropdown">
+            <option value="">Loading...</option>
         </select>
 
+        <!-- Section to display habit stats -->
+        <div id="habit-stats">
+            <h2>Habit Details</h2>
+            <p id="habit-info">Select a habit to view details.</p>
+        </div>
     </div>
+
+    <script type="module" src="./stats.js"></script>
     <script type="module" src="./nav.js"></script>
 </body>
 

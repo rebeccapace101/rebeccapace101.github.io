@@ -7,7 +7,6 @@ body {
     align-items: center;
     min-height: 100vh;
     padding-top: 100px;
-    /* To ensure content doesn't overlap with navbar */
 }
 
 .navbar {
@@ -36,11 +35,10 @@ body {
 
 .navbar li {
     cursor: pointer;
-    padding: 0;
 }
 
 .nav-btn {
-    background-color: #CFCAB2; /* Default button color */
+    background-color: #CFCAB2;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -53,53 +51,14 @@ body {
 }
 
 .nav-btn:hover {
-    background-color: #B8B29E; /* Slightly darker green on hover */
+    background-color: #B8B29E;
     box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .nav-btn.active {
-    background-color: #8C9474; /* Highlight color for active page */
+    background-color: #8C9474;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
 }
-
-#profile-pic {
-    width: 100px;
-    /* Adjust size as needed */
-    height: 100px;
-    border-radius: 50%;
-    /* Makes the image a perfect circle */
-    border: 3px solid white;
-    /* White stroke around the image */
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
-    /* Soft black drop shadow */
-    object-fit: cover;
-    /* Ensures the image fills the circle properly */
-    display: block;
-    /* Removes inline spacing issues */
-}
-
-button {
-    background-color: #CFCAB2; /* Green color */
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle drop shadow */
-}
-
-button:hover {
-    background-color: #CFCAB0; /* Slightly darker green on hover */
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3); /* Slightly larger shadow on hover */
-}
-
-button:active {
-    transform: scale(0.98); /* Slight press effect */
-}
-
 
 .header {
     background-color: #8C9474;
@@ -116,12 +75,13 @@ button:active {
     align-items: center;
 }
 
-.profile-pic {
-    width: 150px;
-    height: 150px;
+#profile-pic {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    border: 5px solid white;
-    margin-bottom: 20px;
+    border: 3px solid white;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
+    object-fit: cover;
 }
 
 h1 {
@@ -130,53 +90,146 @@ h1 {
     margin: 0;
 }
 
-.left-container,
-.right-container,
-.center-container {
-    background-color: #8C9474;
-    /* Same green as the header */
-    border-radius: 20px;
-    /* Rounded edges */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    /* Soft shadow for depth */
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    /* Stack content vertically */
-    align-items: center;
-    justify-content: center;
-    /* Center items within each container */
-    width: 30%;
-    /* Each container takes up 30% of the available space */
-    margin: 10px;
-    /* Space between containers */
-}
-
+/* Main container for content */
 .container {
     display: flex;
     justify-content: space-between;
-    /* Evenly spaces out the containers */
     gap: 20px;
     width: 80%;
-    /* Ensure containers are aligned within the page */
     max-width: 1200px;
-    /* Limit container size */
     margin: 40px 0;
-    /* Vertical margin to add space above and below */
 }
 
+/* Unified styling for all three sections */
+.left-container, .center-container, .right-container {
+    background-color: #8C9474;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 30%;
+    min-height: 200px;
+    text-align: center;
+}
+.left-container {
+    background-color: #8C9474; /* Matching theme */
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align text to the left */
+    justify-content: center;
+    width: 30%;
+    min-height: 250px;
+    text-align: left; /* Ensure text remains left-aligned */
+    color: white;
+    font-size: 1rem;
+    line-height: 1.6; /* Improve text readability */
+    word-wrap: break-word;
+}
+
+.left-container h2 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.left-container p {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.left-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.left-container li {
+    padding: 5px 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.left-container li::before {
+    content: "•";
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .left-container, .center-container, .right-container {
+        width: 90%;
+        align-items: center;
+        text-align: center;
+    }
+
+    .left-container li {
+        justify-content: center;
+    }
+}
+
+
+/* Ensuring center container is slightly larger */
+.center-container {
+    width: 35%;
+}
+
+/* Making text elements readable */
 h2 {
     color: white;
-    /* Make heading text white */
     font-size: 1.5rem;
-    /* Adjust heading size */
     margin-bottom: 10px;
-    /* Space below the heading */
 }
 
 p {
     color: white;
-    /* White text for readability */
     font-size: 1rem;
-    /* Adjust font size */
+}
+
+/* Button Styling */
+button {
+    background-color: #CFCAB2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background-color: #CFCAB0;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .left-container, .center-container, .right-container {
+        width: 90%;
+    }
 }

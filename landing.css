@@ -137,7 +137,7 @@ body {
 }
 
 .hero2-right {
-  background: url('placeholder.png') no-repeat center center/cover;
+  background: url('habits.png') no-repeat center center/cover;
   display: flex;
   justify-content: center;
 }
@@ -197,7 +197,7 @@ body {
 
 .hero4-right {
   width: 50%;
-  background: url('placeholder.png') no-repeat center center/cover;
+  background: url('stats.png') no-repeat center center/cover;
 }
 
 .hero4-left {
