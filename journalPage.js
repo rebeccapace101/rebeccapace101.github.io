@@ -12,16 +12,26 @@ const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 
+
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
         const habitsDoc = await getDoc(dayDoc);
         const habits = habitsDoc.data().habits;
         habits.forEach(element => {
-            const newParagraph = document.createElement('p');
-            newParagraph.textContent = element;
+            console.log('Element:', element);
+
+            const newParagraph = document.createElement('input');
+            newParagraph.type = 'checkbox';
+            newParagraph.value = element;
+            const newLabel = document.createElement('label');
+            newLabel.textContent = element;
+            newLabel.for = element;
+            newParagraph.id = element;
             parentElement.appendChild(newParagraph);
+            parentElement.appendChild(newLabel);
+            const br = document.createElement("br");
+            parentElement.appendChild(br);
         });
 
         console.log(habits)
@@ -128,3 +138,35 @@ const closeWindow = async () => {
 closePopup.addEventListener('click', closeWindow);
 newHabit.addEventListener('click', callNewHabits)
 
+
+
+const submitHabits = document.getElementById("submitHabits");
+
+const sendHabits = async () => {
+
+
+    onAuthStateChanged(auth, async (user) => {
+        const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
+        const habitsDoc = await getDoc(dayDoc);
+        const habits = habitsDoc.data().habits;
+        if (user) {
+            habits.forEach(element => {
+                const habitCheck = document.getElementById(element);
+                let isChecked = false;
+                if (habitCheck.checked) {
+                    isChecked = true;
+                }
+                const habitDoc = doc(db, "habitData", user.uid, element, date.toISOString().split('T')[0]);
+                setDoc(habitDoc, {
+                    date: date.toISOString().split('T')[0],
+                    completed: isChecked
+                });
+            });
+        } else {
+            // User is signed out
+            console.log("User is signed out");
+        }
+    });
+}
+
+submitHabits.addEventListener('click', sendHabits);
