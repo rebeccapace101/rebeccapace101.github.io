@@ -12,7 +12,6 @@ const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 
-
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
@@ -27,6 +26,7 @@ onAuthStateChanged(auth, async (user) => {
             const newLabel = document.createElement('label');
             newLabel.textContent = element;
             newLabel.for = element;
+            newLabel.id = element + "id";
             newParagraph.id = element;
             parentElement.appendChild(newParagraph);
             parentElement.appendChild(newLabel);
@@ -152,6 +152,7 @@ const sendHabits = async () => {
         if (user) {
             habits.forEach(element => {
                 const habitCheck = document.getElementById(element);
+                const habitLabel = document.getElementById(element + "id");
                 let isChecked = false;
                 if (habitCheck.checked) {
                     isChecked = true;
@@ -161,7 +162,14 @@ const sendHabits = async () => {
                     date: date.toISOString().split('T')[0],
                     completed: isChecked
                 });
+                habitCheck.style.display = "none";
+                habitLabel.style.display = "none";
             });
+            submitHabits.style.display = "none";
+            const newParagraph = document.createElement('p');
+            newParagraph.textContent = "Habits Submitted!";
+            parentElement.appendChild(newParagraph);
+
         } else {
             // User is signed out
             console.log("User is signed out");

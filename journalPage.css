@@ -254,3 +254,14 @@ textarea {
     font-weight: bold;
     cursor: pointer;
 }
+
+p {
+    font-family: roca;
+    color: white;
+}
+
+label {
+    font-family: roca;
+    color: white;
+
+}
