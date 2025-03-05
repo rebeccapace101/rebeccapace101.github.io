@@ -12,7 +12,6 @@ const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 
-
 onAuthStateChanged(auth, async (user) => {
     if (user) {
 
@@ -41,10 +40,12 @@ const Friday = document.getElementById('Friday');
 const Saturday = document.getElementById('Saturday');
 const Sunday = document.getElementById('Sunday');
 const submitted = document.getElementById('addHabit');
-
+const subJournal = document.getElementById('submitBtn');
 const habitSubmitted = async () => {
 
     onAuthStateChanged(auth, async (user) => {
+        popUp.style.display = "none";
+
         if (user) {
             const habitName = document.getElementById('habitInput').value;
             if (Monday.checked) {
@@ -105,3 +106,25 @@ const habitSubmitted = async () => {
 
 }
 submitted.addEventListener('click', habitSubmitted);
+
+
+
+const newHabit = document.getElementById("newHabit");
+
+const popUp = document.getElementById("popupOverlay");
+const closePopup = document.getElementById("closePopup");
+
+const callNewHabits = async () => {
+
+    popUp.style.display = "block";
+
+}
+
+const closeWindow = async () => {
+
+    popUp.style.display = "none";
+}
+
+closePopup.addEventListener('click', closeWindow);
+newHabit.addEventListener('click', callNewHabits)
+

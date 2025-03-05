@@ -1,109 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <link rel="stylesheet" href="https://use.typekit.net/eyv8xbr.css">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="journalPage.css">
-        <script type="module" src="./journalPage.js"></script>
-        <title>Daily Journal</title>
-    </head>
+<head>
+    <link rel="stylesheet" href="https://use.typekit.net/eyv8xbr.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="journalPage.css">
+    <script type="module" src="./journalPage.js"></script>
+    <script type="module" src="./journalSubmission.js"></script>
+    <title>Daily Journal</title>
+</head>
 
-    <body>
-        <nav class="navbar">
-            <ul>
-                <li><a href="./home.html">Home</a></li>
-                <li><a href="./addHabitTest.html">Track Habits</a></li>
-                <li><a href="./journalPage.html">Journal</a> </li>
-                <li><a href="./stats.html">Stats</a></li>
-                <li><a href="./profile.html">Profile</a></li>
-            </ul>
-        </nav>
+<body>
+    <nav class="navbar">
+        <ul>
+            <li><button class="nav-btn" data-page="home.html">Home</button></li>
+            <li><button class="nav-btn" data-page="journalPage.html">Journal</button></li>
+            <li><button class="nav-btn" data-page="stats.html">Stats</button></li>
+            <li><button class="nav-btn" data-page="profile.html">Profile</button></li>
+        </ul>
+    </nav>
 
-        <div class="container">
+    <div class="container">
 
-            <div class = "habitsMetrics">
-                
-                <div id = "habits">
-                   
-                    <h1>Habits</h1>
+        <div class="habitsMetrics">
 
-                    <div id = "habitsBox">
-                    
-                    <button id = "up">up</button>
+            <div id="habits">
 
-                        <div class = "containerOther">
-                            <input type="text" id="habitInput" placeholder="Input Habit Name">
-                        
-                            <form action="#">
-                                <fieldset>
-                                    <legend>Select Days:</legend>
-                        
-                                    <input type="checkbox" name="check" id="Monday" value="Monday">
-                                    <label for="Monday">Monday</label>
-                                    <br>
-                        
-                                    <input type="checkbox" name="check" id="Tuesday" value="Tuesday">
-                                    <label for="Tuesday">Tuesday</label>
-                                    <br>
-                        
-                                    <input type="checkbox" name="check" id="Wednesday" value="Wednesday">
-                                    <label for="Wednesday">Wednesday</label>
-                                    <br>
-                        
-                                    <input type="checkbox" name="check" id="Thursday" value="Thursday">
-                                    <label for="Thursday">Thursday</label>
-                                    <br>
-                        
-                                    <input type="checkbox" name="check" id="Friday" value="Friday">
-                                    <label for="Friday">Friday</label>
-                                    <br>
-                        
-                                    <input type="checkbox" name="check" id="Saturday" value="Saturday">
-                                    <label for="Saturday">Saturday</label>
-                                    <br>
-                        
-                                    <input type="checkbox" name="check" id="Sunday" value="Sunday">
-                                    <label for="Sunday">Sunday</label>
-                        
-                                </fieldset>
-                            </form>
-                            <button id="addHabit">Submit</button>
-                        >   </div>
-                        <button id = "down">down</button>
+                <h1>Habits</h1>
 
-                    </div>
+                <div id="habitsBox">
+                    <button id="newHabit">Create a New Habit</button>
 
-                </div>
 
-                <div id = "metrics">
-                   
-                    <h1>Metrics</h1>
+                    <button id="up">up</button>
+
+                    <!--<div class="containerOther">
+                        <input type="text" id="habitInput" placeholder="Input Habit Name">
+
+                        <form action="#">
+                            <fieldset>
+                                <legend>Select Days:</legend>
+
+                                <input type="checkbox" name="check" id="Monday" value="Monday">
+                                <label for="Monday">Monday</label>
+                                <br>
+
+                                <input type="checkbox" name="check" id="Tuesday" value="Tuesday">
+                                <label for="Tuesday">Tuesday</label>
+                                <br>
+
+                                <input type="checkbox" name="check" id="Wednesday" value="Wednesday">
+                                <label for="Wednesday">Wednesday</label>
+                                <br>
+
+                                <input type="checkbox" name="check" id="Thursday" value="Thursday">
+                                <label for="Thursday">Thursday</label>
+                                <br>
+
+                                <input type="checkbox" name="check" id="Friday" value="Friday">
+                                <label for="Friday">Friday</label>
+                                <br>
+
+                                <input type="checkbox" name="check" id="Saturday" value="Saturday">
+                                <label for="Saturday">Saturday</label>
+                                <br>
+
+                                <input type="checkbox" name="check" id="Sunday" value="Sunday">
+                                <label for="Sunday">Sunday</label>
+
+                            </fieldset>
+                        </form>
+                        <button id="addHabit">Submit</button>
+                    </div>-->
+                    <button id="down">down</button>
+
 
                 </div>
 
             </div>
 
-            <div class="journalSection">
+            <div id="metrics">
 
-                
-                <h1>Take a Moment</h1>
-
-                    <div id = "journalBox">
-
-                       <!--- <h2>Type here</h2> -->
-                            <div class = "textBoxContainer">
-                                <!-- <label for="myTextbox">Enter text:</label> -->
-                                <textarea id="myTextbox" placeholder="Type something..."></textarea>
-                                <button id="submitBtn">Submit</button>
-                            </div>
-                    </div>
+                <h1>Metrics</h1>
 
             </div>
 
         </div>
 
-    </body>
+        <div class="journalSection">
+
+
+            <h1>Take a Moment</h1>
+
+            <div id="journalBox">
+
+                <!--- <h2>Type here</h2> -->
+                <div class="textBoxContainer">
+                    <!-- <label for="myTextbox">Enter text:</label> -->
+                    <textarea id="myTextbox" placeholder="Type something..."></textarea>
+                    <button id="submitBtn">Submit</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!--pop up window for adding a habit-->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup" id="popup">
+            <span class="close" id="closePopup">&times;</span>
+            <div class="popup-content">
+                <input type="text" id="habitInput" placeholder="Input Habit Name">
+
+                <form action="#">
+                    <fieldset>
+                        <legend>Select Days:</legend>
+
+                        <input type="checkbox" name="check" id="Monday" value="Monday">
+                        <label for="Monday">Monday</label>
+                        <br>
+
+                        <input type="checkbox" name="check" id="Tuesday" value="Tuesday">
+                        <label for="Tuesday">Tuesday</label>
+                        <br>
+
+                        <input type="checkbox" name="check" id="Wednesday" value="Wednesday">
+                        <label for="Wednesday">Wednesday</label>
+                        <br>
+
+                        <input type="checkbox" name="check" id="Thursday" value="Thursday">
+                        <label for="Thursday">Thursday</label>
+                        <br>
+
+                        <input type="checkbox" name="check" id="Friday" value="Friday">
+                        <label for="Friday">Friday</label>
+                        <br>
+
+                        <input type="checkbox" name="check" id="Saturday" value="Saturday">
+                        <label for="Saturday">Saturday</label>
+                        <br>
+
+                        <input type="checkbox" name="check" id="Sunday" value="Sunday">
+                        <label for="Sunday">Sunday</label>
+
+                    </fieldset>
+                </form>
+                <button class="addHabitButton" id="addHabit">Submit</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module" src="./nav.js"></script>
+</body>
 
 </html>

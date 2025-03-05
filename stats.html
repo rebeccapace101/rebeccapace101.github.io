@@ -2,27 +2,27 @@
 <html lang="en">
 
 <head>
+    <script src="stats.js" defer></script>
     <meta charset="UTF-8">
-    <link ref="stylesheet" href="stats.css">
+    <link rel="stylesheet" href="stats.css">
 </head>
 <body>
     <nav class="navbar">
         <ul>
-            <li><a href="./home.html">Home</a></li>
-            <li><a href="./addHabitTest.html">Track Habits</a></li>
-            <li><a href="./journalPage.html">Journal</a> </li>
-            <li><a href="./stats.html">Stats</a></li>
-            <li><a href="./profile.html">Profile</a></li>
+            <li><button class="nav-btn" data-page="home.html">Home</button></li>
+            <li><button class="nav-btn" data-page="journalPage.html">Journal</button></li>
+            <li><button class="nav-btn" data-page="stats.html">Stats</button></li>
+            <li><button class="nav-btn" data-page="profile.html">Profile</button></li>
         </ul>
     </nav>
-    <div class="container"
-        <! ~habit~ will be replaced by the selected habit>
+    <div class="container">
+        <!-- ~habit~ will be replaced by the selected habit -->
         <h1>
-            The selected habit is ~habit~
+            Habit stats
         </h1>
 
-        <!dropdown menu will pull from firebase once it is set up>
-        <select name="tracker" id="tracker">
+        <!-- dropdown menu will pull from firebase once it is set up -->
+        <select name="habit" id="habit">
             <option value="sleep">Sleep</option>
             <option value="Make bed">Make bed</option>
             <option value="feed the furry menace">Feed The Furry Menace</option>
@@ -30,9 +30,8 @@
             <option value="screen time">Screen Time</option>
         </select>
 
-        <button type="button">select habit</button>
-    ></div>
+    </div>
+    <script type="module" src="./nav.js"></script>
 </body>
-<!once a habit is selected there will be a graph containing the data about that habit that will be loaded here>
 
 </html>
