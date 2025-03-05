@@ -44,20 +44,20 @@ async function fetchHabitCompletion(user, habitName) {
     let completedDays = 0;
     let streak = 0;
     let currentStreak = 0;
-    
+
     let habitCompletionData = "<h2>Habit Completion</h2><table border='1'><tr>";
     for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const dateStr = d.toISOString().split("T")[0];
         habitCompletionData += `<th>${dateStr}</th>`;
     }
     habitCompletionData += "</tr><tr>";
-    
+
     try {
         for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
             const dateStr = d.toISOString().split("T")[0];
             const habitDocRef = doc(db, "habitData", user.uid, habitName, dateStr);
             const habitDocSnap = await getDoc(habitDocRef);
-            
+
             if (habitDocSnap.exists() && habitDocSnap.data().completed !== undefined) {
                 const completed = habitDocSnap.data().completed;
                 habitCompletionData += `<td>${completed ? "✅" : "❌"}</td>`;
@@ -75,7 +75,7 @@ async function fetchHabitCompletion(user, habitName) {
         }
         habitCompletionData += "</tr></table>";
         habitInfo.innerHTML = habitCompletionData;
-        
+
         let percentage = ((completedDays / 7) * 100).toFixed(2);
         habitPercentage.innerHTML = `Completion Rate: ${percentage}%`;
         habitStreak.innerHTML = `Longest Streak: ${streak} days`;
