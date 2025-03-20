@@ -12,6 +12,8 @@ const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 
+//getting the preexisting habits from the database based on today's date
+
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
@@ -51,6 +53,8 @@ const Saturday = document.getElementById('Saturday');
 const Sunday = document.getElementById('Sunday');
 const submitted = document.getElementById('addHabit');
 const subJournal = document.getElementById('submitBtn');
+
+//creating new habits
 const habitSubmitted = async () => {
 
     onAuthStateChanged(auth, async (user) => {
@@ -117,10 +121,7 @@ const habitSubmitted = async () => {
 }
 submitted.addEventListener('click', habitSubmitted);
 
-
-
 const newHabit = document.getElementById("newHabit");
-
 const popUp = document.getElementById("popupOverlay");
 const closePopup = document.getElementById("closePopup");
 
@@ -142,9 +143,8 @@ newHabit.addEventListener('click', callNewHabits)
 
 const submitHabits = document.getElementById("submitHabits");
 
+//submitting user inputted habits for the day
 const sendHabits = async () => {
-
-
     onAuthStateChanged(auth, async (user) => {
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
         const habitsDoc = await getDoc(dayDoc);
