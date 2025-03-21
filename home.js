@@ -19,20 +19,32 @@ const getTodayDate = () => {
 async function fetchTodayHabits(user) {
     todaySummary.innerHTML = "Loading...";
     const todayDate = getTodayDate();
+    const date = new Date();
+    const dayOfWeek = date.getDay();
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     let habitList = "<h2>Today's Habits</h2><ul>";
-    
+
     try {
-        const userDocRef = doc(db, "habitData", user.uid);
+
+        const userDocRef = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
         const userDocSnap = await getDoc(userDocRef);
 
-        if (userDocSnap.exists() && userDocSnap.data().namesOfHabits) {
-            const habitNames = userDocSnap.data().namesOfHabits;
-            for (const habitName of habitNames) {
-                const habitDocRef = doc(db, "habitData", user.uid, habitName, todayDate);
-                const habitDocSnap = await getDoc(habitDocRef);
-                const completed = habitDocSnap.exists() && habitDocSnap.data().completed;
-                habitList += `<li>${habitName}: ${completed ? "✅" : "❌"}</li>`;
+        if (userDocSnap.exists() && userDocSnap.data().habits) {
+            const habits = userDocSnap.data().habits;
+
+            for (const element of habits) {
+                const habitDocRef = doc(db, "habitData", user.uid, element, todayDate);
+                const habitDocSnap = await getDoc(habitDocRef);  // Make sure to await here
+
+                if (habitDocSnap.exists()) {
+                    const completed = habitDocSnap.data().completed;
+                    habitList += `<li>${element}: ${completed ? "✅" : "❌"}</li>`;
+                } else {
+                    habitList += `<li>${element}: No data found</li>`;
+                }
             }
+
+
         } else {
             habitList += "<li>No habits found.</li>";
         }
@@ -40,7 +52,7 @@ async function fetchTodayHabits(user) {
         console.error("Error fetching today's habits:", error);
         habitList += "<li>Error loading habits.</li>";
     }
-    
+
     habitList += "</ul>";
     todaySummary.innerHTML = habitList;
 }
@@ -49,7 +61,7 @@ async function fetchHighestStreak(user) {
     highestStreakContainer.innerHTML = "Loading...";
     let longestStreak = 0;
     let topHabit = "";
-    
+
     try {
         const userDocRef = doc(db, "habitData", user.uid);
         const userDocSnap = await getDoc(userDocRef);
@@ -60,7 +72,7 @@ async function fetchHighestStreak(user) {
                 const habitCollectionRef = collection(db, "habitData", user.uid, habitName);
                 const habitDocs = await getDocs(habitCollectionRef);
                 let streak = 0, maxStreak = 0;
-                
+
                 habitDocs.forEach((doc) => {
                     if (doc.data().completed) {
                         streak++;
@@ -69,7 +81,7 @@ async function fetchHighestStreak(user) {
                         streak = 0;
                     }
                 });
-                
+
                 if (maxStreak > longestStreak) {
                     longestStreak = maxStreak;
                     topHabit = habitName;
@@ -79,7 +91,7 @@ async function fetchHighestStreak(user) {
     } catch (error) {
         console.error("Error fetching highest streak:", error);
     }
-    
+
     highestStreakContainer.innerHTML = `<h2>Longest Streak</h2><p>${topHabit}: ${longestStreak} days 🔥</p>`;
 }
 

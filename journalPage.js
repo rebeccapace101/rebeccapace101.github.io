@@ -7,13 +7,12 @@ import { getFirestore, Timestamp, FieldValue, doc, setDoc, arrayUnion, getDoc } 
 const db = getFirestore();
 const auth = getAuth();
 const parentElement = document.getElementById('habits');
+
 const date = new Date();
 const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-
 //getting the preexisting habits from the database based on today's date
-
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
@@ -63,11 +62,17 @@ const habitSubmitted = async () => {
         if (user) {
             const habitName = document.getElementById('habitInput').value;
             if (Monday.checked) {
+
                 const Monday = doc(db, "habits", user.uid, "Monday", "habits");
                 await setDoc(Monday, {
                     habits: arrayUnion(habitName)
                 }, { merge: true });
                 console.log("Added habit to monday");
+
+                const habitsList = doc(db, "habitData", user.uid);
+                await setDoc(habitsList, {
+                    namesOfHabits: arrayUnion(habitName)
+                }, { merge: true });
             }
             if (Tuesday.checked) {
                 const Tuesday = doc(db, "habits", user.uid, "Tuesday", "habits");
@@ -75,6 +80,11 @@ const habitSubmitted = async () => {
                     habits: arrayUnion(habitName)
                 }, { merge: true });
                 console.log("Added habit to Tuesday");
+
+                const habitsList = doc(db, "habitData", user.uid);
+                await setDoc(habitsList, {
+                    namesOfHabits: arrayUnion(habitName)
+                }, { merge: true });
             }
             if (Wednesday.checked) {
                 const Wednesday = doc(db, "habits", user.uid, "Wednesday", "habits");
@@ -82,6 +92,11 @@ const habitSubmitted = async () => {
                     habits: arrayUnion(habitName)
                 }, { merge: true });
                 console.log("Added habit to Wednesday");
+
+                const habitsList = doc(db, "habitData", user.uid);
+                await setDoc(habitsList, {
+                    namesOfHabits: arrayUnion(habitName)
+                }, { merge: true });
             }
             if (Thursday.checked) {
                 const Thursday = doc(db, "habits", user.uid, "Thursday", "habits");
@@ -89,6 +104,11 @@ const habitSubmitted = async () => {
                     habits: arrayUnion(habitName)
                 }, { merge: true });
                 console.log("Added habit to Thursday");
+
+                const habitsList = doc(db, "habitData", user.uid);
+                await setDoc(habitsList, {
+                    namesOfHabits: arrayUnion(habitName)
+                }, { merge: true });
             }
             if (Friday.checked) {
                 const Friday = doc(db, "habits", user.uid, "Friday", "habits");
@@ -96,6 +116,11 @@ const habitSubmitted = async () => {
                     habits: arrayUnion(habitName)
                 }, { merge: true });
                 console.log("Added habit to Friday");
+
+                const habitsList = doc(db, "habitData", user.uid);
+                await setDoc(habitsList, {
+                    namesOfHabits: arrayUnion(habitName)
+                }, { merge: true });
             }
             if (Saturday.checked) {
                 const Saturday = doc(db, "habits", user.uid, "Saturday", "habits");
@@ -103,6 +128,11 @@ const habitSubmitted = async () => {
                     habits: arrayUnion(habitName)
                 }, { merge: true });
                 console.log("Added habit to Saturday");
+
+                const habitsList = doc(db, "habitData", user.uid);
+                await setDoc(habitsList, {
+                    namesOfHabits: arrayUnion(habitName)
+                }, { merge: true });
             }
             if (Sunday.checked) {
                 const Sunday = doc(db, "habits", user.uid, "Sunday", "habits");
@@ -110,6 +140,11 @@ const habitSubmitted = async () => {
                     habits: arrayUnion(habitName)
                 }, { merge: true });
                 console.log("Added habit to Sunday");
+
+                const habitsList = doc(db, "habitData", user.uid);
+                await setDoc(habitsList, {
+                    namesOfHabits: arrayUnion(habitName)
+                }, { merge: true });
             }
 
         } else {
@@ -137,7 +172,7 @@ const closeWindow = async () => {
 }
 
 closePopup.addEventListener('click', closeWindow);
-newHabit.addEventListener('click', callNewHabits)
+newHabit.addEventListener('click', callNewHabits);
 
 
 
