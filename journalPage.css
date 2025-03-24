@@ -106,6 +106,47 @@ h1 {
     /* Extends background behind navbar */
 }
 
+.typeField{
+
+    margin: 2%;
+}
+
+.daysField{
+
+margin: 2%;
+
+}
+
+ #inputtype{
+
+    padding:2%;
+    margin: 2%;
+
+ }
+
+.textCont{
+
+    display: flex;
+    height: 100vh;
+    align-items: center;
+} 
+
+#habitInput{
+
+    padding: 2%;
+    margin: 2%;
+    font-family: roca;
+    font-size: 14px;
+
+}
+
+
+.addHabitButton{
+
+    margin: 2%;
+
+}
+
 .habitsMetrics {
 
     display: flex;
@@ -185,16 +226,37 @@ width: 100%;
 }
 
 button {
+
     padding: 8px 12px;
     margin: 2px;
     border: none;
-    font-family: roca;
-    background-color: rgb(222, 170, 121);
-    color: white;
     border-radius: 5px;
-    cursor: pointer;
+    font-family: 'roca', sans-serif;
     font-size: 14px;
+    color: white;
+    background-color: rgb(222, 170, 121);
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+
+    box-shadow:
+    -2px -2px 0 #e6b98a,             /* Top-left highlight */
+    2px 2px 0 #b58258,               /* Bottom-right shadow */
+    2px 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+button:active {
+    /* Pressed-in effect */
+    box-shadow:
+    inset 1px 1px 2px rgba(0, 0, 0, 0.25),
+    inset -0.5px -0.5px 0.5px rgba(255, 255, 255, 0.15);
+  }
+
+button:hover{
+
+    background-color: #e6b98a
+
+}
+
 
 textarea {
     text-align: left;
@@ -237,6 +299,7 @@ textarea {
     padding: 20px;
     border: 1px solid #888;
     width: 25%;
+    height: fit-content;
     /* Adjust as needed */
     position: relative;
     /* For absolute positioning of close button */
