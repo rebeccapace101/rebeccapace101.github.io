@@ -116,41 +116,36 @@ h1 {
 
 }
 
+#newHabit{
+
+width: 100%;
+
+}
+#submitHabits{
+    width: 80%;
+}
+
 #habitsBox {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
-
-#up {}
 
 #habits {
 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
     transition: background-color 0.4s ease;
     border-radius: 15px;
     margin: 2.5%;
-    justify-content: center;
-    text-align: center;
-    width: 30%;
+    width: 70%;
     height: 95%;
     background-color: rgb(177, 194, 158);
 
 }
 
-#metrics {
-
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
-    transition: background-color 0.4s ease;
-    border-radius: 15px;
-    margin: 2.5%;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 30%;
-    height: 95%;
-    background-color: rgb(101, 146, 135);
-
-}
 
 .journalSection {
 
@@ -232,14 +227,15 @@ textarea {
     /* Black background with opacity */
 }
 
+
 .popup {
-    background-color: #fefefe;
+    background-color: rgb(255, 251, 240);
     /* White content background */
     margin: 15% auto;
     /* Center the popup */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: 70%;
     /* Adjust as needed */
     position: relative;
     /* For absolute positioning of close button */

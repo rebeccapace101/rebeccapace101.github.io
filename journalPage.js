@@ -220,7 +220,6 @@ const habitSubmitted = async () => {
 }
 submitted.addEventListener('click', habitSubmitted);
 
-const newMetric = document.getElementById("newMetric");
 const newHabit = document.getElementById("newHabit");
 const popUp = document.getElementById("popupOverlay");
 const closePopup = document.getElementById("closePopup");
@@ -239,7 +238,6 @@ const closeWindow = async () => {
 
 closePopup.addEventListener('click', closeWindow);
 newHabit.addEventListener('click', callNewHabits);
-newMetric.addEventListener('click', callNewHabits);
 
 
 
