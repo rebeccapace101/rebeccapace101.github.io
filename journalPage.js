@@ -24,7 +24,7 @@ onAuthStateChanged(auth, async (user) => {
         }
 
         const habitsData = habitsDoc.data();
-        const habits = habitsData?.habits || []; // Ensure `habits` is always an array
+        const habits = habitsData?.habits || [];
 
         if (habits.length === 0) {
             console.log("User has no habits for today.");
@@ -33,7 +33,7 @@ onAuthStateChanged(auth, async (user) => {
 
         console.log("Retrieved habits:", habits);
 
-        for (const element of habits) { // ✅ Use `for...of` for async/await
+        for (const element of habits) {
             console.log("Element:", element);
 
             try {
@@ -55,7 +55,7 @@ onAuthStateChanged(auth, async (user) => {
 
                 const newLabel = document.createElement("label");
                 newLabel.textContent = element;
-                newLabel.htmlFor = element; // ✅ Correct property for `<label>`
+                newLabel.htmlFor = element;
                 newLabel.id = element + "id";
 
                 parentElement.appendChild(newParagraph);
@@ -225,6 +225,7 @@ const newHabit = document.getElementById("newHabit");
 const popUp = document.getElementById("popupOverlay");
 const closePopup = document.getElementById("closePopup");
 
+//opening and closing the popup for creating new habtis
 const callNewHabits = async () => {
 
     popUp.style.display = "block";
@@ -241,9 +242,12 @@ newHabit.addEventListener('click', callNewHabits);
 newMetric.addEventListener('click', callNewHabits);
 
 
-const submitHabits = document.getElementById("submitHabits");
+
 
 //submitting user inputted habits for the day
+
+const submitHabits = document.getElementById("submitHabits");
+
 const sendHabits = async () => {
     onAuthStateChanged(auth, async (user) => {
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
