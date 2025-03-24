@@ -17,31 +17,59 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
         const habitsDoc = await getDoc(dayDoc);
-        const habits = habitsDoc.data().habits;
-        habits.forEach(element => {
-            console.log('Element:', element);
 
-            const newParagraph = document.createElement('input');
-            newParagraph.type = 'checkbox';
-            newParagraph.value = element;
-            const newLabel = document.createElement('label');
-            newLabel.textContent = element;
-            newLabel.for = element;
-            newLabel.id = element + "id";
-            newParagraph.id = element;
-            parentElement.appendChild(newParagraph);
-            parentElement.appendChild(newLabel);
-            const br = document.createElement("br");
-            parentElement.appendChild(br);
-        });
+        if (!habitsDoc.exists()) {
+            console.log("No habits found for today.");
+            return;
+        }
 
-        console.log(habits)
+        const habitsData = habitsDoc.data();
+        const habits = habitsData?.habits || []; // Ensure `habits` is always an array
 
+        if (habits.length === 0) {
+            console.log("User has no habits for today.");
+            return;
+        }
+
+        console.log("Retrieved habits:", habits);
+
+        for (const element of habits) { // ✅ Use `for...of` for async/await
+            console.log("Element:", element);
+
+            try {
+                const habitsCollection = doc(db, "habitData", user.uid, element, "input");
+                const habitsColDoc = await getDoc(habitsCollection);
+
+                if (!habitsColDoc.exists()) {
+                    console.warn(`No input type found for habit: ${element}`);
+                    continue;
+                }
+
+                const habitsInput = habitsColDoc.data().inputtype;
+                console.log(habitsInput);
+
+                const newParagraph = document.createElement("input");
+                newParagraph.type = habitsInput;
+                newParagraph.value = element;
+                newParagraph.id = element;
+
+                const newLabel = document.createElement("label");
+                newLabel.textContent = element;
+                newLabel.htmlFor = element; // ✅ Correct property for `<label>`
+                newLabel.id = element + "id";
+
+                parentElement.appendChild(newParagraph);
+                parentElement.appendChild(newLabel);
+                parentElement.appendChild(document.createElement("br"));
+            } catch (error) {
+                console.error(`Error fetching input type for ${element}:`, error);
+            }
+        }
     } else {
-        // User is signed out
         console.log("User is signed out");
     }
 });
+
 
 const Monday = document.getElementById('Monday');
 const Tuesday = document.getElementById('Tuesday');
@@ -78,7 +106,12 @@ const habitSubmitted = async () => {
                 await setDoc(habitsList, {
                     namesOfHabits: arrayUnion(habitName)
                 }, { merge: true });
+                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
+                setDoc(habitsCollection, {
+                    inputtype: selectedValue
+                });
             }
+
             if (Tuesday.checked) {
                 const Tuesday = doc(db, "habits", user.uid, "Tuesday", "habits");
                 await setDoc(Tuesday, {
@@ -90,6 +123,10 @@ const habitSubmitted = async () => {
                 await setDoc(habitsList, {
                     namesOfHabits: arrayUnion(habitName)
                 }, { merge: true });
+                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
+                setDoc(habitsCollection, {
+                    inputtype: selectedValue
+                });
             }
             if (Wednesday.checked) {
                 const Wednesday = doc(db, "habits", user.uid, "Wednesday", "habits");
@@ -101,7 +138,11 @@ const habitSubmitted = async () => {
                 const habitsList = doc(db, "habitData", user.uid);
                 await setDoc(habitsList, {
                     namesOfHabits: arrayUnion(habitName)
-                }, { merge: true });
+                }, { merge: true }); const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
+                setDoc(habitsCollection, {
+                    inputtype: selectedValue
+                });
+
             }
             if (Thursday.checked) {
                 const Thursday = doc(db, "habits", user.uid, "Thursday", "habits");
@@ -114,6 +155,10 @@ const habitSubmitted = async () => {
                 await setDoc(habitsList, {
                     namesOfHabits: arrayUnion(habitName)
                 }, { merge: true });
+                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
+                setDoc(habitsCollection, {
+                    inputtype: selectedValue
+                });
             }
             if (Friday.checked) {
                 const Friday = doc(db, "habits", user.uid, "Friday", "habits");
@@ -126,6 +171,10 @@ const habitSubmitted = async () => {
                 await setDoc(habitsList, {
                     namesOfHabits: arrayUnion(habitName)
                 }, { merge: true });
+                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
+                setDoc(habitsCollection, {
+                    inputtype: selectedValue
+                });
             }
             if (Saturday.checked) {
                 const Saturday = doc(db, "habits", user.uid, "Saturday", "habits");
@@ -138,6 +187,10 @@ const habitSubmitted = async () => {
                 await setDoc(habitsList, {
                     namesOfHabits: arrayUnion(habitName)
                 }, { merge: true });
+                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
+                setDoc(habitsCollection, {
+                    inputtype: selectedValue
+                });
             }
             if (Sunday.checked) {
                 const Sunday = doc(db, "habits", user.uid, "Sunday", "habits");
