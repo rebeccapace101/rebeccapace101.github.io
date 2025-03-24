@@ -61,6 +61,11 @@ const habitSubmitted = async () => {
 
         if (user) {
             const habitName = document.getElementById('habitInput').value;
+            
+            const dropdown = document.getElementById("inputtype");
+        
+            const selectedValue = dropdown.value;
+            console.log(selectedValue);
             if (Monday.checked) {
 
                 const Monday = doc(db, "habits", user.uid, "Monday", "habits");
@@ -156,6 +161,7 @@ const habitSubmitted = async () => {
 }
 submitted.addEventListener('click', habitSubmitted);
 
+const newMetric = document.getElementById("newMetric");
 const newHabit = document.getElementById("newHabit");
 const popUp = document.getElementById("popupOverlay");
 const closePopup = document.getElementById("closePopup");
@@ -173,7 +179,7 @@ const closeWindow = async () => {
 
 closePopup.addEventListener('click', closeWindow);
 newHabit.addEventListener('click', callNewHabits);
-
+newMetric.addEventListener('click', callNewHabits);
 
 
 const submitHabits = document.getElementById("submitHabits");
@@ -213,3 +219,5 @@ const sendHabits = async () => {
 }
 
 submitHabits.addEventListener('click', sendHabits);
+
+
