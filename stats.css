@@ -162,15 +162,15 @@ p {
 }
 
 #month-view .calendar-table td.completed {
-  background-color: #D4EDDA;
+  background-color: #D4EDDA; /* Green for completed tasks */
 }
 
 #month-view .calendar-table td.incomplete {
-  background-color: #F8D7DA;
+  background-color: #F8D7DA; /* Red for incomplete tasks */
 }
 
 #month-view .calendar-table td.today {
-  background-color: #FFEB3B;
+  background-color: #FFEB3B; /* Yellow for today */
   font-weight: bold;
 }
 
@@ -236,7 +236,7 @@ p {
 
 /* Specific Today Styling */
 .today {
-  background-color: #FFEB3B;
+  background-color: #FFEB3B; /* Yellow for today */
   font-weight: 700;
   color: #000;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
@@ -278,15 +278,15 @@ p {
 }
 
 #day-view .calendar-table td.completed {
-  background-color: #D4EDDA;
+  background-color: #D4EDDA; /* Green for completed tasks */
 }
 
 #day-view .calendar-table td.incomplete {
-  background-color: #F8D7DA;
+  background-color: #F8D7DA; /* Red for incomplete tasks */
 }
 
 #day-view .calendar-table td.today {
-  background-color: #FFEB3B;
+  background-color: #FFEB3B; /* Yellow for today */
   font-weight: bold;
 }
 
@@ -316,6 +316,29 @@ p {
 }
 
 #week-view .calendar-table td.completed {
-  background-color: #D4EDDA;
+  background-color: #D4EDDA; /* Green for completed tasks */
+}
+
+#week-view .calendar-table td.incomplete {
+  background-color: #F8D7DA; /* Red for incomplete tasks */
+}
+
+#day-view .calendar-table td.completed,
+#week-view .calendar-table td.completed,
+#month-view .calendar-table td.completed {
+  background-color: #D4EDDA; /* Green for completed tasks */
+}
+
+#day-view .calendar-table td.incomplete,
+#week-view .calendar-table td.incomplete,
+#month-view .calendar-table td.incomplete {
+  background-color: #F8D7DA; /* Red for incomplete tasks */
+}
+
+#day-view .calendar-table td.today,
+#week-view .calendar-table td.today,
+#month-view .calendar-table td.today {
+  background-color: #FFEB3B; /* Yellow for today */
+  font-weight: bold;
 }
 

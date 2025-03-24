@@ -27,10 +27,27 @@
             <option value="">Loading...</option>
         </select>
 
+        <!-- Radio buttons for selecting view -->
+        <div>
+            <label for="dayView">Day View</label>
+            <input type="radio" id="dayView" name="view" value="day" checked>
+            <label for="weekView">Week View</label>
+            <input type="radio" id="weekView" name="view" value="week">
+            <label for="monthView">Month View</label>
+            <input type="radio" id="monthView" name="view" value="month">
+        </div>
+
         <!-- Section to display habit stats -->
         <div id="habit-stats">
             <h2>Habit Details</h2>
             <p id="habit-info">Select a habit to view details.</p>
+        </div>
+
+        <!-- Section for habit data -->
+        <div id="habit-table-container">
+            <div id="day-view" class="calendar-view"></div>
+            <div id="week-view" class="calendar-view"></div>
+            <div id="month-view" class="calendar-view"></div>
         </div>
     </div>
 
