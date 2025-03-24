@@ -150,6 +150,12 @@ const habitSubmitted = async () => {
                 await setDoc(habitsList, {
                     namesOfHabits: arrayUnion(habitName)
                 }, { merge: true });
+
+                //adding the input type
+                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
+                setDoc(habitsCollection, {
+                    inputtype: selectedValue
+                });
             }
 
         } else {
