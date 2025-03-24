@@ -61,9 +61,9 @@ const habitSubmitted = async () => {
 
         if (user) {
             const habitName = document.getElementById('habitInput').value;
-            
+
             const dropdown = document.getElementById("inputtype");
-        
+
             const selectedValue = dropdown.value;
             console.log(selectedValue);
             if (Monday.checked) {
@@ -219,5 +219,3 @@ const sendHabits = async () => {
 }
 
 submitHabits.addEventListener('click', sendHabits);
-
-
