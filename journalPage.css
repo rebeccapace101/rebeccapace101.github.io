@@ -229,13 +229,14 @@ textarea {
 
 
 .popup {
+    border-radius: 10px;
     background-color: rgb(255, 251, 240);
     /* White content background */
     margin: 15% auto;
     /* Center the popup */
     padding: 20px;
     border: 1px solid #888;
-    width: 70%;
+    width: 25%;
     /* Adjust as needed */
     position: relative;
     /* For absolute positioning of close button */
