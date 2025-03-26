@@ -49,6 +49,11 @@ onAuthStateChanged(auth, async (user) => {
         // https://firebase.google.com/docs/auth/admin/manage-users
         const userRef = doc(db, "users", user.uid); // user.uid is the document ID
         try {
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                const privacy = userData.privacy;
+            }
             await setDoc(userRef, {
                 uid: user.uid,
                 email: user.email,
@@ -56,7 +61,8 @@ onAuthStateChanged(auth, async (user) => {
                 photoURL: user.photoURL,
                 creationTimestamp: Date.now(), //or use admin sdk to get accurate timestamps
                 lastLoginTimestamp: Date.now(), //or use admin sdk to get accurate timestamps
-            });
+                privacy: "private"
+            }, merge = True);
             console.log("User data written with ID: ", user.uid);
         } catch (error) {
             console.error("Error adding document: ", error);

@@ -1,45 +1,55 @@
 import { app } from './init.mjs';
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
 
 const userName = document.getElementById("userName");
 const email = document.getElementById("email");
+const privacy = document.getElementById("privacy");
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
 const changeUser = document.getElementById("changeUser");
 const changePFP = document.getElementById("changePFP");
-
 const userNameBody = document.getElementById("userNameBody");
 const db = getFirestore(app);
 const signOutButton = document.getElementById("signOutButton");
 const submitNewUsername = document.getElementById("submitNewUsername");
+const changePrivacy = document.getElementById("changePrivacy");
+const newPrivacy = document.getElementById("newPrivacy");
+
 
 changeUser.style.display = "none";
 
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log(user);
-        userNameBody.innerHTML = user.displayName;
-        email.innerHTML = user.email;
-        changeUser.style.display = "block";
-    } else {
-    }
-})
 
+//adding user information to the profile page
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/auth/admin/manage-users
-        const userRef = doc(db, "users", user.uid); // user.uid is the document ID
+
         try {
+            const userRef = doc(db, "users", user.uid);
+
+            console.log(user);
             userNameBody.innerHTML = user.displayName;
             email.innerHTML = user.email;
+            changeUser.style.display = "block";
+
+            // Fetch user document from Firestore
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                privacy.innerHTML = userData.privacy || "Not Set";
+                if (userData.privacy == "public") {
+                    newPrivacy.innerHTML = "private";
+                } else {
+                    newPrivacy.innerHTML = "public";
+                }
+            } else {
+                privacy.innerHTML = "Not Set";
+            }
         } catch (error) {
-            console.error("Error adding document: ", error);
+            console.error("Error fetching user document: ", error);
         }
     } else {
-        // User is signed out
         console.log("User is signed out");
     }
 });
@@ -75,9 +85,6 @@ onAuthStateChanged(auth, async (user) => {
         console.log("No user is signed in.");
     }
 });
-
-
-
 
 const popUpUser = document.getElementById("popupOverlayUser");
 const closePopupUser = document.getElementById("closePopupUser");
@@ -119,7 +126,67 @@ const userNameChange = async () => {
     });
 
 }
-/*
+
+//changing user privacy button function
+
+const popUpPrivacy = document.getElementById("popupOverlayPrivacy");
+const closePopupPrivacy = document.getElementById("closePopupPrivacy");
+
+const callNewPrivacy = async () => {
+
+    popUpPrivacy.style.display = "block";
+
+}
+
+const closePrivacyWindow = async () => {
+
+    popUpPrivacy.style.display = "none";
+}
+
+closePopupPrivacy.addEventListener('click', closePrivacyWindow);
+
+const changeUserPrivacy = async () => {
+    const user = auth.currentUser;
+
+    if (user) {
+        popUpPrivacy.style.display = "none";
+
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+
+        const userPrivacy = userData.privacy;
+
+        if (userPrivacy === 'public') {
+            await updateDoc(userRef, { privacy: "private" });
+            privacy.innerHTML = "private";
+            newPrivacy.innerHTML = "public";
+
+        } else {
+            await updateDoc(userRef, { privacy: "public" });
+            privacy.innerHTML = "public";
+            newPrivacy.innerHTML = "private";
+            console.log("changed user to public");
+
+        }
+
+    } else {
+        // User is signed out
+        console.log("User is signed out");
+    }
+
+}
+
+
+
+const confirmPrivacyChange = document.getElementById("confirmPrivacyChange");
+const denyPrivacyChange = document.getElementById("denyPrivacyChange");
+confirmPrivacyChange.addEventListener('click', changeUserPrivacy);
+denyPrivacyChange.addEventListener('click', closePrivacyWindow);
+changePrivacy.addEventListener('click', callNewPrivacy);
+
+
+/* code for changing profile picture
 const popUpPFP = document.getElementById("popupOverlayPFP");
 const closePopupPFP = document.getElementById("closePopupPFP");
 
