@@ -55,7 +55,8 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-//for checking if the user is private or not 
+//for checking if the user is private or not
+/*
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         try {
@@ -81,7 +82,7 @@ onAuthStateChanged(auth, async (user) => {
     } else {
         console.log("User is signed out");
     }
-});
+}); */
 
 
 //for displaying and changing profile picture
