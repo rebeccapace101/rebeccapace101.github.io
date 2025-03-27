@@ -8,6 +8,12 @@
 
 }
 
+#displayResults {
+    display: none;
+
+
+}
+
 .navbar {
     background-color: #EDE9DD;
     padding: 10px 30px;
