@@ -21,6 +21,7 @@ const newPrivacy = document.getElementById("newPrivacy");
 changeUser.style.display = "none";
 
 
+
 //adding user information to the profile page
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -45,6 +46,34 @@ onAuthStateChanged(auth, async (user) => {
                 }
             } else {
                 privacy.innerHTML = "Not Set";
+            }
+        } catch (error) {
+            console.error("Error fetching user document: ", error);
+        }
+    } else {
+        console.log("User is signed out");
+    }
+});
+
+//for checking if the user is private or not 
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        try {
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+
+                if (userData.privacy === "private") {
+                    removeNavButton("Accountability");
+
+                } else {
+                    addNavButton("Accountability", "accountability.html");
+
+                }
+            } else {
+                console.log("No user document found in Firestore.");
             }
         } catch (error) {
             console.error("Error fetching user document: ", error);
@@ -161,12 +190,15 @@ const changeUserPrivacy = async () => {
             await updateDoc(userRef, { privacy: "private" });
             privacy.innerHTML = "private";
             newPrivacy.innerHTML = "public";
+            removeNavButton("Accountability");
+
 
         } else {
             await updateDoc(userRef, { privacy: "public" });
             privacy.innerHTML = "public";
             newPrivacy.innerHTML = "private";
             console.log("changed user to public");
+            addNavButton("Accountability", "accountability.html");
 
         }
 
@@ -177,6 +209,37 @@ const changeUserPrivacy = async () => {
 
 }
 
+
+// Function to add a new button to the navbar
+function addNavButton(text, page) {
+    const navList = document.querySelector('.navbar ul'); // Select the <ul> inside .navbar
+
+    // Create new <li> element
+    const newListItem = document.createElement('li');
+
+    // Create new button element
+    const newButton = document.createElement('button');
+    newButton.classList.add('nav-btn'); // Add class
+    newButton.setAttribute('data-page', page); // Set data attribute
+    newButton.textContent = text; // Set button text
+    newListItem.id = text;
+    newButton.addEventListener('click', () => {
+        window.location.href = page; // Navigate to the page
+    });
+    // Append button to <li>, then <li> to <ul>
+    newListItem.appendChild(newButton);
+    navList.appendChild(newListItem);
+}
+
+// Function to remove a button from the navbar by ID
+function removeNavButton(id) {
+    const listItem = document.getElementById(id); // Select the <li> containing the button
+    if (listItem) {
+        listItem.remove(); // Remove the <li>, which removes the button inside it
+    } else {
+        console.warn(`Button with ID "${id}" not found.`);
+    }
+}
 
 
 const confirmPrivacyChange = document.getElementById("confirmPrivacyChange");
@@ -242,5 +305,3 @@ const userSignOut = async () => {
 changeUser.addEventListener('click', callNewUser)
 submitNewUsername.addEventListener('click', userNameChange);
 signOutButton.addEventListener('click', userSignOut);
-
-

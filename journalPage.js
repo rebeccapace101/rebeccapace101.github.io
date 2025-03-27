@@ -12,6 +12,8 @@ const date = new Date();
 const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
+
+
 //getting the preexisting habits from the database based on today's date
 onAuthStateChanged(auth, async (user) => {
     if (user) {
