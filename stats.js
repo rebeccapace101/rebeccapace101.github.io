@@ -5,14 +5,19 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 const db = getFirestore(app);
 const auth = getAuth();
 
-const habitDropdown = document.getElementById("habitDropdown");
-const habitStats = document.getElementById("habit-stats");
-const habitInfo = document.getElementById("habit-info");
-const habitTableContainer = document.getElementById("habit-table-container");
-const habitPercentage = document.createElement("p");
-const habitStreak = document.createElement("p");
-habitStats.appendChild(habitPercentage);
-habitStats.appendChild(habitStreak);
+// Common DOM elements
+const elements = {
+    habitDropdown: document.getElementById("habitDropdown"),
+    habitStats: document.getElementById("habit-stats"),
+    habitInfo: document.getElementById("habit-info"),
+    habitPercentage: document.createElement("p"),
+    prevPeriodBtn: document.getElementById("prevPeriod"),
+    nextPeriodBtn: document.getElementById("nextPeriod"),
+    currentPeriodLabel: document.getElementById("currentPeriodLabel"),
+    todayButton: document.getElementById("todayButton")
+};
+
+elements.habitStats.appendChild(elements.habitPercentage);
 
 const dayView = document.getElementById("dayView");
 const weekView = document.getElementById("weekView");
@@ -23,9 +28,6 @@ const currentMonth = today.getMonth();
 const currentYear = today.getFullYear();
 
 let currentOffset = 0;
-const prevPeriodBtn = document.getElementById("prevPeriod");
-const nextPeriodBtn = document.getElementById("nextPeriod");
-const currentPeriodLabel = document.getElementById("currentPeriodLabel");
 
 // Function to format date as YYYY-MM-DD
 const formatDate = (date) => {
@@ -40,38 +42,37 @@ function isFutureDate(date) {
 // Helper function to get offset date
 function getOffsetDate(offset, view) {
     const date = new Date();
-    if (view === "day") {
-        date.setDate(date.getDate() + offset);
-    } else if (view === "week") {
-        date.setDate(date.getDate() + (offset * 7));
-    } else if (view === "month") {
-        date.setMonth(date.getMonth() + offset);
-    }
+    const offsets = {
+        'day': () => date.setDate(date.getDate() + offset),
+        'week': () => date.setDate(date.getDate() + (offset * 7)),
+        'month': () => date.setMonth(date.getMonth() + offset)
+    };
+    offsets[view]?.();
     return date;
 }
 
 // Fetch habits for the user
 async function fetchHabits(user) {
-    habitDropdown.innerHTML = "<option value=''>Loading...</option>";
+    elements.habitDropdown.innerHTML = "<option value=''>Loading...</option>";
     try {
         const userDocRef = doc(db, "habitData", user.uid);
         const userDocSnap = await getDoc(userDocRef);
 
         if (userDocSnap.exists() && userDocSnap.data().namesOfHabits) {
             const habitNames = userDocSnap.data().namesOfHabits;
-            habitDropdown.innerHTML = "<option value=''>Select a Habit</option>";
+            elements.habitDropdown.innerHTML = "<option value=''>Select a Habit</option>";
             habitNames.forEach((habitName) => {
                 const option = document.createElement("option");
                 option.value = habitName;
                 option.textContent = habitName;
-                habitDropdown.appendChild(option);
+                elements.habitDropdown.appendChild(option);
             });
         } else {
-            habitDropdown.innerHTML = "<option value=''>No habits found</option>";
+            elements.habitDropdown.innerHTML = "<option value=''>No habits found</option>";
         }
     } catch (error) {
         console.error("Error fetching habits:", error);
-        habitDropdown.innerHTML = "<option value=''>Error loading habits</option>";
+        elements.habitDropdown.innerHTML = "<option value=''>Error loading habits</option>";
     }
 }
 
@@ -90,9 +91,17 @@ async function fetchHabitCompletion(user, habitName, view) {
     if (!habitName) return;
     
     const viewDate = getOffsetDate(currentOffset, view);
-    habitInfo.innerHTML = "Loading habit data...";
+    elements.habitInfo.innerHTML = "Loading habit data...";
     let completedDays = 0;
     let totalDays = 0;
+
+    const renderCell = (date, status, isToday = false) => {
+        const cellClass = status === 'future' ? 'future' : 
+                         status ? 'completed' : 'incomplete';
+        return `<td class="${isToday ? 'today' : ''} ${cellClass}">
+            <span>${date.getDate()}</span>
+        </td>`;
+    };
 
     if (view === "day") {
         let dayCompletionData = "<table class='calendar-table'><thead><tr><th>Selected Date</th></tr></thead><tbody><tr>";
@@ -102,10 +111,9 @@ async function fetchHabitCompletion(user, habitName, view) {
             if (status === true) completedDays = 1;
         }
         
-        const cellClass = status === 'future' ? 'future' : status ? 'completed' : 'incomplete';
-        dayCompletionData += `<td class="${cellClass}"><span>${viewDate.getDate()}</span></td>`;
+        dayCompletionData += renderCell(viewDate, status);
         dayCompletionData += "</tr></tbody></table>";
-        habitInfo.innerHTML = dayCompletionData;
+        elements.habitInfo.innerHTML = dayCompletionData;
 
     } else if (view === "week") {
         let weekCompletionData = "<table class='calendar-table'><thead><tr>";
@@ -128,12 +136,11 @@ async function fetchHabitCompletion(user, habitName, view) {
                 if (status === true) completedDays++;
             }
             
-            const cellClass = status === 'future' ? 'future' : status ? 'completed' : 'incomplete';
-            weekCompletionData += `<td class="${cellClass}"><span>${currentDay.getDate()}</span></td>`;
+            weekCompletionData += renderCell(currentDay, status);
         }
 
         weekCompletionData += "</tr></tbody></table>";
-        habitInfo.innerHTML = weekCompletionData;
+        elements.habitInfo.innerHTML = weekCompletionData;
 
     } else if (view === "month") {
         let monthCompletionData = "<table class='calendar-table'><thead><tr>";
@@ -159,8 +166,7 @@ async function fetchHabitCompletion(user, habitName, view) {
                 if (status === true) completedDays++;
             }
             
-            const cellClass = status === 'future' ? 'future' : status ? 'completed' : 'incomplete';
-            monthCompletionData += `<td class="${cellClass}"><span>${i}</span></td>`;
+            monthCompletionData += renderCell(currentDay, status);
 
             if ((i + firstDayOfMonth) % 7 === 0) {
                 monthCompletionData += "</tr><tr>";
@@ -168,39 +174,37 @@ async function fetchHabitCompletion(user, habitName, view) {
         }
 
         monthCompletionData += "</tr></tbody></table>";
-        habitInfo.innerHTML = monthCompletionData;
+        elements.habitInfo.innerHTML = monthCompletionData;
     }
 
     // Calculate and display percentage with fraction
     const percentage = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
     const fractionText = `${completedDays}/${totalDays} days completed`;
     
-    habitPercentage.innerHTML = `
+    elements.habitPercentage.innerHTML = `
         <div>Completion Rate: ${percentage}%</div>
         <div class="fraction-display">${fractionText}</div>
     `;
-    habitPercentage.className = 'percentage-text';
-    habitPercentage.style.color = percentage >= 70 ? '#198754' : percentage >= 40 ? '#cc8a00' : '#dc3545';
+    elements.habitPercentage.className = 'percentage-text';
+    elements.habitPercentage.style.color = percentage >= 70 ? '#198754' : percentage >= 40 ? '#cc8a00' : '#dc3545';
 
     // Update period navigation
-    updatePeriodNavigation(view);
+    updatePeriodNavigation(view, viewDate);
 }
 
 // Add function to update period navigation
-function updatePeriodNavigation(view) {
-    const currentDate = getOffsetDate(currentOffset, view);
-    
+function updatePeriodNavigation(view, currentDate) {
     if (view === "day") {
-        currentPeriodLabel.textContent = formatDate(currentDate);
+        elements.currentPeriodLabel.textContent = formatDate(currentDate);
     } else if (view === "week") {
         const weekEnd = new Date(currentDate);
         weekEnd.setDate(currentDate.getDate() + 6);
-        currentPeriodLabel.textContent = `${formatDate(currentDate)} - ${formatDate(weekEnd)}`;
+        elements.currentPeriodLabel.textContent = `${formatDate(currentDate)} - ${formatDate(weekEnd)}`;
     } else {
-        currentPeriodLabel.textContent = currentDate.toLocaleDateString('default', { month: 'long', year: 'numeric' });
+        elements.currentPeriodLabel.textContent = currentDate.toLocaleDateString('default', { month: 'long', year: 'numeric' });
     }
 
-    nextPeriodBtn.disabled = currentOffset >= 0;
+    elements.nextPeriodBtn.disabled = currentOffset >= 0;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -208,13 +212,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (user) {
             await fetchHabits(user);
 
-            habitDropdown.addEventListener("change", async () => {
-                const selectedHabit = habitDropdown.value;
+            elements.habitDropdown.addEventListener("change", async () => {
+                const selectedHabit = elements.habitDropdown.value;
                 const view = document.querySelector('input[name="view"]:checked').value; // Get the selected view
                 if (selectedHabit) {
                     await fetchHabitCompletion(user, selectedHabit, view);
                 } else {
-                    habitInfo.innerHTML = "Select a habit to view details.";
+                    elements.habitInfo.innerHTML = "Select a habit to view details.";
                 }
             });
 
@@ -223,8 +227,8 @@ document.addEventListener("DOMContentLoaded", () => {
             radioButtons.forEach((button) => {
                 button.addEventListener("change", async () => {
                     currentOffset = 0;
-                    nextPeriodBtn.disabled = true;
-                    const selectedHabit = habitDropdown.value;
+                    elements.nextPeriodBtn.disabled = true;
+                    const selectedHabit = elements.habitDropdown.value;
                     const view = button.value;
                     if (selectedHabit) {
                         await fetchHabitCompletion(auth.currentUser, selectedHabit, view);
@@ -234,11 +238,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Initialize with a default view (Day View)
             document.querySelector('input[name="view"][value="day"]').checked = true;
-            await fetchHabitCompletion(user, habitDropdown.value, "day");
+            await fetchHabitCompletion(user, elements.habitDropdown.value, "day");
         } else {
             console.log("User is signed out");
-            habitDropdown.innerHTML = "<option value=''>Please log in to see your habits.</option>";
-            habitInfo.innerHTML = "";
+            elements.habitDropdown.innerHTML = "<option value=''>Please log in to see your habits.</option>";
+            elements.habitInfo.innerHTML = "";
         }
     });
 });
@@ -247,18 +251,27 @@ document.addEventListener("DOMContentLoaded", () => {
 const handlePeriodNavigation = (direction) => {
     currentOffset += direction;
     const view = document.querySelector('input[name="view"]:checked').value;
-    fetchHabitCompletion(auth.currentUser, habitDropdown.value, view);
-    nextPeriodBtn.disabled = currentOffset >= 0;
+    fetchHabitCompletion(auth.currentUser, elements.habitDropdown.value, view);
+    elements.nextPeriodBtn.disabled = currentOffset >= 0;
 };
 
-prevPeriodBtn.addEventListener('click', () => handlePeriodNavigation(-1));
-nextPeriodBtn.addEventListener('click', () => handlePeriodNavigation(1));
+elements.prevPeriodBtn.addEventListener('click', () => handlePeriodNavigation(-1));
+elements.nextPeriodBtn.addEventListener('click', () => handlePeriodNavigation(1));
+
+// Add Today button functionality
+elements.todayButton.addEventListener('click', () => {
+    currentOffset = 0;
+    const view = document.querySelector('input[name="view"]:checked').value;
+    fetchHabitCompletion(auth.currentUser, elements.habitDropdown.value, view);
+    elements.nextPeriodBtn.disabled = true;
+});
 
 // Reset offset when changing views
+const radioButtons = document.querySelectorAll('input[name="view"]');
 radioButtons.forEach((button) => {
     button.addEventListener("change", () => {
         currentOffset = 0;
-        nextPeriodBtn.disabled = true;
+        elements.nextPeriodBtn.disabled = true;
         // ... rest of existing radio button handler ...
     });
 });
