@@ -48,6 +48,29 @@
             <div id="day-view" class="calendar-view"></div>
             <div id="week-view" class="calendar-view"></div>
             <div id="month-view" class="calendar-view"></div>
+            
+            <!-- Add period navigation -->
+            <div class="period-navigation">
+                <button id="prevPeriod">&larr; Previous</button>
+                <span id="currentPeriodLabel"></span>
+                <button id="nextPeriod" disabled>Next &rarr;</button>
+            </div>
+
+            <!-- Add completion legend -->
+            <div class="completion-legend">
+                <div class="legend-item">
+                    <div class="legend-box completed"></div>
+                    <span>Completed</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box incomplete"></div>
+                    <span>Incomplete</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box future"></div>
+                    <span>Future Date</span>
+                </div>
+            </div>
         </div>
     </div>
 
