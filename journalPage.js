@@ -1,19 +1,21 @@
 import { app } from './init.mjs';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { getFirestore, Timestamp, FieldValue, doc, setDoc, arrayUnion, getDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
+import {
+    getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import {
+    getFirestore, doc, setDoc, arrayUnion, getDoc
+} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
-// Import Admin SDK
-
-const db = getFirestore();
-const auth = getAuth();
+// Initialize Firebase
+const db = getFirestore(app);
+const auth = getAuth(app);
 const parentElement = document.getElementById('habits');
 
 const date = new Date();
 const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-
-//getting the preexisting habits from the database based on today's date
+// Fetch preexisting habits
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
@@ -24,46 +26,39 @@ onAuthStateChanged(auth, async (user) => {
             return;
         }
 
-        const habitsData = habitsDoc.data();
-        const habits = habitsData?.habits || [];
-
-        if (habits.length === 0) {
-            console.log("User has no habits for today.");
-            return;
-        }
+        const habits = habitsDoc.data()?.habits || [];
+        if (habits.length === 0) return console.log("User has no habits for today.");
 
         console.log("Retrieved habits:", habits);
 
-        for (const element of habits) {
-            console.log("Element:", element);
-
+        for (const habitName of habits) {
             try {
-                const habitsCollection = doc(db, "habitData", user.uid, element, "input");
-                const habitsColDoc = await getDoc(habitsCollection);
+                const inputDoc = doc(db, "habitData", user.uid, habitName, "input");
+                const inputTypeDoc = await getDoc(inputDoc);
 
-                if (!habitsColDoc.exists()) {
-                    console.warn(`No input type found for habit: ${element}`);
+                if (!inputTypeDoc.exists()) {
+                    console.warn(`No input type found for habit: ${habitName}`);
                     continue;
                 }
 
-                const habitsInput = habitsColDoc.data().inputtype;
-                console.log(habitsInput);
+                const inputType = inputTypeDoc.data().inputtype;
+                console.log(`Habit ${habitName} input type: ${inputType}`);
 
-                const newParagraph = document.createElement("input");
-                newParagraph.type = habitsInput;
-                newParagraph.value = element;
-                newParagraph.id = element;
+                const inputField = document.createElement("input");
+                inputField.type = inputType;
+                inputField.id = habitName;
+                if (inputType !== "checkbox") inputField.value = ""; // Avoid default text in inputs
 
-                const newLabel = document.createElement("label");
-                newLabel.textContent = element;
-                newLabel.htmlFor = element;
-                newLabel.id = element + "id";
+                const label = document.createElement("label");
+                label.textContent = habitName;
+                label.htmlFor = habitName;
+                label.id = habitName + "id";
 
-                parentElement.appendChild(newParagraph);
-                parentElement.appendChild(newLabel);
+                parentElement.appendChild(label);
+                parentElement.appendChild(inputField);
                 parentElement.appendChild(document.createElement("br"));
             } catch (error) {
-                console.error(`Error fetching input type for ${element}:`, error);
+                console.error(`Error fetching input type for ${habitName}:`, error);
             }
         }
     } else {
@@ -71,228 +66,101 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-
-const Monday = document.getElementById('Monday');
-const Tuesday = document.getElementById('Tuesday');
-const Wednesday = document.getElementById('Wednesday');
-const Thursday = document.getElementById('Thursday');
-const Friday = document.getElementById('Friday');
-const Saturday = document.getElementById('Saturday');
-const Sunday = document.getElementById('Sunday');
+// Habit creation
 const submitted = document.getElementById('addHabit');
-const subJournal = document.getElementById('submitBtn');
 
-//creating new habits
 const habitSubmitted = async () => {
-
     onAuthStateChanged(auth, async (user) => {
-        popUp.style.display = "none";
+        if (!user) return console.log("User is signed out");
 
-        if (user) {
-            const habitName = document.getElementById('habitInput').value;
+        const habitName = document.getElementById('habitInput').value;
+        const selectedValue = document.getElementById("inputtype").value;
+        console.log(`New Habit: ${habitName}, Input Type: ${selectedValue}`);
 
-            const dropdown = document.getElementById("inputtype");
+        const daysChecked = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            .filter(day => document.getElementById(day).checked);
 
-            const selectedValue = dropdown.value;
-            console.log(selectedValue);
-            if (Monday.checked) {
+        if (daysChecked.length === 0) return console.log("No days selected for habit.");
 
-                const Monday = doc(db, "habits", user.uid, "Monday", "habits");
-                await setDoc(Monday, {
-                    habits: arrayUnion(habitName)
-                }, { merge: true });
-                console.log("Added habit to monday");
-
-                const habitsList = doc(db, "habitData", user.uid);
-                await setDoc(habitsList, {
-                    namesOfHabits: arrayUnion(habitName)
-                }, { merge: true });
-                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
-                setDoc(habitsCollection, {
-                    inputtype: selectedValue
-                });
-            }
-
-            if (Tuesday.checked) {
-                const Tuesday = doc(db, "habits", user.uid, "Tuesday", "habits");
-                await setDoc(Tuesday, {
-                    habits: arrayUnion(habitName)
-                }, { merge: true });
-                console.log("Added habit to Tuesday");
-
-                const habitsList = doc(db, "habitData", user.uid);
-                await setDoc(habitsList, {
-                    namesOfHabits: arrayUnion(habitName)
-                }, { merge: true });
-                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
-                setDoc(habitsCollection, {
-                    inputtype: selectedValue
-                });
-            }
-            if (Wednesday.checked) {
-                const Wednesday = doc(db, "habits", user.uid, "Wednesday", "habits");
-                await setDoc(Wednesday, {
-                    habits: arrayUnion(habitName)
-                }, { merge: true });
-                console.log("Added habit to Wednesday");
-
-                const habitsList = doc(db, "habitData", user.uid);
-                await setDoc(habitsList, {
-                    namesOfHabits: arrayUnion(habitName)
-                }, { merge: true }); const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
-                setDoc(habitsCollection, {
-                    inputtype: selectedValue
-                });
-
-            }
-            if (Thursday.checked) {
-                const Thursday = doc(db, "habits", user.uid, "Thursday", "habits");
-                await setDoc(Thursday, {
-                    habits: arrayUnion(habitName)
-                }, { merge: true });
-                console.log("Added habit to Thursday");
-
-                const habitsList = doc(db, "habitData", user.uid);
-                await setDoc(habitsList, {
-                    namesOfHabits: arrayUnion(habitName)
-                }, { merge: true });
-                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
-                setDoc(habitsCollection, {
-                    inputtype: selectedValue
-                });
-            }
-            if (Friday.checked) {
-                const Friday = doc(db, "habits", user.uid, "Friday", "habits");
-                await setDoc(Friday, {
-                    habits: arrayUnion(habitName)
-                }, { merge: true });
-                console.log("Added habit to Friday");
-
-                const habitsList = doc(db, "habitData", user.uid);
-                await setDoc(habitsList, {
-                    namesOfHabits: arrayUnion(habitName)
-                }, { merge: true });
-                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
-                setDoc(habitsCollection, {
-                    inputtype: selectedValue
-                });
-            }
-            if (Saturday.checked) {
-                const Saturday = doc(db, "habits", user.uid, "Saturday", "habits");
-                await setDoc(Saturday, {
-                    habits: arrayUnion(habitName)
-                }, { merge: true });
-                console.log("Added habit to Saturday");
-
-                const habitsList = doc(db, "habitData", user.uid);
-                await setDoc(habitsList, {
-                    namesOfHabits: arrayUnion(habitName)
-                }, { merge: true });
-                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
-                setDoc(habitsCollection, {
-                    inputtype: selectedValue
-                });
-            }
-            if (Sunday.checked) {
-                const Sunday = doc(db, "habits", user.uid, "Sunday", "habits");
-                await setDoc(Sunday, {
-                    habits: arrayUnion(habitName)
-                }, { merge: true });
-                console.log("Added habit to Sunday");
-
-                const habitsList = doc(db, "habitData", user.uid);
-                await setDoc(habitsList, {
-                    namesOfHabits: arrayUnion(habitName)
-                }, { merge: true });
-
-                //adding the input type
-                const habitsCollection = doc(db, "habitData", user.uid, habitName, "input");
-                setDoc(habitsCollection, {
-                    inputtype: selectedValue
-                });
-
-            }
-
-        } else {
-            // User is signed out
-            console.log("User is signed out");
+        for (const day of daysChecked) {
+            const dayDoc = doc(db, "habits", user.uid, day, "habits");
+            await setDoc(dayDoc, { habits: arrayUnion(habitName) }, { merge: true });
+            console.log(`Added habit to ${day}`);
         }
+
+        // Store habit name and input type
+        const habitsList = doc(db, "habitData", user.uid);
+        await setDoc(habitsList, { namesOfHabits: arrayUnion(habitName) }, { merge: true });
+
+        const inputTypeDoc = doc(db, "habitData", user.uid, habitName, "input");
+        await setDoc(inputTypeDoc, { inputtype: selectedValue }, { merge: true });
+
         window.location.reload();
     });
+};
 
-}
 submitted.addEventListener('click', habitSubmitted);
 
-const newHabit = document.getElementById("newHabit");
-const popUp = document.getElementById("popupOverlay");
-const closePopup = document.getElementById("closePopup");
-
-//opening and closing the popup for creating new habtis
-const callNewHabits = async () => {
-
-    popUp.style.display = "block";
-
-}
-
-const closeWindow = async () => {
-
-    popUp.style.display = "none";
-}
-
-closePopup.addEventListener('click', closeWindow);
-newHabit.addEventListener('click', callNewHabits);
-
-
-//submitting user inputted habits for the day
-
+// Habit submission
 const submitHabits = document.getElementById("submitHabits");
 
 const sendHabits = async () => {
     onAuthStateChanged(auth, async (user) => {
+        if (!user) return console.log("User is signed out");
 
-        if (user) {
-            const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
-            const habitsDoc = await getDoc(dayDoc);
-            const habits = habitsDoc.data().habits;
-            for (const element of habits) {
-                const elementName = document.getElementById(element);
-                const elementLabel = document.getElementById(element + "id");
-                let userInput = null;
-                const inputDoc = doc(db, "habitData", user.uid, element, "input")
-                const inputTypeDoc = await getDoc(inputDoc);
-                const inputType = inputTypeDoc.inputType;
+        const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
+        const habitsDoc = await getDoc(dayDoc);
 
-                //edit userInput based on input type
+        if (!habitsDoc.exists()) return console.log("No habits found for today.");
 
-                if (inputType === "checkbox") {
-                    userInput = false;
-                    if (elementName.checked) {
-                        userInput = true;
-                    }
-                }
-                else {
-                    userInput = elementName.value;
-                }
+        const habits = habitsDoc.data()?.habits || [];
 
-                //submitting to the doc
-                const habitDoc = doc(db, "habitData", user.uid, element, date.toISOString().split('T')[0]);
-                setDoc(habitDoc, {
-                    date: date.toISOString().split('T')[0],
-                    data: userInput
-                });
-                elementName.style.display = "none";
-                elementLabel.style.display = "none";
+        for (const habitName of habits) {
+            const inputField = document.getElementById(habitName);
+            const labelField = document.getElementById(habitName + "id");
+
+            if (!inputField) {
+                console.warn(`Element not found: ${habitName}`);
+                continue;
             }
-            submitHabits.style.display = "none";
-            const newParagraph = document.createElement('p');
-            newParagraph.textContent = "Habits Submitted!";
-            parentElement.appendChild(newParagraph);
 
-        } else {
-            // User is signed out
-            console.log("User is signed out");
+            const inputDoc = doc(db, "habitData", user.uid, habitName, "input");
+            const inputTypeDoc = await getDoc(inputDoc);
+
+            if (!inputTypeDoc.exists()) {
+                console.warn(`No input type found for habit: ${habitName}`);
+                continue;
+            }
+
+            const inputType = inputTypeDoc.data().inputtype;
+            const userInput = (inputType === "checkbox") ? inputField.checked : inputField.value;
+
+            const habitDoc = doc(db, "habitData", user.uid, habitName, date.toISOString().split('T')[0]);
+            await setDoc(habitDoc, {
+                date: date.toISOString().split('T')[0],
+                data: userInput
+            }, { merge: true });
+
+            inputField.style.display = "none";
+            labelField.style.display = "none";
         }
+
+        submitHabits.style.display = "none";
+        const confirmation = document.createElement('p');
+        confirmation.textContent = "Habits Submitted!";
+        parentElement.appendChild(confirmation);
     });
-}
+};
 
 submitHabits.addEventListener('click', sendHabits);
+
+// Pop-up handlers
+const newHabit = document.getElementById("newHabit");
+const popUp = document.getElementById("popupOverlay");
+const closePopup = document.getElementById("closePopup");
+
+const callNewHabits = () => popUp.style.display = "block";
+const closeWindow = () => popUp.style.display = "none";
+
+closePopup.addEventListener('click', closeWindow);
+newHabit.addEventListener('click', callNewHabits);
