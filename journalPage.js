@@ -13,7 +13,6 @@ const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 
-
 //getting the preexisting habits from the database based on today's date
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -211,12 +210,14 @@ const habitSubmitted = async () => {
                 setDoc(habitsCollection, {
                     inputtype: selectedValue
                 });
+
             }
 
         } else {
             // User is signed out
             console.log("User is signed out");
         }
+        window.location.reload();
     });
 
 }

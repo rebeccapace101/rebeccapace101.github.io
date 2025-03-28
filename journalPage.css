@@ -159,15 +159,17 @@ margin: 2%;
 
 #newHabit{
 
-font-size: 28px;                   
-width: 40px;
-height: 40px;
+font-size: 30px;                   
+width: 48px;
+height: 48px;
 display: flex;
 align-items: center;
 justify-content: center;
 line-height: 1;            /* Prevent weird text alignment */
 padding: 0;                /* Remove default padding */
 border: none;
+border-radius: 22px;
+transform: translate(0px, 0px);
 
 }
 
@@ -176,10 +178,14 @@ border: none;
 }
 
 #habitsBox {
+
     display: flex;
-    text-align: center;
     flex-direction: column;
     align-items: center;
+    justify-content: center; /* ✅ Add this to center all children vertically */
+    gap: 10px;               /* Optional: space between buttons */
+    height: 20%; 
+    position:relative;
 
 }
 
