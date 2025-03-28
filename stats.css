@@ -252,3 +252,35 @@ h1 {
     color: #666;
 }
 
+/* Graph Container */
+.graph-container {
+    margin-bottom: 50px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.graph-container h2 {
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+#trendsGraph {
+    flex: 1;
+    min-height: 300px !important;
+    max-height: 400px !important;
+    width: 100% !important;
+    margin: 20px 0;
+}
+
+/* Add media query for smaller screens */
+@media screen and (max-width: 768px) {
+    .graph-container {
+        min-height: 350px;
+    }
+    
+    #trendsGraph {
+        min-height: 250px !important;
+    }
+}
+

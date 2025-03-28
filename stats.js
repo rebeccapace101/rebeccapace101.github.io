@@ -2,6 +2,13 @@ import { app } from './init.mjs';
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
+// Fix chart variable initialization
+let trendsChart = null;
+const chartColors = {
+    primary: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+    background: 'rgba(126, 130, 100, 0.1)'
+};
+
 const db = getFirestore(app);
 const auth = getAuth();
 
@@ -14,7 +21,8 @@ const elements = {
     prevPeriodBtn: document.getElementById("prevPeriod"),
     nextPeriodBtn: document.getElementById("nextPeriod"),
     currentPeriodLabel: document.getElementById("currentPeriodLabel"),
-    todayButton: document.getElementById("todayButton")
+    todayButton: document.getElementById("todayButton"),
+    trendsGraph: document.getElementById('trendsGraph')
 };
 
 elements.habitStats.appendChild(elements.habitPercentage);
@@ -78,12 +86,66 @@ async function fetchHabits(user) {
 
 // Helper function to check completion status
 async function getCompletionStatus(date, user, habitName) {
-    if (isFutureDate(date)) return 'future';
+    try {
+        if (isFutureDate(date)) return 'future';
+        
+        const dateStr = formatDate(date);
+        const habitDocRef = doc(db, "habitData", user.uid, habitName, dateStr);
+        const habitDocSnap = await getDoc(habitDocRef);
+        // Fix completed property reference
+        return habitDocSnap.exists() && (habitDocSnap.data()?.completed === true || habitDocSnap.data()?.data === true);
+    } catch (error) {
+        console.error('Error checking completion status:', error);
+        return false;
+    }
+}
+
+// Add cache for completion status
+const completionCache = new Map();
+
+// Add cache helper functions
+function getCacheKey(user, habitName, date) {
+    return `${user.uid}_${habitName}_${formatDate(date)}`;
+}
+
+function clearCache() {
+    completionCache.clear();
+}
+
+// Optimize completion status checks with batching
+async function getCompletionStatuses(user, habitName, dates) {
+    const results = new Map();
+    const uncachedDates = [];
     
-    const dateStr = formatDate(date);
-    const habitDocRef = doc(db, "habitData", user.uid, habitName, dateStr);
-    const habitDocSnap = await getDoc(habitDocRef);
-    return habitDocSnap.exists() && habitDocSnap.data().completed === true;
+    // Check cache first
+    dates.forEach(date => {
+        const cacheKey = getCacheKey(user, habitName, date);
+        if (completionCache.has(cacheKey)) {
+            results.set(formatDate(date), completionCache.get(cacheKey));
+        } else if (!isFutureDate(date)) {
+            uncachedDates.push(date);
+        } else {
+            results.set(formatDate(date), 'future');
+        }
+    });
+
+    // Batch fetch uncached dates
+    if (uncachedDates.length > 0) {
+        const promises = uncachedDates.map(async date => {
+            const dateStr = formatDate(date);
+            const habitDocRef = doc(db, "habitData", user.uid, habitName, dateStr);
+            return getDoc(habitDocRef).then(snap => {
+                const status = snap.exists() && (snap.data()?.completed === true || snap.data()?.data === true);
+                const cacheKey = getCacheKey(user, habitName, date);
+                completionCache.set(cacheKey, status);
+                results.set(dateStr, status);
+            });
+        });
+
+        await Promise.all(promises);
+    }
+
+    return results;
 }
 
 // Fetch habit completion data for a specific habit and display it based on the selected view
@@ -95,6 +157,29 @@ async function fetchHabitCompletion(user, habitName, view) {
     let completedDays = 0;
     let totalDays = 0;
 
+    // Collect all dates needed for the view
+    const datesToFetch = [];
+    if (view === "day") {
+        datesToFetch.push(viewDate);
+    } else if (view === "week") {
+        const weekStart = new Date(viewDate);
+        weekStart.setDate(viewDate.getDate() - viewDate.getDay() + 1);
+        for (let i = 0; i < 7; i++) {
+            const currentDay = new Date(weekStart);
+            currentDay.setDate(weekStart.getDate() + i);
+            datesToFetch.push(currentDay);
+        }
+    } else if (view === "month") {
+        const firstDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
+        const lastDay = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0);
+        for (let d = new Date(firstDay); d <= lastDay; d.setDate(d.getDate() + 1)) {
+            datesToFetch.push(new Date(d));
+        }
+    }
+
+    // Batch fetch all completion statuses
+    const completionStatuses = await getCompletionStatuses(user, habitName, datesToFetch);
+
     const renderCell = (date, status, isToday = false) => {
         const cellClass = status === 'future' ? 'future' : 
                          status ? 'completed' : 'incomplete';
@@ -105,7 +190,7 @@ async function fetchHabitCompletion(user, habitName, view) {
 
     if (view === "day") {
         let dayCompletionData = "<table class='calendar-table'><thead><tr><th>Selected Date</th></tr></thead><tbody><tr>";
-        const status = await getCompletionStatus(viewDate, user, habitName);
+        const status = completionStatuses.get(formatDate(viewDate));
         if (status !== 'future') {
             totalDays = 1;
             if (status === true) completedDays = 1;
@@ -129,7 +214,7 @@ async function fetchHabitCompletion(user, habitName, view) {
         for (let i = 0; i < 7; i++) {
             const currentDay = new Date(weekStart);
             currentDay.setDate(weekStart.getDate() + i);
-            const status = await getCompletionStatus(currentDay, user, habitName);
+            const status = completionStatuses.get(formatDate(currentDay));
             
             if (status !== 'future') {
                 totalDays++;
@@ -159,7 +244,7 @@ async function fetchHabitCompletion(user, habitName, view) {
 
         for (let i = 1; i <= totalDaysInMonth; i++) {
             const currentDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), i);
-            const status = await getCompletionStatus(currentDay, user, habitName);
+            const status = completionStatuses.get(formatDate(currentDay));
             
             if (status !== 'future') {
                 totalDays++;
@@ -188,8 +273,15 @@ async function fetchHabitCompletion(user, habitName, view) {
     elements.habitPercentage.className = 'percentage-text';
     elements.habitPercentage.style.color = percentage >= 70 ? '#198754' : percentage >= 40 ? '#cc8a00' : '#dc3545';
 
+    if (habitName) {
+        await updateTrendsGraph(user, habitName, viewDate);
+    }
+    
     // Update period navigation
     updatePeriodNavigation(view, viewDate);
+
+    // Clear cache when changing habits
+    elements.habitDropdown.addEventListener("change", clearCache);
 }
 
 // Add function to update period navigation
@@ -207,6 +299,126 @@ function updatePeriodNavigation(view, currentDate) {
     elements.nextPeriodBtn.disabled = currentOffset >= 0;
 }
 
+async function updateTrendsGraph(user, habitName, viewDate) {
+    try {
+        if (!elements.trendsGraph) return;
+        const ctx = elements.trendsGraph.getContext('2d');
+        if (!ctx) return;
+
+        const view = document.querySelector('input[name="view"]:checked').value;
+        const dates = [];
+        const completionData = [];
+        
+        const endDate = new Date(viewDate);
+        const startDate = new Date(endDate);
+        
+        if (view === "week") {
+            // Show last 4 weeks
+            startDate.setDate(startDate.getDate() - (4 * 7));
+            
+            // Get weekly stats
+            let currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                let weeklyCompleted = 0;
+                let weeklyTotal = 0;
+                
+                // Check each day of the week
+                for (let i = 0; i < 7; i++) {
+                    if (!isFutureDate(currentDate)) {
+                        weeklyTotal++;
+                        const status = await getCompletionStatus(currentDate, user, habitName);
+                        if (status === true) weeklyCompleted++;
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+                
+                if (weeklyTotal > 0) {
+                    const weekStart = new Date(currentDate);
+                    weekStart.setDate(currentDate.getDate() - 7);
+                    dates.push(`${formatDate(weekStart)} - ${formatDate(currentDate)}`);
+                    completionData.push(weeklyCompleted);
+                }
+            }
+        } else if (view === "month") {
+            // Show last 6 months
+            startDate.setMonth(startDate.getMonth() - 5);
+            
+            // Get monthly stats
+            let currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                let monthlyCompleted = 0;
+                let monthlyTotal = 0;
+                
+                const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+                
+                // Check each day of the month
+                for (let i = 1; i <= daysInMonth; i++) {
+                    currentDate.setDate(i);
+                    if (!isFutureDate(currentDate)) {
+                        monthlyTotal++;
+                        const status = await getCompletionStatus(currentDate, user, habitName);
+                        if (status === true) monthlyCompleted++;
+                    }
+                }
+                
+                if (monthlyTotal > 0) {
+                    dates.push(currentDate.toLocaleDateString('default', { month: 'long', year: 'numeric' }));
+                    completionData.push(monthlyCompleted);
+                }
+                
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+        }
+
+        if (trendsChart) trendsChart.destroy();
+
+        trendsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Completions',
+                    data: completionData,
+                    backgroundColor: chartColors.primary,
+                    borderColor: chartColors.primary,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        },
+                        title: {
+                            display: true,
+                            text: 'Days Completed'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error updating trends graph:', error);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -219,6 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     await fetchHabitCompletion(user, selectedHabit, view);
                 } else {
                     elements.habitInfo.innerHTML = "Select a habit to view details.";
+                    if (trendsChart) trendsChart.destroy();
                 }
             });
 
