@@ -9,7 +9,8 @@ import {
 // Initialize Firebase
 const db = getFirestore(app);
 const auth = getAuth(app);
-const parentElement = document.getElementById('habits');
+//sets habits as the box to add stuff inside of
+const parentElement = document.getElementById('habitsBox');
 
 const date = new Date();
 const dayOfWeek = date.getDay();
@@ -18,6 +19,7 @@ const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 // Fetch preexisting habits
 onAuthStateChanged(auth, async (user) => {
     if (user) {
+        //Create a reference to the Firestore document for the user's habits for today's day of the week
         const dayDoc = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
         const habitsDoc = await getDoc(dayDoc);
 
@@ -28,11 +30,12 @@ onAuthStateChanged(auth, async (user) => {
 
         const habits = habitsDoc.data()?.habits || [];
         if (habits.length === 0) return console.log("User has no habits for today.");
-
+        //Log the retrieved habits
         console.log("Retrieved habits:", habits);
-
+        //Loop over each habit name.
         for (const habitName of habits) {
             try {
+                //For each habit, get the input type from the habitData collection
                 const inputDoc = doc(db, "habitData", user.uid, habitName, "input");
                 const inputTypeDoc = await getDoc(inputDoc);
 
@@ -40,22 +43,39 @@ onAuthStateChanged(auth, async (user) => {
                     console.warn(`No input type found for habit: ${habitName}`);
                     continue;
                 }
-
+                //inputType = input type of habit to add to page
                 const inputType = inputTypeDoc.data().inputtype;
                 console.log(`Habit ${habitName} input type: ${inputType}`);
-
+                //creates inputField for the webpage display
                 const inputField = document.createElement("input");
+                //update field for webpage
                 inputField.type = inputType;
+                //update name for webpage
                 inputField.id = habitName;
                 if (inputType !== "checkbox") inputField.value = ""; // Avoid default text in inputs
 
+                //add habit on screen (label for html) 
                 const label = document.createElement("label");
+                //label text = habit
                 label.textContent = habitName;
+                //Associate the label with the input (for accessibility and clicking purposes)
                 label.htmlFor = habitName;
+                //give label id for some reason? I guess as primary key?
                 label.id = habitName + "id";
 
-                parentElement.appendChild(label);
-                parentElement.appendChild(inputField);
+
+                // Create a container div
+                const habitContainer = document.createElement("div");
+                habitContainer.className = "habit-item"; // You can style this in CSS
+
+                // Add label and input inside the div
+                habitContainer.appendChild(label);
+                habitContainer.appendChild(inputField);
+
+                // Add the habit container to habitsBox
+                parentElement.appendChild(habitContainer);
+
+                //line break
                 parentElement.appendChild(document.createElement("br"));
             } catch (error) {
                 console.error(`Error fetching input type for ${habitName}:`, error);

@@ -91,6 +91,7 @@ body {
     align-items: center;
     min-height: 100vh;
     padding-top: 100px;
+    background-color: #FFFBF0;
     /* To ensure content doesn't overlap with navbar */
 }
 

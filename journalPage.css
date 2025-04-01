@@ -90,13 +90,33 @@ h1 {
     align-items: center;
 }
 
+.habit-item{
+
+    background-color: rgb(255, 251, 240);
+    border-style: solid;
+    border-width: 11px;
+    border-color: #659287;
+    border-radius: 12%;
+    padding:6%;
+    height: 95px;
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 4px 4px 8px rgba(58, 74, 63, 0.4);
+    transition: background-color 0.4s ease;
+
+}
+
+
 .container {
     margin-top: 80px;
     /* Creates space below navbar */
     justify-content: space-evenly;
-    margin: 2vh;
+    margin: 0vh;
     display: flex;
-    width: 97.5vw;
+    width: 100vw;
     height: 96vh;
 }
 
@@ -184,7 +204,8 @@ transform: translate(0px, 0px);
     align-items: center;
     justify-content: center; /* ✅ Add this to center all children vertically */
     gap: 10px;               /* Optional: space between buttons */
-    height: 20%; 
+    height: 85%; 
+    width: auto;
     position:relative;
 
 }
