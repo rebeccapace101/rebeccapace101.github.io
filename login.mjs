@@ -1,7 +1,6 @@
-
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { app } from './init.mjs';
-import { getFirestore, doc, setDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
+import { getFirestore, doc, setDoc, getDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
@@ -13,114 +12,69 @@ const db = getFirestore(app);
 signOutButton.style.display = "none";
 
 const userSignIn = async () => {
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            const user = result.user
-            console.log(user);
-            signInButton.style.display = "none";
-            window.location.href = "home.html";
-        }).catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message
-        })
-}
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log(user);
+        signInButton.style.display = "none";
+        window.location.href = "home.html";
+    } catch (error) {
+        console.error("Sign-in error:", error);
+    }
+};
 
 const userSignOut = async () => {
-    signOut(auth).then(() => {
+    try {
+        await signOut(auth);
         alert("You have signed out successfully!");
-    }).catch((error) => { })
-}
+    } catch (error) {
+        console.error("Sign-out error:", error);
+    }
+};
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     if (user) {
         signOutButton.style.display = "block";
         signInButton.style.display = "none";
 
+        const userRef = doc(db, "users", user.uid);
 
+        try {
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists()) {
+                await setDoc(userRef, {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
+                    photoURL: user.photoURL,
+                    creationTimestamp: Date.now(),
+                    lastLoginTimestamp: Date.now(),
+                    privacy: "private"
+                }, { merge: true });
+
+                console.log("New user document created:", user.uid);
+            } else {
+                console.log("User document already exists:", user.uid);
+            }
+
+            // Create habits subcollection for new users
+            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            for (const day of days) {
+                const habitRef = doc(db, "habits", user.uid, day, "habits");
+                await setDoc(habitRef, { habits: arrayUnion() }, { merge: true });
+            }
+
+            console.log("Habit documents created for:", user.uid);
+        } catch (error) {
+            console.error("Error managing user data:", error);
+        }
     } else {
         signInButton.style.display = "block";
         signOutButton.style.display = "none";
-    }
-})
-
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/auth/admin/manage-users
-        const userRef = doc(db, "users", user.uid); // user.uid is the document ID
-        try {
-            const userSnap = await getDoc(userRef);
-            if (userSnap.exists()) {
-                const userData = userSnap.data();
-                const privacy = userData.privacy;
-            }
-            await setDoc(userRef, {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-                creationTimestamp: Date.now(), //or use admin sdk to get accurate timestamps
-                lastLoginTimestamp: Date.now(), //or use admin sdk to get accurate timestamps
-                privacy: "private"
-            }, merge = True);
-            console.log("User data written with ID: ", user.uid);
-        } catch (error) {
-            console.error("Error adding document: ", error);
-        }
-    } else {
-        // User is signed out
         console.log("User is signed out");
     }
 });
 
 signInButton.addEventListener('click', userSignIn);
 signOutButton.addEventListener('click', userSignOut);
-
-
-
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/auth/admin/manage-users
-        const userRef = doc(db, "habits", user.uid); // user.uid is the document ID
-        const Monday = doc(db, "habits", user.uid, "Monday", "habits");
-        await setDoc(Monday, {
-            habits: arrayUnion()
-        }, { merge: true });
-
-        const Tuesday = doc(db, "habits", user.uid, "Tuesday", "habits");
-        await setDoc(Tuesday, {
-            habits: arrayUnion()
-        }, { merge: true });
-
-        const Wednesday = doc(db, "habits", user.uid, "Wednesday", "habits");
-        await setDoc(Wednesday, {
-            habits: arrayUnion()
-        }, { merge: true });
-
-        const Thursday = doc(db, "habits", user.uid, "Thursday", "habits");
-        await setDoc(Thursday, {
-            habits: arrayUnion()
-        }, { merge: true });
-
-        const Friday = doc(db, "habits", user.uid, "Friday", "habits");
-        await setDoc(Friday, {
-            habits: arrayUnion()
-        }, { merge: true });
-
-        const Saturday = doc(db, "habits", user.uid, "Saturday", "habits");
-        await setDoc(Saturday, {
-            habits: arrayUnion()
-        }, { merge: true });
-
-        const Sunday = doc(db, "habits", user.uid, "Sunday", "habits");
-        await setDoc(Sunday, {
-            habits: arrayUnion()
-        }, { merge: true });
-
-    } else {
-        // User is signed out
-        console.log("User is signed out");
-    }
-});
-
