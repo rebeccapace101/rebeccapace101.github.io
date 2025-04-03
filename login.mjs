@@ -17,7 +17,6 @@ const userSignIn = async () => {
         const user = result.user;
         console.log(user);
         signInButton.style.display = "none";
-        window.location.href = "home.html";
     } catch (error) {
         console.error("Sign-in error:", error);
     }
