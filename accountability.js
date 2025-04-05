@@ -9,6 +9,20 @@ const userNameDisplay = document.getElementById("userNameDisplay");
 const displayResults = document.getElementById("displayResults");
 const profilePic = document.getElementById("profile-pic");
 const displayPartner = document.getElementById("displayPartner");
+const popUp = document.getElementById("popupOverlay");
+
+//popup managing
+
+const closePopup = document.getElementById("closePopup");
+
+const closeWindow = () => popUp.style.display = "none";
+
+closePopup.addEventListener('click', closeWindow);
+
+//popup if there is a message
+
+
+//either showing search or partner based on whether you have a partner yet 
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -97,25 +111,29 @@ const errorMessage = document.getElementById("errorMessage");
 
 const addAccountabilityPartner = async () => {
     const user = auth.currentUser;
+    const mDoc = doc(db, "messages", user.uid);
+
 
     if (user) {
         const userId = idInput.value.trim();
+        const partnerMDoc = doc(db, "messages", userId);
         const currentUserRef = doc(db, "users", user.uid);
-
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
         const userData = userSnap.data();
         const userPrivacy = userData.privacy;
 
         if (userPrivacy == "public") {
-            await updateDoc(currentUserRef, { partner: userId }); //add the partner
+            //await updateDoc(currentUserRef, { partner: userId }); //add the partner
+            await setDoc(mDoc, { outGoingRequest: userId }); //add message to log
+            await setDoc(partnerMDoc, { inComingRequest: user.uid });
             errorMessage.innerHTML = "";
-            userNameDisplay.innerHTML = "Successfully added!";
+            userNameDisplay.innerHTML = "Partner request sent! Once the user accepts, you'll be notified.";
             addPartner.style.display = "none";
             profilePic.style.display = "none";
 
         } else {
-            errorMessage.innerHTML = "This user is not public.";
+            errorMessage.innerHTML = "This user may not be public or already has a partner.";
         }
 
     } else {
@@ -125,3 +143,5 @@ const addAccountabilityPartner = async () => {
 }
 
 addPartner.addEventListener('click', addAccountabilityPartner);
+
+

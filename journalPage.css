@@ -90,14 +90,14 @@ h1 {
     align-items: center;
 }
 
-.habit-item{
+.habit-item {
 
     background-color: rgb(255, 251, 240);
     border-style: solid;
     border-width: 11px;
     border-color: #659287;
     border-radius: 12%;
-    padding:6%;
+    padding: 6%;
     height: 95px;
     width: 120px;
     display: flex;
@@ -126,32 +126,32 @@ h1 {
     /* Extends background behind navbar */
 }
 
-.typeField{
+.typeField {
 
     margin: 2%;
 }
 
-.daysField{
+.daysField {
 
-margin: 2%;
-
-}
-
-#inputtype{
-
-    padding:2%;
     margin: 2%;
 
 }
 
-.textCont{
+#inputtype {
+
+    padding: 2%;
+    margin: 2%;
+
+}
+
+.textCont {
 
     display: flex;
-    height:fit-content;
+    height: fit-content;
     align-items: center;
-} 
+}
 
-#habitInput{
+#habitInput {
 
     padding: 2%;
     margin: 2%;
@@ -161,7 +161,7 @@ margin: 2%;
 }
 
 
-.addHabitButton{
+.addHabitButton {
 
     margin: 2%;
 
@@ -177,23 +177,25 @@ margin: 2%;
 
 }
 
-#newHabit{
+#newHabit {
 
-font-size: 30px;                   
-width: 48px;
-height: 48px;
-display: flex;
-align-items: center;
-justify-content: center;
-line-height: 1;            /* Prevent weird text alignment */
-padding: 0;                /* Remove default padding */
-border: none;
-border-radius: 22px;
-transform: translate(0px, 0px);
+    font-size: 30px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    /* Prevent weird text alignment */
+    padding: 0;
+    /* Remove default padding */
+    border: none;
+    border-radius: 22px;
+    transform: translate(0px, 0px);
 
 }
 
-#submitHabits{
+#submitHabits {
     width: 80%;
 }
 
@@ -202,11 +204,13 @@ transform: translate(0px, 0px);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* ✅ Add this to center all children vertically */
-    gap: 10px;               /* Optional: space between buttons */
-    height: 85%; 
+    justify-content: center;
+    /* ✅ Add this to center all children vertically */
+    gap: 10px;
+    /* Optional: space between buttons */
+    height: 85%;
     width: auto;
-    position:relative;
+    position: relative;
 
 }
 
@@ -277,22 +281,23 @@ button {
     transition: box-shadow 0.15s ease;
 
     box-shadow:
-    -2px -2px 0 #e6b98a,             /* Top-left highlight */
-    2px 2px 0 #b58258,               /* Bottom-right shadow */
-    2px 4px 8px rgba(0, 0, 0, 0.2);
+        -2px -2px 0 #e6b98a,
+        /* Top-left highlight */
+        2px 2px 0 #b58258,
+        /* Bottom-right shadow */
+        2px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 button:active {
     /* Pressed-in effect */
     box-shadow:
-    inset 1px 1px 2px rgba(0, 0, 0, 0.25),
-    inset -0.5px -0.5px 0.5px rgba(255, 255, 255, 0.15);
-  }
+        inset 1px 1px 2px rgba(0, 0, 0, 0.25),
+        inset -0.5px -0.5px 0.5px rgba(255, 255, 255, 0.15);
+}
 
-button:hover{
+button:hover {
 
     background-color: #e6b98a
-
 }
 
 
