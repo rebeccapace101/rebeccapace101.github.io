@@ -50,7 +50,8 @@ onAuthStateChanged(auth, async (user) => {
                     photoURL: user.photoURL,
                     creationTimestamp: Date.now(),
                     lastLoginTimestamp: Date.now(),
-                    privacy: "private"
+                    privacy: "private",
+                    partner: null
                 }, { merge: true });
 
                 console.log("New user document created:", user.uid);

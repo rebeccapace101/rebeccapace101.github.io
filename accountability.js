@@ -8,8 +8,41 @@ const idInput = document.getElementById("idInput");
 const userNameDisplay = document.getElementById("userNameDisplay");
 const displayResults = document.getElementById("displayResults");
 const profilePic = document.getElementById("profile-pic");
+const displayPartner = document.getElementById("displayPartner");
 
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        const partner = userData.partner;
+        console.log(partner);
+        if (partner != null) {
+            const partnerRef = doc(db, "users", partner);
+            const partnerSnap = await getDoc(partnerRef);
+            const partnerData = partnerSnap.data();
+            const partnerName = document.getElementById("partnerName");
+            partnerName.innerHTML = partnerData.displayName;
+            const partnerPhotoURL = partnerData.photoURL;
+            const partnerpic = document.getElementById("partner-pic");
+            if (partnerPhotoURL) {
+                partnerpic.src = partnerPhotoURL;
+                partnerpic.style.display = "block"; // Show the image
+            } else {
+                console.log("No profile picture found.");
+                partnerpic.style.display = "none"; // Hide if no image available
+            }
+        }
+        else { //if there is no partner yet, display the search block
+            const searchPartner = document.getElementById("searchPartner");
+            searchPartner.style.display = "block";
+            displayPartner.style.display = "none";
+        }
 
+    } else {
+        console.log("User is signed out");
+    }
+});
 
 //function to look for a user based on user input
 const searchUser = async () => {
@@ -67,6 +100,7 @@ const addAccountabilityPartner = async () => {
 
     if (user) {
         const userId = idInput.value.trim();
+        const currentUserRef = doc(db, "users", user.uid);
 
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
@@ -74,6 +108,7 @@ const addAccountabilityPartner = async () => {
         const userPrivacy = userData.privacy;
 
         if (userPrivacy == "public") {
+            await updateDoc(currentUserRef, { partner: userId }); //add the partner
             errorMessage.innerHTML = "";
             userNameDisplay.innerHTML = "Successfully added!";
             addPartner.style.display = "none";
