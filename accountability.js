@@ -53,7 +53,7 @@ onAuthStateChanged(auth, async (user) => {
         console.log("User is signed out");
     }
 });
-//popup if your request was accepted
+//popup if your request was accepted or declined
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -64,17 +64,23 @@ onAuthStateChanged(auth, async (user) => {
 
         console.log(outGoingRequest);
         if (outGoingRequest != null && outGoingRequest != undefined) {  //if there is an outgoing request
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+            const partnerId = userData.partner;
+            const partnerRef = doc(db, "users", partnerId);
+            const partnerSnap = await getDoc(partnerRef);
+            const partnerData = partnerSnap.data();
             if (outGoingRequest == "accepted") { //if the request was accepted
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-                const userData = userSnap.data();
-                const partnerId = userData.partner;
-                const partnerRef = doc(db, "users", partnerId);
-                const partnerSnap = await getDoc(partnerRef);
-                const partnerData = partnerSnap.data();
+
                 updateMessage.innerHTML = "Congrats! Your request to " + partnerData.displayName + " was accepted, and you are now accountability partners!";
                 partnerpic.src = partnerData.photoURL;
             }
+            else if (outGoingRequest == "declined") {
+                updateMessage.innerHTML = "Your request to " + partnerData.displayName + " was declined.";
+                partnerpic.src = partnerData.photoURL;
+            }
+            acceptedPopup.style.display = "block";
         }
         else {
             closeWindow();
