@@ -1,12 +1,24 @@
 /**
  * Completion Service
- * Manages habit completion status checks and calculations
+ * Manages habit completion status checks and calculations.
  */
 
-import { formatDate, isFutureDate } from '../utils/dateUtils.js'; // Updated path
+import { formatDate, isFutureDate } from '../utils/dateUtils.js';
 import { getHabitCompletion } from './habitService.js';
 
+/**
+ * Fetches the completion statuses for a habit over a range of dates.
+ * @param {Object} user - The authenticated user object.
+ * @param {string} habitName - The name of the habit.
+ * @param {Array<Date>} dates - The range of dates to check.
+ * @returns {Map<string, boolean>} - A map of date strings to completion statuses.
+ */
 export async function getCompletionStatuses(user, habitName, dates) {
+    if (!user || !habitName || !dates) {
+        console.error('Invalid parameters for getCompletionStatuses');
+        return new Map();
+    }
+
     const results = new Map();
     const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
@@ -30,6 +42,12 @@ export async function getCompletionStatuses(user, habitName, dates) {
     return results;
 }
 
+/**
+ * Calculates completion statistics for a habit.
+ * @param {Map<string, boolean>} completionData - The completion data.
+ * @param {Array<Date>} dates - The range of dates.
+ * @returns {Object} - The calculated statistics.
+ */
 export function calculateCompletionStats(completionData, dates) {
     let completedDays = 0;
     let totalDays = 0;

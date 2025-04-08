@@ -6,7 +6,7 @@
 import { formatDate, isFutureDate, getChicagoDateTime } from '../utils/dateUtils.js'; // Updated import path
 import { getDatesForView } from '../services/habitService.js'; // Import getDatesForView from habitService
 
-class Calendar {
+export default class Calendar {
     constructor(containerId) {
         this.container = document.getElementById(containerId);
         this.table = null;
@@ -112,5 +112,3 @@ class Calendar {
         });
     }
 }
-
-export default Calendar;

@@ -1,5 +1,6 @@
 /**
  * Trends Graph Component
+ * Handles rendering of the trends graph using ApexCharts.
  */
 
 class TrendsGraph {
@@ -8,8 +9,28 @@ class TrendsGraph {
         this.chart = null;
     }
 
+    /**
+     * Renders the trends graph with the provided data.
+     * @param {Array<string>} labels - The labels for the x-axis.
+     * @param {Array<number>} data - The data points for the graph.
+     * @param {string} view - The current view (e.g., day, week, month).
+     */
     render(labels, data, view) {
-        if (!this.container || !window.ApexCharts) return;
+        if (!this.container) {
+            console.error('TrendsGraph container not found');
+            return;
+        }
+
+        if (!window.ApexCharts) {
+            console.error('ApexCharts library is not loaded');
+            this.container.innerHTML = 'Error: Chart library not loaded';
+            return;
+        }
+
+        if (!labels.length || !data.length) {
+            this.container.innerHTML = "No data available for the selected habit.";
+            return;
+        }
 
         const options = {
             series: [{
@@ -41,6 +62,9 @@ class TrendsGraph {
         }
     }
 
+    /**
+     * Destroys the current chart instance.
+     */
     destroy() {
         if (this.chart) {
             this.chart.destroy();

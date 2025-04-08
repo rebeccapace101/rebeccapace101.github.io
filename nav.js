@@ -1,5 +1,5 @@
 import { app } from './init.mjs';
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
+import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
 const db = getFirestore(app);
@@ -10,19 +10,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentPage = window.location.pathname.split("/").pop();
 
     buttons.forEach(button => {
-        if (button.getAttribute("data-page") === "stats/stats.html") {
-            // Check if we're in the stats page
+        const path = button.getAttribute("data-page");
+
+        // Update stats page handling
+        if (path === "stats/stats.html") {
             if (window.location.pathname.includes("/stats/")) {
                 button.classList.add("active");
             }
-        } else if (button.getAttribute("data-page") === currentPage) {
-            button.classList.add("active");
-        }
+            button.addEventListener("click", () => {
+                window.location.href = path;
+            });
+        } else {
+            if (button.getAttribute("data-page") === "stats.html") {
+                // Check if we're in the stats page
+                if (window.location.pathname.includes("/stats/")) {
+                    button.classList.add("active");
+                }
+            } else if (button.getAttribute("data-page") === currentPage) {
+                button.classList.add("active");
+            }
 
-        button.addEventListener("click", () => {
-            const path = button.getAttribute("data-page");
-            window.location.href = path.startsWith("../") ? path : `../${path}`;
-        });
+            button.addEventListener("click", () => {
+                const path = button.getAttribute("data-page");
+                window.location.href = `../${path}`;
+            });
+        }
     });
 });
 
