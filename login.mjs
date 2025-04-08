@@ -17,7 +17,6 @@ const userSignIn = async () => {
         const user = result.user;
         console.log(user);
         signInButton.style.display = "none";
-        window.location.href = "home.html";
     } catch (error) {
         console.error("Sign-in error:", error);
     }
@@ -34,6 +33,7 @@ const userSignOut = async () => {
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
+        console.log("User details:", user);  // Debugging log to check user details
         signOutButton.style.display = "block";
         signInButton.style.display = "none";
 
@@ -43,6 +43,7 @@ onAuthStateChanged(auth, async (user) => {
             const userSnap = await getDoc(userRef);
 
             if (!userSnap.exists()) {
+                console.log("No user document found. Creating new user.");
                 await setDoc(userRef, {
                     uid: user.uid,
                     email: user.email,
@@ -67,6 +68,10 @@ onAuthStateChanged(auth, async (user) => {
             }
 
             console.log("Habit documents created for:", user.uid);
+
+            // Now that Firestore operations are done, navigate to home
+            console.log("redirecting...");
+            window.location.href = "home.html";  // Redirect after all operations
         } catch (error) {
             console.error("Error managing user data:", error);
         }

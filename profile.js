@@ -16,6 +16,7 @@ const signOutButton = document.getElementById("signOutButton");
 const submitNewUsername = document.getElementById("submitNewUsername");
 const changePrivacy = document.getElementById("changePrivacy");
 const newPrivacy = document.getElementById("newPrivacy");
+const userId = document.getElementById("userId");
 
 
 changeUser.style.display = "none";
@@ -32,6 +33,7 @@ onAuthStateChanged(auth, async (user) => {
             console.log(user);
             userNameBody.innerHTML = user.displayName;
             email.innerHTML = user.email;
+            userId.innerHTML = user.uid;
             changeUser.style.display = "block";
 
             // Fetch user document from Firestore
