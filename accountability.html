@@ -44,12 +44,30 @@
         <p id="errorMessage"></p>
     </div>
 
-    <!--pop up window for showing a message-->
+    <!--pop up window for showing a request-->
     <div class="popup-overlay" id="popupOverlay">
         <div class="popup" id="popup">
             <span class="close" id="closePopup">&times;</span>
             <div class="popup-content">
+                <div class="profile-container">
+                    <img id="request-pic" src="" alt="Profile Picture" width="100" height="100">
+                </div>
                 <h1><span id="partnerMessage"></span></h1>
+                <button id="acceptRequest">Accept</button>
+                <button id="denyRequest">Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <!--pop up window for showing a request acceptance-->
+    <div class="popup-overlay" id="acceptedPopup">
+        <div class="popup" id="popup">
+            <span class="close" id="closePopup">&times;</span>
+            <div class="popup-content">
+                <div class="profile-container">
+                    <img id="partner-pic" src="" alt="Profile Picture" width="100" height="100">
+                </div>
+                <h1><span id="updateMessage"></span></h1>
             </div>
         </div>
     </div>

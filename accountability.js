@@ -10,6 +10,11 @@ const displayResults = document.getElementById("displayResults");
 const profilePic = document.getElementById("profile-pic");
 const displayPartner = document.getElementById("displayPartner");
 const popUp = document.getElementById("popupOverlay");
+const partnerMessage = document.getElementById("partnerMessage");
+const requestPic = document.getElementById("request-pic");
+const acceptedPopup = document.getElementById("acceptedPopup");
+const updateMessage = document.getElementById("updateMessage");
+const partnerpic = document.getElementById("partner-pic");
 
 //popup managing
 
@@ -19,7 +24,110 @@ const closeWindow = () => popUp.style.display = "none";
 
 closePopup.addEventListener('click', closeWindow);
 
-//popup if there is a message
+//popup if there is a request
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const messageRef = doc(db, "messages", user.uid);
+        const messageSnap = await getDoc(messageRef);
+        const messageData = messageSnap.data();
+        const inComingRequest = messageData.inComingRequest;
+        console.log(inComingRequest);
+        if (inComingRequest != null && inComingRequest != undefined) {  //if there is an partner request available
+            const userRef = doc(db, "users", inComingRequest);
+            const userSnap = await getDoc(userRef);
+            const userData = userSnap.data();
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                requestPic.src = userData.photoURL;
+                partnerMessage.innerHTML = userData.displayName + " wants to add you as an accountability partner!";
+                popUp.style.display = "block";
+            } else {
+                console.error("User not found for inComingRequest:", inComingRequest);
+            }
+        }
+        else {
+            closeWindow();
+        }
+
+    } else {
+        console.log("User is signed out");
+    }
+});
+//popup if your request was accepted
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const messageRef = doc(db, "messages", user.uid);
+        const messageSnap = await getDoc(messageRef);
+        const messageData = messageSnap.data();
+        const outGoingRequest = messageData.outGoingRequest;
+
+        console.log(outGoingRequest);
+        if (outGoingRequest != null && outGoingRequest != undefined) {  //if there is an outgoing request
+            if (outGoingRequest == "accepted") { //if the request was accepted
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+                const userData = userSnap.data();
+                const partnerId = userData.partner;
+                const partnerRef = doc(db, "users", partnerId);
+                const partnerSnap = await getDoc(partnerRef);
+                const partnerData = partnerSnap.data();
+                updateMessage.innerHTML = "Congrats! Your request to " + partnerData.displayName + " was accepted, and you are now accountability partners!";
+                partnerpic.src = partnerData.photoURL;
+            }
+        }
+        else {
+            closeWindow();
+        }
+
+    } else {
+        console.log("User is signed out");
+    }
+});
+
+
+
+//code for accepting or denying a partner request
+const acceptRequest = document.getElementById("acceptRequest");
+const denyRequest = document.getElementById("denyRequest");
+
+const submitAcceptance = async () => {
+    const user = auth.currentUser;
+
+    const messageRef = doc(db, "messages", user.uid);
+    const messageSnap = await getDoc(messageRef);
+    const messageData = messageSnap.data();
+    const requesterId = messageData.inComingRequest;
+    const partnerMDoc = doc(db, "messages", requesterId);
+    const currentUserRef = doc(db, "users", user.uid);
+
+    const partnerRef = doc(db, "users", requesterId);
+
+    await updateDoc(currentUserRef, { partner: requesterId }); //add the partner
+    await updateDoc(messageRef, { inComingRequest: null }); //remove the request
+    await updateDoc(partnerMDoc, { outGoingRequest: "accepted" }); //send acceptance
+    await updateDoc(partnerRef, { partner: user.uid }); //add the user as a partner
+
+    closeWindow();
+};
+
+const submitDecline = async () => {
+    const user = auth.currentUser;
+
+    const messageRef = doc(db, "messages", user.uid);
+    const messageSnap = await getDoc(messageRef);
+    const messageData = messageSnap.data();
+    const requesterId = messageData.inComingRequest;
+    const partnerMDoc = doc(db, "messages", requesterId);
+    const currentUserRef = doc(db, "users", user.uid);
+
+    await updateDoc(messageRef, { inComingRequest: null }); //remove the request
+    await updateDoc(partnerMDoc, { outGoingRequest: "declined" }); //send decline
+    closeWindow();
+};
+
+acceptRequest.addEventListener('click', submitAcceptance);
+denyRequest.addEventListener('click', submitDecline);
 
 
 //either showing search or partner based on whether you have a partner yet 
@@ -117,16 +225,14 @@ const addAccountabilityPartner = async () => {
     if (user) {
         const userId = idInput.value.trim();
         const partnerMDoc = doc(db, "messages", userId);
-        const currentUserRef = doc(db, "users", user.uid);
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
         const userData = userSnap.data();
         const userPrivacy = userData.privacy;
 
         if (userPrivacy == "public") {
-            //await updateDoc(currentUserRef, { partner: userId }); //add the partner
             await setDoc(mDoc, { outGoingRequest: userId }); //add message to log
-            await setDoc(partnerMDoc, { inComingRequest: user.uid });
+            await setDoc(partnerMDoc, { inComingRequest: user.uid }); //add message to prospective partner log
             errorMessage.innerHTML = "";
             userNameDisplay.innerHTML = "Partner request sent! Once the user accepts, you'll be notified.";
             addPartner.style.display = "none";
