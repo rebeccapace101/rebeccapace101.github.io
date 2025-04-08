@@ -29,10 +29,12 @@
     </div>
 
     <div class="container" id="displayPartner">
+        <h2>Your Accountability Partner:</h2>
         <div class="profile-container">
             <img id="partner-pic" src="" alt="Profile Picture" width="100" height="100">
         </div>
         <h1><span id="partnerName"></span></h1>
+        <button id="removePartner">Remove As Partner</button>
     </div>
 
     <div class="container" id="displayResults">
@@ -59,18 +61,19 @@
         </div>
     </div>
 
-    <!--pop up window for showing a request acceptance-->
+    <!--popup for showing acceptance/decline-->
     <div class="popup-overlay" id="acceptedPopup">
-        <div class="popup" id="popup">
-            <span class="close" id="closePopup">&times;</span>
+        <div class="popup" id="acceptedInnerPopup">
+            <span class="close" id="closeAcceptedPopup">&times;</span>
             <div class="popup-content">
                 <div class="profile-container">
-                    <img id="partner-pic" src="" alt="Profile Picture" width="100" height="100">
+                    <img id="accepted-partner-pic" src="" alt="Profile Picture" width="100" height="100">
                 </div>
                 <h1><span id="updateMessage"></span></h1>
             </div>
         </div>
     </div>
+
 
     <script type="module" src="./nav.js"></script>
 

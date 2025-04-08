@@ -12,9 +12,23 @@ const displayPartner = document.getElementById("displayPartner");
 const popUp = document.getElementById("popupOverlay");
 const partnerMessage = document.getElementById("partnerMessage");
 const requestPic = document.getElementById("request-pic");
-const acceptedPopup = document.getElementById("acceptedPopup");
 const updateMessage = document.getElementById("updateMessage");
-const partnerpic = document.getElementById("partner-pic");
+
+const acceptedPopup = document.getElementById("acceptedPopup");
+const closeAcceptedPopup = document.getElementById("closeAcceptedPopup");
+const partnerpic = document.getElementById("accepted-partner-pic"); // update this line too
+
+closeAcceptedPopup.addEventListener('click', async () => {
+    const user = auth.currentUser;
+
+    const messageRef = doc(db, "messages", user.uid);
+    const messageSnap = await getDoc(messageRef);
+    const messageData = messageSnap.data();
+    await updateDoc(messageRef, { outGoingRequest: null }); //remove the request
+
+    acceptedPopup.style.display = "none";
+
+});
 
 //popup managing
 
@@ -53,6 +67,9 @@ onAuthStateChanged(auth, async (user) => {
         console.log("User is signed out");
     }
 });
+
+
+
 //popup if your request was accepted or declined
 
 onAuthStateChanged(auth, async (user) => {
@@ -72,7 +89,6 @@ onAuthStateChanged(auth, async (user) => {
             const partnerSnap = await getDoc(partnerRef);
             const partnerData = partnerSnap.data();
             if (outGoingRequest == "accepted") { //if the request was accepted
-
                 updateMessage.innerHTML = "Congrats! Your request to " + partnerData.displayName + " was accepted, and you are now accountability partners!";
                 partnerpic.src = partnerData.photoURL;
             }
@@ -237,8 +253,8 @@ const addAccountabilityPartner = async () => {
         const userPrivacy = userData.privacy;
 
         if (userPrivacy == "public") {
-            await setDoc(mDoc, { outGoingRequest: userId }); //add message to log
-            await setDoc(partnerMDoc, { inComingRequest: user.uid }); //add message to prospective partner log
+            await setDoc(mDoc, { outGoingRequest: userId }, { merge: true }); //add message to log
+            await setDoc(partnerMDoc, { inComingRequest: user.uid }, { merge: true }); //add message to prospective partner log
             errorMessage.innerHTML = "";
             userNameDisplay.innerHTML = "Partner request sent! Once the user accepts, you'll be notified.";
             addPartner.style.display = "none";
@@ -257,3 +273,26 @@ const addAccountabilityPartner = async () => {
 addPartner.addEventListener('click', addAccountabilityPartner);
 
 
+//code for removing current accountability partner
+
+const removePartner = document.getElementById("removePartner");
+
+const removePartnerFunc = async () => {
+    const user = auth.currentUser;
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
+    const partnerId = userData.partner;
+    const partnerDoc = doc(db, "users", partnerId);
+
+    const partnerMessages = doc(db, "messages", partnerId);
+    await setDoc(partnerMessages, { partnerUpdate: "removed" }, { merge: true }); //notify the partner of the removal
+    await setDoc(userRef, { partner: null }), { merge: true }; //remove partner
+    await setDoc(partnerDoc, { partner: null }, { merge: true }); //remove self from partner's db
+    alert("You have successfully removed your accountability partner");
+    location.reload();
+
+
+}
+
+removePartner.addEventListener('click', removePartnerFunc);
