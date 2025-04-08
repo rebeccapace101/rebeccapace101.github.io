@@ -12,7 +12,14 @@ const auth = getAuth(app);
 //sets habits as the box to add stuff inside of
 const parentElement = document.getElementById('habitsBox');
 
-const date = new Date();
+// Function to get the current date in Chicago timezone
+const getChicagoDate = () => {
+    const chicagoTime = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+    return new Date(chicagoTime);
+};
+
+// Replace `new Date()` with `getChicagoDate()` where applicable
+const date = getChicagoDate();
 const dayOfWeek = date.getDay();
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -54,7 +61,7 @@ onAuthStateChanged(auth, async (user) => {
                 inputField.id = habitName;
                 if (inputType !== "checkbox") inputField.value = ""; // Avoid default text in inputs
 
-                //add habit on screen (label for html) 
+                //add habit on screen (label for html)
                 const label = document.createElement("label");
                 //label text = habit
                 label.textContent = habitName;

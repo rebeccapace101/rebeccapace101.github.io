@@ -10,9 +10,10 @@ const userNameElement = document.getElementById("userName");
 const profilePic = document.getElementById("profile-pic");
 const journalContainer = document.getElementById("journal-container");
 
-// Function to get today's date in YYYY-MM-DD format
+// Function to get today's date in Chicago timezone in YYYY-MM-DD format
 const getTodayDate = () => {
-    const today = new Date();
+    const chicagoTime = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+    const today = new Date(chicagoTime);
     return today.toISOString().split('T')[0];
 };
 

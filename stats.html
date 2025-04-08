@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Stats</title>
     <link rel="stylesheet" href="stats.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -17,61 +19,40 @@
     </nav>
 
     <div class="container">
-        <h1>Habit Stats</h1>
+        <h1>Habit Statistics</h1>
 
         <div class="controls">
             <select id="habitDropdown">
-                <option value="">Loading...</option>
+                <option value="">Select a Habit</option>
             </select>
 
             <div class="view-controls">
                 <input type="radio" id="dayView" name="view" value="day" checked>
-                <label for="dayView">Day View</label>
+                <label for="dayView">Day</label>
                 <input type="radio" id="weekView" name="view" value="week">
-                <label for="weekView">Week View</label>
+                <label for="weekView">Week</label>
                 <input type="radio" id="monthView" name="view" value="month">
-                <label for="monthView">Month View</label>
+                <label for="monthView">Month</label>
             </div>
         </div>
 
         <div id="habit-stats">
-            <h2>Habit Details</h2>
-            <div id="habit-info">Select a habit to view details.</div>
-        </div>
-
-        <div id="habit-table-container">
-            <div class="calendar-views"></div>
-            
+            <div id="habit-info"></div>
+            <div id="habit-calendar"></div>
             <div class="period-navigation">
                 <button id="prevPeriod">&larr;</button>
+                <button id="todayButton">Today</button>
                 <span id="currentPeriodLabel"></span>
                 <button id="nextPeriod" disabled>&rarr;</button>
-                <button id="todayButton">Today</button>
-            </div>
-
-            <div class="completion-legend">
-                <div class="legend-item">
-                    <div class="legend-box completed"></div>
-                    <span>Completed</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-box incomplete"></div>
-                    <span>Incomplete</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-box future"></div>
-                    <span>Future</span>
-                </div>
             </div>
         </div>
     </div>
 
     <div class="container graph-container">
-        <h2>Habit Trends</h2>
-        <canvas id="trendsGraph"></canvas>
+        <h2>Trends Overview</h2>
+        <div id="trendsGraph"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="./stats.js"></script>
     <script type="module" src="./nav.js"></script>
 </body>

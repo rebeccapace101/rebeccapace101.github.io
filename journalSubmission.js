@@ -7,10 +7,11 @@ const auth = getAuth();
 const subJournal = document.getElementById('submitBtn');
 const journalInput = document.getElementById('myTextbox');
 
-// Function to get today's date in YYYY-MM-DD format
+// Function to get today's date in Chicago timezone in YYYY-MM-DD format
 const getTodayDate = () => {
-    const today = new Date();
-    return today.toISOString().split('T')[0]; // Extracts YYYY-MM-DD
+    const chicagoTime = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+    const today = new Date(chicagoTime);
+    return today.toISOString().split('T')[0];
 };
 
 // Function to submit a journal entry
@@ -26,7 +27,7 @@ const journalSubmission = async () => {
             try {
                 const todayDate = getTodayDate();
                 const journalRef = doc(db, "journals", user.uid, "journalEntry", todayDate);
-                
+
                 await setDoc(journalRef, {
                     text: entryText,
                     date: todayDate
