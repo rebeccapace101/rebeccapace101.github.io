@@ -4,26 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Stats</title>
-    <link rel="stylesheet" href="stats.css">
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+    <link rel="stylesheet" href="./css/stats.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 </head>
 <body>
     <nav class="navbar">
         <ul>
-            <li><button class="nav-btn" data-page="home.html">Home</button></li>
-            <li><button class="nav-btn" data-page="journalPage.html">Journal</button></li>
+            <li><button class="nav-btn" data-page="../home.html">Home</button></li>
+            <li><button class="nav-btn" data-page="../journalPage.html">Journal</button></li>
             <li><button class="nav-btn" data-page="stats.html">Stats</button></li>
-            <li><button class="nav-btn" data-page="profile.html">Profile</button></li>
+            <li><button class="nav-btn" data-page="../profile.html">Profile</button></li>
         </ul>
     </nav>
 
     <div class="container">
         <h1>Habit Statistics</h1>
-
         <div class="controls">
             <select id="habitDropdown">
-                <option value="">Select a Habit</option>
+                <option value="">Loading habits...</option>
             </select>
 
             <div class="view-controls">
@@ -35,7 +36,6 @@
                 <label for="monthView">Month</label>
             </div>
         </div>
-
         <div id="habit-stats">
             <div id="habit-info"></div>
             <div id="habit-calendar"></div>
@@ -54,6 +54,6 @@
     </div>
 
     <script type="module" src="./stats.js"></script>
-    <script type="module" src="./nav.js"></script>
+    <script type="module" src="../nav.js"></script>
 </body>
 </html>

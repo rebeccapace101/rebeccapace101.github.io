@@ -10,13 +10,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentPage = window.location.pathname.split("/").pop();
 
     buttons.forEach(button => {
-        if (button.getAttribute("data-page") === currentPage) {
+        if (button.getAttribute("data-page") === "stats/stats.html") {
+            // Check if we're in the stats page
+            if (window.location.pathname.includes("/stats/")) {
+                button.classList.add("active");
+            }
+        } else if (button.getAttribute("data-page") === currentPage) {
             button.classList.add("active");
         }
 
-        // Add click event to navigate
         button.addEventListener("click", () => {
-            window.location.href = button.getAttribute("data-page");
+            const path = button.getAttribute("data-page");
+            window.location.href = path.startsWith("../") ? path : `../${path}`;
         });
     });
 });
