@@ -1,14 +1,11 @@
 body {
-
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
-
 }
 
 h1 {
-
     transition: background-color 0.4s ease;
     box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.4);
     display: inline-block;
@@ -16,7 +13,6 @@ h1 {
     padding: 10px;
     font-family: roca;
     font-size: larger;
-
 }
 
 .navbar {
@@ -75,12 +71,10 @@ h1 {
 }
 
 #addHabit {
-
     width: 5vw;
 }
 
 .containerOther {
-
     background-color: rgb(255, 230, 169);
     display: flex;
     width: 30wh;
@@ -91,7 +85,6 @@ h1 {
 }
 
 .habit-item {
-
     background-color: rgb(255, 251, 240);
     border-style: solid;
     border-width: 11px;
@@ -106,9 +99,7 @@ h1 {
     justify-content: center;
     box-shadow: 4px 4px 8px rgba(58, 74, 63, 0.4);
     transition: background-color 0.4s ease;
-
 }
-
 
 .container {
     margin-top: 80px;
@@ -127,58 +118,44 @@ h1 {
 }
 
 .typeField {
-
     margin: 2%;
 }
 
 .daysField {
-
     margin: 2%;
-
 }
 
 #inputtype {
-
     padding: 2%;
     margin: 2%;
-
 }
 
 .textCont {
-
     display: flex;
     height: fit-content;
     align-items: center;
 }
 
 #habitInput {
-
     padding: 2%;
     margin: 2%;
     font-family: roca;
     font-size: 14px;
-
 }
 
-
 .addHabitButton {
-
     margin: 2%;
-
 }
 
 .habitsMetrics {
-
     display: flex;
     width: 50%;
     justify-content: space-evenly;
     height: 100%;
     background-color: rgb(255, 251, 240);
-
 }
 
 #newHabit {
-
     font-size: 30px;
     width: 48px;
     height: 48px;
@@ -192,7 +169,6 @@ h1 {
     border: none;
     border-radius: 22px;
     transform: translate(0px, 0px);
-
 }
 
 #submitHabits {
@@ -200,7 +176,6 @@ h1 {
 }
 
 #habitsBox {
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -211,11 +186,9 @@ h1 {
     height: 85%;
     width: auto;
     position: relative;
-
 }
 
 #habits {
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -226,12 +199,9 @@ h1 {
     width: 70%;
     height: 95%;
     background-color: rgb(177, 194, 158);
-
 }
 
-
 .journalSection {
-
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -239,7 +209,6 @@ h1 {
     width: 50%;
     height: 100%;
     background-color: rgb(255, 230, 169);
-
 }
 
 #journalBox {
@@ -259,16 +228,13 @@ h1 {
 }
 
 #textBoxContainer {
-
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     background: red;
-
 }
 
 button {
-
     padding: 8px 12px;
     margin: 2px;
     border: none;
@@ -279,7 +245,6 @@ button {
     background-color: rgb(222, 170, 121);
     cursor: pointer;
     transition: box-shadow 0.15s ease;
-
     box-shadow:
         -2px -2px 0 #e6b98a,
         /* Top-left highlight */
@@ -296,10 +261,8 @@ button:active {
 }
 
 button:hover {
-
     background-color: #e6b98a
 }
-
 
 textarea {
     text-align: left;
@@ -332,7 +295,6 @@ textarea {
     /* Black background with opacity */
 }
 
-
 .popup {
     border-radius: 10px;
     background-color: rgb(255, 251, 240);
@@ -347,7 +309,6 @@ textarea {
     position: relative;
     /* For absolute positioning of close button */
 }
-
 
 .close {
     position: absolute;
@@ -365,5 +326,4 @@ p {
 
 label {
     font-family: roca;
-
 }

@@ -31,8 +31,17 @@ export async function getCompletionStatuses(user, habitName, dates) {
         }
 
         try {
-            const isCompleted = await getHabitCompletion(user.uid, habitName, dateStr);
-            results.set(dateStr, isCompleted);
+            const completionData = await getHabitCompletion(user.uid, habitName, dateStr);
+
+            // If completionData contains a numeric value, include habit name and value
+            if (completionData && typeof completionData === "object" && completionData.value > 0) {
+                results.set(dateStr, {
+                    habitName,
+                    value: completionData.value
+                });
+            } else {
+                results.set(dateStr, completionData);
+            }
         } catch (error) {
             console.error(`Error fetching completion for ${dateStr}:`, error);
             results.set(dateStr, false);

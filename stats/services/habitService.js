@@ -37,12 +37,33 @@ export async function fetchHabits(userId) {
 
 export async function getHabitCompletion(userId, habitName, date) {
     try {
+        console.log("Starting getHabitCompletion"); // Debug log
         const habitDocRef = doc(db, "habitData", userId, habitName, date);
-        const habitDocSnap = await getDoc(habitDocRef);
+        console.log("Fetching document:", habitDocRef.path); // Debug log
 
-        if (!habitDocSnap.exists()) return false;
+        const habitDocSnap = await getDoc(habitDocRef);
+        if (!habitDocSnap.exists()) {
+            console.log("Document does not exist.");
+            return false;
+        }
 
         const data = habitDocSnap.data();
+        console.log("Fetched data:", data); // Debug log
+
+        let value = 0;
+        if (typeof data.data === "string") {
+            value = parseInt(data.data, 10); // Parse the string as an integer
+        } else if (typeof data.data === "number") {
+            value = data.data; // Use the number directly
+        }
+
+        console.log("Parsed value as integer:", value); // Log the parsed value
+
+        // Return habit name and value if value > 0
+        if (value > 0) {
+            return { habitName, value };
+        }
+
         return (
             data?.completed === true ||
             data?.data === true ||

@@ -3,23 +3,17 @@
 
 <head>
     <link rel="stylesheet" href="accountability.css">
+    <link rel="stylesheet" href="components/navbar/navbar.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Accountability Page</title>
+    <script type="module" src="js/loadNavbar.js"></script>
     <script type="module" src="./accountability.js"></script>
     <link rel="stylesheet" href="https://use.typekit.net/eyv8xbr.css">
 </head>
 
 <body>
-    <nav class="navbar">
-        <ul>
-            <li><button class="nav-btn" data-page="home.html">Home</button></li>
-            <li><button class="nav-btn" data-page="journalPage.html">Journal</button></li>
-            <li><button class="nav-btn" data-page="stats.html">Stats</button></li>
-            <li><button class="nav-btn" data-page="profile.html">Profile</button></li>
-        </ul>
-    </nav>
-
+    <!-- Navbar will be loaded here dynamically -->
     <div id="searchPartner">
         <div class="container">
             <h2>You don't have a partner yet, try searching for one: </h2>
@@ -75,6 +69,7 @@
     </div>
 
 
-    <script type="module" src="./nav.js"></script>
+    <script type="module" src="components/navbar/navbar.js"></script>
 
 </body>
+</html>

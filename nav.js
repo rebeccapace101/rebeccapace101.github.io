@@ -6,36 +6,26 @@ const db = getFirestore(app);
 const auth = getAuth();
 
 document.addEventListener("DOMContentLoaded", () => {
-    const buttons = document.querySelectorAll(".nav-btn");
-    const currentPage = window.location.pathname.split("/").pop();
+    // Wait for navbar to be loaded
+    setTimeout(() => {
+        const buttons = document.querySelectorAll(".nav-btn");
+        const currentPage = window.location.pathname.split("/").pop();
 
-    buttons.forEach(button => {
-        const path = button.getAttribute("data-page");
+        buttons.forEach(button => {
+            const path = button.getAttribute("data-page");
 
-        // Update stats page handling
-        if (path === "stats/stats.html") {
-            if (window.location.pathname.includes("/stats/")) {
-                button.classList.add("active");
-            }
-            button.addEventListener("click", () => {
-                window.location.href = path;
-            });
-        } else {
-            if (button.getAttribute("data-page") === "stats.html") {
-                // Check if we're in the stats page
-                if (window.location.pathname.includes("/stats/")) {
-                    button.classList.add("active");
-                }
-            } else if (button.getAttribute("data-page") === currentPage) {
+            if (path === currentPage ||
+                (path === "stats/stats.html" && window.location.pathname.includes("/stats/"))) {
                 button.classList.add("active");
             }
 
             button.addEventListener("click", () => {
-                const path = button.getAttribute("data-page");
-                window.location.href = `../${path}`;
+                const isInStats = window.location.pathname.includes("/stats/");
+                const targetPath = isInStats && !path.includes("stats") ? `../${path}` : path;
+                window.location.href = targetPath;
             });
-        }
-    });
+        });
+    }, 100); // Small delay to ensure navbar is loaded
 });
 
 // Placeholder to prevent layout shift and re-render issues

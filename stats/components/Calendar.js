@@ -18,6 +18,7 @@ export default class Calendar {
         this.container.innerHTML = '';
         this.table = document.createElement('table');
         this.table.className = 'custom-calendar-table';
+        this.table.setAttribute('data-view', view); // Add view type as a data attribute
 
         if (view !== 'day') {
             const headerRow = document.createElement('tr');
@@ -25,6 +26,7 @@ export default class Calendar {
             daysOfWeek.forEach(day => {
                 const th = document.createElement('th');
                 th.textContent = day;
+                th.style.fontSize = '0.8rem'; // Scale down header font size
                 headerRow.appendChild(th);
             });
             this.table.appendChild(headerRow);
@@ -58,12 +60,21 @@ export default class Calendar {
         const isFuture = isFutureDate(viewDate);
         const status = completionData.get(dateStr);
 
+        let habitName = ""; // Placeholder for habit name
+        let habitValue = ""; // Placeholder for habit value
+
+        // Check if status contains habit data
+        if (typeof status === "object" && status.habitName && status.value) {
+            habitName = status.habitName;
+            habitValue = status.value;
+        }
+
         cell.innerHTML = `
             <div class="day-view-cell">
                 <div class="day-date">${viewDate.toLocaleDateString('en-US', { weekday: 'long' })}</div>
                 <div class="day-number">${viewDate.getDate()}</div>
                 <div class="day-month">${viewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
-                ${!isFuture ? `<div class="day-status">${status ? '✓ Completed' : '✗ Not Completed'}</div>` :
+                ${!isFuture ? `<div class="day-status">${habitName && habitValue ? `${habitName}: ${habitValue}` : '✗ Not Completed'}</div>` :
                             '<div class="day-status future">Future Date</div>'}
             </div>
         `;
@@ -93,15 +104,28 @@ export default class Calendar {
             const isToday = formatDate(date) === formatDate(currentDate);
 
             const td = currentRow.insertCell();
-            td.textContent = date.getDate();
             td.classList.add('custom-calendar-date');
 
-            if (isToday) td.classList.add('today');
+            // Apply status classes
+            if (status === 'completed') {
+                td.classList.add('completed');
+            } else if (status === 'incomplete') {
+                td.classList.add('incomplete');
+            }
 
+            // Add date information
+            const dayViewCell = document.createElement('div');
+            dayViewCell.classList.add('day-view-cell');
+            dayViewCell.innerHTML = `
+                <div class="day-date">${date.toLocaleDateString('en-US', { weekday: 'long' })}</div>
+                <div class="day-number">${date.getDate()}</div>
+                <div class="day-month">${date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
+            `;
+            td.appendChild(dayViewCell);
+
+            if (isToday) td.classList.add('today');
             if (isFuture) {
                 td.classList.add('custom-calendar-date--disabled');
-            } else {
-                td.classList.add(status ? 'custom-calendar-date--selected' : 'custom-calendar-date--failed');
             }
 
             dayCount++;

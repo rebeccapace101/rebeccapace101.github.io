@@ -6,21 +6,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="journalPage.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="components/navbar/navbar.css">
+    <script type="module" src="js/loadNavbar.js"></script>
     <script type="module" src="./journalPage.js"></script>
     <script type="module" src="./journalSubmission.js"></script>
     <title>Daily Journal</title>
 </head>
 
 <body>
-    <nav class="navbar">
-        <ul>
-            <li><button class="nav-btn" data-page="home.html">Home</button></li>
-            <li><button class="nav-btn" data-page="journalPage.html">Journal</button></li>
-            <li><button class="nav-btn" data-page="stats/stats.html">Stats</button></li>
-            <li><button class="nav-btn" data-page="profile.html">Profile</button></li>
-        </ul>
-    </nav>
-
+    <!-- Navbar will be loaded here dynamically -->
     <div class="container">
 
         <div class="habitsMetrics">
@@ -131,7 +126,7 @@
     </div>
 
 
-    <script type="module" src="./nav.js"></script>
+    <script type="module" src="components/navbar/navbar.js"></script>
 </body>
 
 </html>
