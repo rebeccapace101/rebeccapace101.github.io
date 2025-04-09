@@ -18,6 +18,7 @@ const acceptedPopup = document.getElementById("acceptedPopup");
 const closeAcceptedPopup = document.getElementById("closeAcceptedPopup");
 const partnerpic = document.getElementById("accepted-partner-pic"); // update this line too
 
+//code to close a popup
 closeAcceptedPopup.addEventListener('click', async () => {
     const user = auth.currentUser;
 
@@ -38,7 +39,7 @@ const closeWindow = () => popUp.style.display = "none";
 
 closePopup.addEventListener('click', closeWindow);
 
-//popup if there is a request
+//popup if there is a request existing 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const messageRef = doc(db, "messages", user.uid);
@@ -46,6 +47,7 @@ onAuthStateChanged(auth, async (user) => {
         const messageData = messageSnap.data();
         const inComingRequest = messageData.inComingRequest;
         console.log(inComingRequest);
+
         if (inComingRequest != null && inComingRequest != undefined) {  //if there is an partner request available
             const userRef = doc(db, "users", inComingRequest);
             const userSnap = await getDoc(userRef);
@@ -70,7 +72,7 @@ onAuthStateChanged(auth, async (user) => {
 
 
 
-//popup if your request was accepted or declined
+//popup if your previously sent request was accepted or declined
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -161,7 +163,25 @@ onAuthStateChanged(auth, async (user) => {
         const userData = userSnap.data();
         const partner = userData.partner;
         console.log(partner);
-        if (partner != null) {
+
+        //check for any partner updates
+
+        const messagesRef = doc(db, "messages", user.uid);
+        const messageSnap = await getDoc(messagesRef);
+        const messageData = messageSnap.data();
+
+        if (messageData.partnerUpdate != null) {
+            if (messageData.partnerUpdate == "removed") {
+                updateMessage.innerHTML = "Your partner removed you as their accountability partner.";
+                acceptedPopup.style.display = "block";
+                await setDoc(partnerMessages, { partnerUpdate: null }, { merge: true }); //remove the notification message
+
+            }
+        }
+
+        if (partner != null) { //if you have a valid partner
+
+
             const partnerRef = doc(db, "users", partner);
             const partnerSnap = await getDoc(partnerRef);
             const partnerData = partnerSnap.data();
@@ -234,7 +254,7 @@ const submitID = document.getElementById("submitID");
 submitID.addEventListener('click', searchUser);
 
 
-//code to add an accountability partner
+//code to send a request to an accountability partner
 
 const addPartner = document.getElementById("addPartner");
 const errorMessage = document.getElementById("errorMessage");
@@ -252,16 +272,27 @@ const addAccountabilityPartner = async () => {
         const userData = userSnap.data();
         const userPrivacy = userData.privacy;
 
+
+        const currentMessagesRef = doc(db, "messages", user.uid);
+        const currentUserSnap = await getDoc(currentMessagesRef);
+        const currentUserMessages = currentUserSnap.data();
+
         if (userPrivacy == "public") {
-            await setDoc(mDoc, { outGoingRequest: userId }, { merge: true }); //add message to log
-            await setDoc(partnerMDoc, { inComingRequest: user.uid }, { merge: true }); //add message to prospective partner log
-            errorMessage.innerHTML = "";
-            userNameDisplay.innerHTML = "Partner request sent! Once the user accepts, you'll be notified.";
-            addPartner.style.display = "none";
-            profilePic.style.display = "none";
+
+            if (userData.partner != null) { //if they already have a partner
+                errorMessage.innerHTML = "This user already has a partner!";
+            }
+            else { //if they are public and don't have a partner, let the user send the request
+                await setDoc(mDoc, { outGoingRequest: userId }, { merge: true }); //add message to log
+                await setDoc(partnerMDoc, { inComingRequest: user.uid }, { merge: true }); //add message to prospective partner log
+                errorMessage.innerHTML = "";
+                userNameDisplay.innerHTML = "Partner request sent! Once the user accepts, you'll be notified.";
+                addPartner.style.display = "none";
+                profilePic.style.display = "none";
+            }
 
         } else {
-            errorMessage.innerHTML = "This user may not be public or already has a partner.";
+            errorMessage.innerHTML = "This user is not public.";
         }
 
     } else {
@@ -291,8 +322,6 @@ const removePartnerFunc = async () => {
     await setDoc(partnerDoc, { partner: null }, { merge: true }); //remove self from partner's db
     alert("You have successfully removed your accountability partner");
     location.reload();
-
-
 }
 
 removePartner.addEventListener('click', removePartnerFunc);
