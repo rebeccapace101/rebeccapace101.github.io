@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="components/navbar/navbar.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Admin Page</title>
+    <script type="module" src="js/loadNavbar.js"></script>
+    <script type="module" src="./admin.js"></script>
+    <link rel="stylesheet" href="https://use.typekit.net/eyv8xbr.css">
+</head>
+
+
+<h1>Admin</h1>
+
+<body>
+
+    <div class="container" id="userConcerns">
+    </div>
+
+</body>
+
+<!--popup for concern-->
+<div class="popup-overlay" id="concernPopup">
+    <span class="close" id="closeAcceptedPopup">&times;</span>
+    <div class="popup-content">
+        <h1>Filed by: <span id="filedName"></span></h1>
+        <h1>Against: <span id="filedAgainst"></span></h1>
+        <h1><span id="concernMessage"></span></h1>
+    </div>
+</div>

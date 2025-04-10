@@ -324,4 +324,42 @@ const removePartnerFunc = async () => {
     location.reload();
 }
 
+
+
+const reportPopup = document.getElementById("acceptedPopup");
+const closeReportPopup = document.getElementById("closeAcceptedPopup");
+const reportInput = document.getElementById("reportInput");
+
+closeReportPopup.addEventListener('click', closeWindow); //for closing the report popup
+
 removePartner.addEventListener('click', removePartnerFunc);
+
+const reportPartner = document.getElementById("reportPartner");
+
+const reportPartnerFunc = async () => {
+    const user = auth.currentUser;
+    const concernDoc = doc(db, "concerns", activeConcerns);
+    const concernSnap = await getDoc(concernDoc);
+    const concernData = concernSnap.data();
+    const userId = user.uid;
+    if (concernData.userId.exists && (concernData.userId != null)) { //if there is already a concern in progress
+        alert("You already have a concern sent. Please wait until our admin can resolve your previous concern.");
+    } else {
+        reportPopup.style.display = "block";
+
+    }
+
+}
+
+const submitReport = document.getElementById("submitReport");
+
+const submitReportFunc = async () => {
+    const concernMessage = reportPartner.value;
+    const userConcern = doc(db, "concerns", activeConcerns, userId);
+    await setDoc(userConcern, { concern: concernMessage }, { merge: true });
+    console.log(concernMessage);
+    alert("Concern sent. Please wait for our admin to resolve your submission. In the meantime, you can remove this person as a partner.");
+
+}
+
+submitReport.addEventListener('click', submitReportFunc);

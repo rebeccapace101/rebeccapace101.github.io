@@ -1,0 +1,152 @@
+.container {
+    margin-top: 80px;
+    background-color: rgb(177, 194, 158);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
+    padding: 30px;
+    color: white;
+
+}
+
+#displayResults {
+    display: none;
+
+}
+
+#searchPartner {
+    display: none;
+}
+
+button {
+    padding: 8px 12px;
+    margin: 2px;
+    border: none;
+    font-family: roca;
+    background-color: #8C9474;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: rgb(222, 170, 121);
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+
+}
+
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar li {
+    cursor: pointer;
+    padding: 0;
+}
+
+.nav-btn {
+    background-color: #CFCAB2;
+    /* Default button color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn:hover {
+    background-color: #B8B29E;
+    /* Slightly darker green on hover */
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.nav-btn.active {
+    background-color: #8C9474;
+    /* Highlight color for active page */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
+}
+
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('circle.jpg') no-repeat center center/cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 100px;
+    /* To ensure content doesn't overlap with navbar */
+}
+
+#profile-pic {
+    width: 100px;
+    /* Adjust size as needed */
+    height: 100px;
+    border-radius: 50%;
+    /* Makes the image a perfect circle */
+    border: 3px solid white;
+    /* White stroke around the image */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
+    /* Soft black drop shadow */
+    object-fit: cover;
+    /* Ensures the image fills the circle properly */
+    display: block;
+    /* Removes inline spacing issues */
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid white;
+    margin-bottom: 20px;
+}
+
+.popup-overlay {
+    display: none;
+    /* Initially hidden */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black background with opacity */
+}
+
+.popup {
+    background-color: #fefefe;
+    /* White content background */
+    margin: 15% auto;
+    /* Center the popup */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* Adjust as needed */
+    position: relative;
+    /* For absolute positioning of close button */
+}
+
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}

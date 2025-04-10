@@ -29,6 +29,7 @@
         </div>
         <h1><span id="partnerName"></span></h1>
         <button id="removePartner">Remove As Partner</button>
+        <button id="reportPartner">Report Partner</button>
     </div>
 
     <div class="container" id="displayResults">
@@ -68,8 +69,21 @@
         </div>
     </div>
 
+    <!--popup for sending a user report-->
+    <div class="popup-overlay" id="reportPopup">
+        <div class="popup" id="reportInnerPopup">
+            <span class="close" id="closeReportPopup">&times;</span>
+            <div class="popup-content">
+                <h1>Enter a brief description of your concern.</h1>
+                <input type="text" id="reportInput" placeholder="type here...">
+                <button id="submitReport">Submit</button>
+            </div>
+        </div>
+    </div>
+
 
     <script type="module" src="components/navbar/navbar.js"></script>
 
 </body>
+
 </html>
