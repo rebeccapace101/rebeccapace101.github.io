@@ -385,6 +385,7 @@ const reportPartnerFunc = async () => {
 
 }
 
+reportPartner.addEventListener('click', reportPartnerFunc);
 const submitReport = document.getElementById("submitReport");
 
 const submitReportFunc = async () => {
