@@ -38,6 +38,26 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
+//initialize concerns if not already
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userId = user.uid;
+
+        const concernRef = doc(db, "concerns", "activeConcerns", userId, "concern");
+        const concernSnap = await getDoc(concernRef);
+
+        if (!concernSnap.exists()) {
+            // create the document with null fields
+            await setDoc(concernRef, {
+                message: null
+            });
+            console.log("Initialized message doc for", user.uid);
+        } else {
+            console.log("Message doc already exists for", user.uid);
+        }
+    }
+});
+
 //code to close a popup
 closeAcceptedPopup.addEventListener('click', async () => {
     const user = auth.currentUser;
@@ -364,19 +384,20 @@ const reportPopup = document.getElementById("reportPopup");
 const closeReportPopup = document.getElementById("closeReportPopup");
 const reportInput = document.getElementById("reportInput");
 
-closeReportPopup.addEventListener('click', closeWindow); //for closing the report popup
-
+closeReportPopup.addEventListener('click', () => {
+    reportPopup.style.display = "none";
+});
 removePartner.addEventListener('click', removePartnerFunc);
 
 const reportPartner = document.getElementById("reportPartner");
 
 const reportPartnerFunc = async () => {
     const user = auth.currentUser;
-    const concernDoc = doc(db, "concerns", activeConcerns);
+    const userId = user.uid;
+    const concernDoc = doc(db, "concerns", "activeConcerns", userId, "concern");
     const concernSnap = await getDoc(concernDoc);
     const concernData = concernSnap.data();
-    const userId = user.uid;
-    if (concernData.userId.exists && (concernData.userId != null)) { //if there is already a concern in progress
+    if ((concernData.message != null)) { //if there is already a concern in progress
         alert("You already have a concern sent. Please wait until our admin can resolve your previous concern.");
     } else {
         reportPopup.style.display = "block";
@@ -394,11 +415,11 @@ const submitReportFunc = async () => {
     const userId = user.uid;
 
     const concernMessage = reportInput.value;
-    const userConcern = doc(db, "concerns", "activeConcerns", userId);
-    await setDoc(userConcern, { concern: concernMessage }, { merge: true });
+    const userConcern = doc(db, "concerns", "activeConcerns", userId, "concern");
+    await setDoc(userConcern, { message: concernMessage }, { merge: true });
     console.log(concernMessage);
     alert("Concern sent. Please wait for our admin to resolve your submission. In the meantime, you can remove this person as a partner.");
-
+    reportPopup.style.display = "none";
 }
 
 submitReport.addEventListener('click', submitReportFunc);

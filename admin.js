@@ -4,25 +4,6 @@ import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChang
 const auth = getAuth();
 const db = getFirestore(app);
 
-//initialize concerns if not already
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const concernRef = doc(db, "concerns", "activeConcerns");
-        const concernSnap = await getDoc(concernRef);
-        const userId = user.uid;
-
-        if (!concernSnap.exists()) {
-            // create the document with null fields
-            await setDoc(concernRef, {
-                placeholder: null
-            });
-            console.log("Initialized message doc for", user.uid);
-        } else {
-            console.log("Message doc already exists for", user.uid);
-        }
-    }
-});
-
 //adding in user concerns
 onAuthStateChanged(auth, async (user) => {
     if (user) {
