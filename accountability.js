@@ -18,6 +18,26 @@ const acceptedPopup = document.getElementById("acceptedPopup");
 const closeAcceptedPopup = document.getElementById("closeAcceptedPopup");
 const partnerpic = document.getElementById("accepted-partner-pic"); // update this line too
 
+//initialize messages if not already created
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const messageRef = doc(db, "messages", user.uid);
+        const messageSnap = await getDoc(messageRef);
+
+        if (!messageSnap.exists()) {
+            // create the document with null fields
+            await setDoc(messageRef, {
+                inComingRequest: null,
+                outGoingRequest: null,
+                partnerUpdate: null
+            });
+            console.log("Initialized message doc for", user.uid);
+        } else {
+            console.log("Message doc already exists for", user.uid);
+        }
+    }
+});
+
 //code to close a popup
 closeAcceptedPopup.addEventListener('click', async () => {
     const user = auth.currentUser;
