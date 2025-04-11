@@ -360,8 +360,8 @@ const removePartnerFunc = async () => {
 
 
 
-const reportPopup = document.getElementById("acceptedPopup");
-const closeReportPopup = document.getElementById("closeAcceptedPopup");
+const reportPopup = document.getElementById("reportPopup");
+const closeReportPopup = document.getElementById("closeReportPopup");
 const reportInput = document.getElementById("reportInput");
 
 closeReportPopup.addEventListener('click', closeWindow); //for closing the report popup
@@ -389,7 +389,7 @@ reportPartner.addEventListener('click', reportPartnerFunc);
 const submitReport = document.getElementById("submitReport");
 
 const submitReportFunc = async () => {
-    const concernMessage = reportPartner.value;
+    const concernMessage = reportInput.value;
     const userConcern = doc(db, "concerns", activeConcerns, userId);
     await setDoc(userConcern, { concern: concernMessage }, { merge: true });
     console.log(concernMessage);
