@@ -38,72 +38,82 @@ const closePopup = document.getElementById("closePopup");
 const closeWindow = () => popUp.style.display = "none";
 
 closePopup.addEventListener('click', closeWindow);
-
-//popup if there is a request existing 
+// popup if there is a request existing 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const messageRef = doc(db, "messages", user.uid);
         const messageSnap = await getDoc(messageRef);
-        const messageData = messageSnap.data();
-        const inComingRequest = messageData.inComingRequest;
-        console.log(inComingRequest);
 
-        if (inComingRequest != null && inComingRequest != undefined) {  //if there is an partner request available
-            const userRef = doc(db, "users", inComingRequest);
-            const userSnap = await getDoc(userRef);
-            const userData = userSnap.data();
-            if (userSnap.exists()) {
-                const userData = userSnap.data();
-                requestPic.src = userData.photoURL;
-                partnerMessage.innerHTML = userData.displayName + " wants to add you as an accountability partner!";
-                popUp.style.display = "block";
+        if (messageSnap.exists()) {
+            const messageData = messageSnap.data();
+            const inComingRequest = messageData.inComingRequest;
+            console.log(inComingRequest);
+
+            if (inComingRequest != null && inComingRequest != undefined) {
+                const userRef = doc(db, "users", inComingRequest);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    requestPic.src = userData.photoURL;
+                    partnerMessage.innerHTML = userData.displayName + " wants to add you as an accountability partner!";
+                    popUp.style.display = "block";
+                } else {
+                    console.error("User not found for inComingRequest:", inComingRequest);
+                }
             } else {
-                console.error("User not found for inComingRequest:", inComingRequest);
+                closeWindow();
             }
+        } else {
+            console.warn("Message doc not found for user:", user.uid);
         }
-        else {
-            closeWindow();
-        }
-
     } else {
         console.log("User is signed out");
     }
 });
 
 
-
-//popup if your previously sent request was accepted or declined
-
+// popup if your previously sent request was accepted or declined
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const messageRef = doc(db, "messages", user.uid);
         const messageSnap = await getDoc(messageRef);
-        const messageData = messageSnap.data();
-        const outGoingRequest = messageData.outGoingRequest;
 
-        console.log(outGoingRequest);
-        if (outGoingRequest != null && outGoingRequest != undefined) {  //if there is an outgoing request
-            const userRef = doc(db, "users", user.uid);
-            const userSnap = await getDoc(userRef);
-            const userData = userSnap.data();
-            const partnerId = userData.partner;
-            const partnerRef = doc(db, "users", partnerId);
-            const partnerSnap = await getDoc(partnerRef);
-            const partnerData = partnerSnap.data();
-            if (outGoingRequest == "accepted") { //if the request was accepted
-                updateMessage.innerHTML = "Congrats! Your request to " + partnerData.displayName + " was accepted, and you are now accountability partners!";
-                partnerpic.src = partnerData.photoURL;
-            }
-            else if (outGoingRequest == "declined") {
-                updateMessage.innerHTML = "Your request to " + partnerData.displayName + " was declined.";
-                partnerpic.src = partnerData.photoURL;
-            }
-            acceptedPopup.style.display = "block";
-        }
-        else {
-            closeWindow();
-        }
+        if (messageSnap.exists()) {
+            const messageData = messageSnap.data();
+            const outGoingRequest = messageData.outGoingRequest;
 
+            console.log(outGoingRequest);
+
+            if (outGoingRequest != null && outGoingRequest != undefined) {
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    const partnerId = userData.partner;
+
+                    const partnerRef = doc(db, "users", partnerId);
+                    const partnerSnap = await getDoc(partnerRef);
+
+                    if (partnerSnap.exists()) {
+                        const partnerData = partnerSnap.data();
+
+                        if (outGoingRequest == "accepted") {
+                            updateMessage.innerHTML = "Congrats! Your request to " + partnerData.displayName + " was accepted, and you are now accountability partners!";
+                            partnerpic.src = partnerData.photoURL;
+                        } else if (outGoingRequest == "declined") {
+                            updateMessage.innerHTML = "Your request to " + partnerData.displayName + " was declined.";
+                            partnerpic.src = partnerData.photoURL;
+                        }
+                        acceptedPopup.style.display = "block";
+                    }
+                }
+            } else {
+                closeWindow();
+            }
+        } else {
+            console.warn("Message doc not found for user:", user.uid);
+        }
     } else {
         console.log("User is signed out");
     }
@@ -160,49 +170,53 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
-        const userData = userSnap.data();
-        const partner = userData.partner;
-        console.log(partner);
 
-        //check for any partner updates
+        if (userSnap.exists()) {
+            const userData = userSnap.data();
+            const partner = userData.partner;
+            console.log(partner);
 
-        const messagesRef = doc(db, "messages", user.uid);
-        const messageSnap = await getDoc(messagesRef);
-        const messageData = messageSnap.data();
+            const messagesRef = doc(db, "messages", user.uid);
+            const messageSnap = await getDoc(messagesRef);
 
-        if (messageData.partnerUpdate != null) {
-            if (messageData.partnerUpdate == "removed") {
-                updateMessage.innerHTML = "Your partner removed you as their accountability partner.";
-                acceptedPopup.style.display = "block";
-                await setDoc(partnerMessages, { partnerUpdate: null }, { merge: true }); //remove the notification message
+            if (messageSnap.exists()) {
+                const messageData = messageSnap.data();
 
+                if (messageData.partnerUpdate != null) {
+                    if (messageData.partnerUpdate == "removed") {
+                        updateMessage.innerHTML = "Your partner removed you as their accountability partner.";
+                        acceptedPopup.style.display = "block";
+
+                        await setDoc(messagesRef, { partnerUpdate: null }, { merge: true });
+                    }
+                }
             }
-        }
 
-        if (partner != null) { //if you have a valid partner
+            if (partner != null) {
+                const partnerRef = doc(db, "users", partner);
+                const partnerSnap = await getDoc(partnerRef);
 
+                if (partnerSnap.exists()) {
+                    const partnerData = partnerSnap.data();
+                    const partnerName = document.getElementById("partnerName");
+                    partnerName.innerHTML = partnerData.displayName;
+                    const partnerPhotoURL = partnerData.photoURL;
+                    const partnerpic = document.getElementById("partner-pic");
 
-            const partnerRef = doc(db, "users", partner);
-            const partnerSnap = await getDoc(partnerRef);
-            const partnerData = partnerSnap.data();
-            const partnerName = document.getElementById("partnerName");
-            partnerName.innerHTML = partnerData.displayName;
-            const partnerPhotoURL = partnerData.photoURL;
-            const partnerpic = document.getElementById("partner-pic");
-            if (partnerPhotoURL) {
-                partnerpic.src = partnerPhotoURL;
-                partnerpic.style.display = "block"; // Show the image
+                    if (partnerPhotoURL) {
+                        partnerpic.src = partnerPhotoURL;
+                        partnerpic.style.display = "block";
+                    } else {
+                        console.log("No profile picture found.");
+                        partnerpic.style.display = "none";
+                    }
+                }
             } else {
-                console.log("No profile picture found.");
-                partnerpic.style.display = "none"; // Hide if no image available
+                const searchPartner = document.getElementById("searchPartner");
+                searchPartner.style.display = "block";
+                displayPartner.style.display = "none";
             }
         }
-        else { //if there is no partner yet, display the search block
-            const searchPartner = document.getElementById("searchPartner");
-            searchPartner.style.display = "block";
-            displayPartner.style.display = "none";
-        }
-
     } else {
         console.log("User is signed out");
     }

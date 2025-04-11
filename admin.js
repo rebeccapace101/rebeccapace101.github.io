@@ -8,7 +8,7 @@ const db = getFirestore(app);
 //adding in user concerns
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        const concernsRef = doc(db, "concerns", activeConcerns);
+        const concernsRef = doc(db, "concerns", "activeConcerns");
         const concernSnap = await getDoc(concernsRef);
         const concernData = concernSnap.data();
 
