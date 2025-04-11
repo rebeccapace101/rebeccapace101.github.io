@@ -111,6 +111,7 @@ body {
     margin-bottom: 20px;
 }
 
+
 .popup-overlay {
     display: none;
     /* Initially hidden */
@@ -130,16 +131,13 @@ body {
 
 .popup {
     background-color: #fefefe;
-    /* White content background */
     margin: 15% auto;
-    /* Center the popup */
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-    /* Adjust as needed */
     position: relative;
-    /* For absolute positioning of close button */
 }
+
 
 
 .close {

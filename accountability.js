@@ -13,10 +13,20 @@ const popUp = document.getElementById("popupOverlay");
 const partnerMessage = document.getElementById("partnerMessage");
 const requestPic = document.getElementById("request-pic");
 const updateMessage = document.getElementById("updateMessage");
+const todaySummary = document.getElementById("today-summary");
+
 
 const acceptedPopup = document.getElementById("acceptedPopup");
 const closeAcceptedPopup = document.getElementById("closeAcceptedPopup");
 const partnerpic = document.getElementById("accepted-partner-pic"); // update this line too
+
+
+// Function to get today's date in Chicago timezone in YYYY-MM-DD format
+const getTodayDate = () => {
+    const chicagoTime = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+    const today = new Date(chicagoTime);
+    return today.toISOString().split('T')[0];
+};
 
 //initialize messages if not already created
 onAuthStateChanged(auth, async (user) => {
@@ -241,8 +251,7 @@ onAuthStateChanged(auth, async (user) => {
 
                 if (partnerSnap.exists()) {
                     const partnerData = partnerSnap.data();
-                    const partnerName = document.getElementById("partnerName");
-                    partnerName.innerHTML = partnerData.displayName;
+                    const name = partnerData.displayName;
                     const partnerPhotoURL = partnerData.photoURL;
                     const partnerpic = document.getElementById("partner-pic");
 
@@ -253,6 +262,13 @@ onAuthStateChanged(auth, async (user) => {
                         console.log("No profile picture found.");
                         partnerpic.style.display = "none";
                     }
+
+                    document.querySelectorAll('.partnerName').forEach(el => {
+                        el.textContent = name;
+                    });
+
+                    await fetchTodayHabits(user);
+
                 }
             } else {
                 const searchPartner = document.getElementById("searchPartner");
@@ -435,3 +451,48 @@ const submitReportFunc = async () => {
 }
 
 submitReport.addEventListener('click', submitReportFunc);
+
+
+
+async function fetchTodayHabits(user) {
+    todaySummary.innerHTML = "Loading...";
+    const todayDate = getTodayDate();
+    const date = new Date();
+    const dayOfWeek = date.getDay();
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    let habitList = "<ul>";
+
+    try {
+
+        const userDocRef = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+            const habits = userDocSnap.data().habits;
+            if (habits && habits.length > 0) {
+                for (const element of habits) {
+                    const habitDocRef = doc(db, "habitData", user.uid, element, todayDate);
+                    const habitDocSnap = await getDoc(habitDocRef);
+
+                    if (habitDocSnap.exists()) {
+                        const completed = habitDocSnap.data().completed;
+                        habitList += `<li>${element}: ${completed ? "✅" : "❌"}</li>`;
+                    } else {
+                        habitList += `<li>${element}: No data found</li>`;
+                    }
+                }
+            } else {
+                habitList += "<li>No habits found for today.</li>";
+            }
+        } else {
+            habitList += "<li>No habits found for today.</li>";
+        }
+
+    } catch (error) {
+        console.error("Error fetching today's habits:", error);
+        habitList += "<li>Error loading habits.</li>";
+    }
+
+    habitList += "</ul>";
+    todaySummary.innerHTML = habitList;
+}

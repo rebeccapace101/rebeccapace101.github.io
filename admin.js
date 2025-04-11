@@ -1,5 +1,5 @@
 import { app } from './init.mjs';
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 const auth = getAuth();
 const db = getFirestore(app);
@@ -74,10 +74,56 @@ function showConcernPopup({ filedBy, filedAgainst, message }) {
     document.getElementById('filedName').textContent = filedBy;
     document.getElementById('filedAgainst').textContent = filedAgainst;
     document.getElementById('concernMessage').textContent = message;
-
     document.getElementById('concernPopup').style.display = 'block';
 }
 
 document.getElementById('closeConcernPopup').addEventListener('click', () => {
     document.getElementById('concernPopup').style.display = 'none';
 });
+
+
+//code for viewing the profiles of the users
+
+const viewReporter = document.getElementById("viewReporter");
+const viewReported = document.getElementById("viewReported");
+
+//code for resolving an active concern
+
+const resolve = document.getElementById("resolve");
+
+resolve.addEventListener('click', async () => {
+    const filedBy = document.getElementById('filedName').textContent;
+    const filedAgainst = document.getElementById('filedAgainst').textContent;
+    const message = document.getElementById('concernMessage').textContent;
+
+    try {
+        // get the concern data from activeConcerns
+        const activeConcernRef = doc(db, "concerns", "activeConcerns", filedBy, "concern");
+        const concernSnap = await getDoc(activeConcernRef);
+
+        if (concernSnap.exists()) {
+            const concernData = concernSnap.data();
+
+            // move it to concerns/resolvedConcerns/{filedBy}/concern
+            const resolvedConcernRef = doc(db, "concerns", "resolvedConcerns", filedBy, "concern");
+            await setDoc(resolvedConcernRef, {
+                ...concernData,
+                resolvedAt: new Date().toISOString()
+            });
+
+            // delete it from activeConcerns
+            await deleteDoc(activeConcernRef);
+
+            alert("Concern resolved and moved to 'resolvedConcerns'.");
+            document.getElementById('concernPopup').style.display = 'none';
+        } else {
+            alert("No active concern found for this user.");
+        }
+    } catch (error) {
+        console.error("Error resolving concern:", error);
+        alert("Something went wrong while resolving the concern.");
+    }
+});
+
+
+

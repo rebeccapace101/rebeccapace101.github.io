@@ -13,9 +13,10 @@
 </head>
 
 
-<h1>Admin</h1>
+
 
 <body>
+    <h1>Admin</h1>
     <h2>Active Concerns</h2>
     <div class="container" id="userConcerns">
 
@@ -25,10 +26,13 @@
 
 <!--popup for concern-->
 <div class="popup-overlay" id="concernPopup">
-    <span class="close" id="closeConcernPopup">&times;</span>
-    <div class="popup-content">
+    <div class="popup">
+        <span class="close" id="closeConcernPopup">&times;</span>
         <h1>Filed by: <span id="filedName"></span></h1>
         <h1>Against: <span id="filedAgainst"></span></h1>
         <h1><span id="concernMessage"></span></h1>
+        <button id="viewReporter">View Reporter Profile</button>
+        <button id="viewReported">View Reported Profile</button>
+        <button id="resolve">Resolve Concern</button>
     </div>
 </div>
