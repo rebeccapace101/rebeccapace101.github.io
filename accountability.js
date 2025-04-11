@@ -49,6 +49,9 @@ onAuthStateChanged(auth, async (user) => {
         if (!concernSnap.exists()) {
             // create the document with null fields
             await setDoc(concernRef, {
+                date: null,
+                filedBy: null,
+                filedAgainst: null,
                 message: null
             });
             console.log("Initialized message doc for", user.uid);
@@ -411,12 +414,21 @@ const submitReport = document.getElementById("submitReport");
 
 const submitReportFunc = async () => {
     const user = auth.currentUser;
-
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+    const userData = userSnap.data();
+    const partnerId = userData.partner;
     const userId = user.uid;
+    const getFormattedDate = () => {
+        const today = new Date();
+        const options = { month: 'long', day: 'numeric', year: 'numeric' };
+        return today.toLocaleDateString('en-US', options);
+    };
 
     const concernMessage = reportInput.value;
     const userConcern = doc(db, "concerns", "activeConcerns", userId, "concern");
-    await setDoc(userConcern, { message: concernMessage }, { merge: true });
+
+    await setDoc(userConcern, { date: getFormattedDate(), message: concernMessage, filedBy: user.uid, filedAgainst: partnerId }, { merge: true });
     console.log(concernMessage);
     alert("Concern sent. Please wait for our admin to resolve your submission. In the meantime, you can remove this person as a partner.");
     reportPopup.style.display = "none";
