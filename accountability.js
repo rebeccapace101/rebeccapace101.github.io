@@ -389,8 +389,12 @@ reportPartner.addEventListener('click', reportPartnerFunc);
 const submitReport = document.getElementById("submitReport");
 
 const submitReportFunc = async () => {
+    const user = auth.currentUser;
+
+    const userId = user.uid;
+
     const concernMessage = reportInput.value;
-    const userConcern = doc(db, "concerns", activeConcerns, userId);
+    const userConcern = doc(db, "concerns", "activeConcerns", userId);
     await setDoc(userConcern, { concern: concernMessage }, { merge: true });
     console.log(concernMessage);
     alert("Concern sent. Please wait for our admin to resolve your submission. In the meantime, you can remove this person as a partner.");
