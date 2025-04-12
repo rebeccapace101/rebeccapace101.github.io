@@ -46,6 +46,9 @@ onAuthStateChanged(auth, async (user) => {
                 } else {
                     newPrivacy.innerHTML = "public";
                 }
+                if (userData.privacyLock == "set") {
+                    changePrivacy.style.display = "none";
+                }
             } else {
                 privacy.innerHTML = "Not Set";
             }

@@ -48,28 +48,6 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-//initialize concerns if not already
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const userId = user.uid;
-
-        const concernRef = doc(db, "concerns", "activeConcerns", userId, "concern");
-        const concernSnap = await getDoc(concernRef);
-
-        if (!concernSnap.exists()) {
-            // create the document with null fields
-            await setDoc(concernRef, {
-                date: null,
-                filedBy: null,
-                filedAgainst: null,
-                message: null
-            });
-            console.log("Initialized message doc for", user.uid);
-        } else {
-            console.log("Message doc already exists for", user.uid);
-        }
-    }
-});
 
 //code for showing a concern update popup
 
@@ -123,6 +101,46 @@ closeAcceptedPopup.addEventListener('click', async () => {
     acceptedPopup.style.display = "none";
 
 });
+
+//code for showing an admin privacy change 
+
+const closePrivacyPopup = document.getElementById("closePrivacyPopup");
+const privacyPopup = document.getElementById("privacyPopup");
+const privacyMessage = document.getElementById("privacyMessage");
+
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const messageRef = doc(db, "messages", user.uid);
+        const messageSnap = await getDoc(messageRef);
+
+        if (messageSnap.exists()) {
+            const messageData = messageSnap.data();
+            const privacyChange = messageData.privacyChange;
+            console.log(privacyChange);
+
+            if (privacyChange == "changed") {
+                privacyPopup.style.display = "block";
+                privacyMessage.innerHTML = "Due to user report, our admin have decided to no longer allow you to be a public user. If you would like to contest this decision, contact an admin."
+            }
+        } else {
+            console.warn("Message doc not found for user:", user.uid);
+        }
+    } else {
+        console.log("User is signed out");
+    }
+});
+
+closePrivacyPopup.addEventListener('click', async () => {
+    const user = auth.currentUser;
+
+    const messageRef = doc(db, "messages", user.uid);
+    const messageSnap = await getDoc(messageRef);
+    const messageData = messageSnap.data();
+    await updateDoc(messageRef, { privacyChange: null }); //remove the update
+
+    privacyPopup.style.display = "none";
+})
 
 //popup managing
 
@@ -451,17 +469,10 @@ removePartner.addEventListener('click', removePartnerFunc);
 const reportPartner = document.getElementById("reportPartner");
 
 const reportPartnerFunc = async () => {
-    const user = auth.currentUser;
-    const userId = user.uid;
-    const concernDoc = doc(db, "concerns", "activeConcerns", userId, "concern");
-    const concernSnap = await getDoc(concernDoc);
-    const concernData = concernSnap.data();
-    if ((concernData.message != null)) { //if there is already a concern in progress
-        alert("You already have a concern sent. Please wait until our admin can resolve your previous concern.");
-    } else {
-        reportPopup.style.display = "block";
 
-    }
+    reportPopup.style.display = "block";
+
+
 
 }
 
@@ -485,7 +496,7 @@ const submitReportFunc = async () => {
     const concernMessage = reportInput.value;
 
     // Create a new concern under the user's concerns subcollection
-    const concernsRef = collection(db, "users", userId, "concerns");
+    const concernsRef = collection(db, "concerns", "activeConcerns", "concerns");
 
     // Add a new document with auto-generated concernID
     const newConcernRef = await addDoc(concernsRef, {
@@ -546,3 +557,6 @@ async function fetchTodayHabits(user) {
     habitList += "</ul>";
     todaySummary.innerHTML = habitList;
 }
+
+
+

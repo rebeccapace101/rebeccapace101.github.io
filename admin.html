@@ -48,6 +48,34 @@
             <button id="resolve">Resolve Concern</button>
         </div>
     </div>
+
+    <!-- Full User Profile Popup -->
+    <div id="userProfilePopup" class="popup-overlay" style="display: none;">
+        <div class="container">
+            <div class="profile-container">
+                <img id="profile-pic-view" src="" alt="Profile Picture" width="100" height="100">
+            </div>
+            <h2><span id="userNameView"></span></h2>
+            <h2>Email: <span id="emailView"></span></h2>
+            <h2>User ID: <span id="userIdView"></span></h2>
+            <h2>User Privacy: <span id="privacyView"></span></h2>
+            <button id="changePrivacy">Edit Privacy</button>
+            <button id="closeUserProfilePopup">Close</button>
+        </div>
+    </div>
+
+    <!-- Privacy Edit Popup (for changing privacy) -->
+    <div id="privacyEditPopup" class="popup-overlay" style="display: none;">
+        <div class="container">
+            <h2>Edit Privacy</h2>
+            <p>Are you sure you want to set the privacy to "private"?</p>
+
+            <button id="confirmPrivacyChange">Confirm</button>
+            <button id="closePrivacyEditPopup">Cancel</button>
+        </div>
+    </div>
+
+
 </body>
 
 </html>
