@@ -1,5 +1,5 @@
 import { app } from './init.mjs';
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 const auth = getAuth();
 const db = getFirestore(app);
@@ -70,6 +70,46 @@ onAuthStateChanged(auth, async (user) => {
         }
     }
 });
+
+//code for showing a concern update popup
+
+const closeConcernPopup = document.getElementById("closeConcernPopup");
+const concernPopup = document.getElementById("concernPopup");
+const concernMessage = document.getElementById("concernMessage");
+
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const messageRef = doc(db, "messages", user.uid);
+        const messageSnap = await getDoc(messageRef);
+
+        if (messageSnap.exists()) {
+            const messageData = messageSnap.data();
+            const concernUpdate = messageData.concernUpdate;
+            console.log(concernUpdate);
+
+            if (concernUpdate == "resolved") {
+                concernPopup.style.display = "block";
+                concernMessage.innerHTML = "Your concern has been resolved and appropriate action has been taken."
+            }
+        } else {
+            console.warn("Message doc not found for user:", user.uid);
+        }
+    } else {
+        console.log("User is signed out");
+    }
+});
+
+closeConcernPopup.addEventListener('click', async () => {
+    const user = auth.currentUser;
+
+    const messageRef = doc(db, "messages", user.uid);
+    const messageSnap = await getDoc(messageRef);
+    const messageData = messageSnap.data();
+    await updateDoc(messageRef, { concernUpdate: null }); //remove the update
+
+    concernPopup.style.display = "none";
+})
 
 //code to close a popup
 closeAcceptedPopup.addEventListener('click', async () => {
@@ -435,6 +475,7 @@ const submitReportFunc = async () => {
     const userData = userSnap.data();
     const partnerId = userData.partner;
     const userId = user.uid;
+
     const getFormattedDate = () => {
         const today = new Date();
         const options = { month: 'long', day: 'numeric', year: 'numeric' };
@@ -442,13 +483,22 @@ const submitReportFunc = async () => {
     };
 
     const concernMessage = reportInput.value;
-    const userConcern = doc(db, "concerns", "activeConcerns", userId, "concern");
 
-    await setDoc(userConcern, { date: getFormattedDate(), message: concernMessage, filedBy: user.uid, filedAgainst: partnerId }, { merge: true });
+    // Create a new concern under the user's concerns subcollection
+    const concernsRef = collection(db, "users", userId, "concerns");
+
+    // Add a new document with auto-generated concernID
+    const newConcernRef = await addDoc(concernsRef, {
+        date: getFormattedDate(),
+        message: concernMessage,
+        filedBy: user.uid,
+        filedAgainst: partnerId
+    });
+
     console.log(concernMessage);
     alert("Concern sent. Please wait for our admin to resolve your submission. In the meantime, you can remove this person as a partner.");
     reportPopup.style.display = "none";
-}
+};
 
 submitReport.addEventListener('click', submitReportFunc);
 

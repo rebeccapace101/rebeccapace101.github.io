@@ -148,3 +148,33 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
+
+.columns {
+    display: flex;
+    gap: 4rem;
+    padding: 1rem;
+    position: relative;
+}
+
+/* vertical divider, starts below the header */
+.columns::before {
+    content: '';
+    position: absolute;
+    top: 2.5rem;
+    /* push it down to clear the title */
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background-color: #ccc;
+    transform: translateX(-50%);
+}
+
+.column {
+    flex: 1;
+    padding: 0 2rem;
+
+}
+
+.column h2 {
+    margin-top: 0;
+}

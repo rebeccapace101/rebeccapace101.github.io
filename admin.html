@@ -12,27 +12,42 @@
     <link rel="stylesheet" href="https://use.typekit.net/eyv8xbr.css">
 </head>
 
-
-
-
 <body>
     <h1>Admin</h1>
-    <h2>Active Concerns</h2>
-    <div class="container" id="userConcerns">
+    <div class="columns">
+        <div class="column">
+            <h2>Active Concerns</h2>
+            <div class="container" id="userConcerns">
+                <span id="loadingActive">loading concerns...</span>
 
+                <h2><span id="concernsMessage"></span></h2>
+            </div>
+        </div>
+
+        <div class="column">
+            <h2>Resolved Concerns</h2>
+            <div class="container" id="resolvedConcerns">
+                <span id="loadingResolved">loading resolved concerns...</span>
+
+
+                <h2><span id="resConcMessage"></span></h2>
+                <!-- resolved concerns will go here -->
+            </div>
+        </div>
     </div>
 
+    <!-- popup for concern -->
+    <div class="popup-overlay" id="concernPopup">
+        <div class="popup">
+            <span class="close" id="closeConcernPopup">&times;</span>
+            <h1>Filed by: <span id="filedName"></span></h1>
+            <h1>Against: <span id="filedAgainst"></span></h1>
+            <h1><span id="concernMessage"></span></h1>
+            <button id="viewReporter">View Reporter Profile</button>
+            <button id="viewReported">View Reported Profile</button>
+            <button id="resolve">Resolve Concern</button>
+        </div>
+    </div>
 </body>
 
-<!--popup for concern-->
-<div class="popup-overlay" id="concernPopup">
-    <div class="popup">
-        <span class="close" id="closeConcernPopup">&times;</span>
-        <h1>Filed by: <span id="filedName"></span></h1>
-        <h1>Against: <span id="filedAgainst"></span></h1>
-        <h1><span id="concernMessage"></span></h1>
-        <button id="viewReporter">View Reporter Profile</button>
-        <button id="viewReported">View Reported Profile</button>
-        <button id="resolve">Resolve Concern</button>
-    </div>
-</div>
+</html>
