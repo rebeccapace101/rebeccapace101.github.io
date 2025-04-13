@@ -26,7 +26,7 @@ export async function getCompletionStatuses(user, habitName, dates) {
     for (const date of dates) {
         const dateStr = formatDate(date);
         if (isFutureDate(date)) {
-            results.set(dateStr, 'future');
+            results.set(dateStr, { completed: false, value: 0 }); // Ensure future days are marked as 0
             continue;
         }
 

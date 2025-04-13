@@ -117,7 +117,15 @@ async function loadHabitData(user, habitName) {
         const viewDate = getOffsetDate(currentOffset, view);
 
         const dates = habitService.getDatesForView(viewDate, view);
-        const completionData = await completionService.getCompletionStatuses(user, habitName, dates);
+
+        // Use threading to fetch completion data and calculate stats concurrently
+        const [completionData, graphData] = await Promise.all([
+            completionService.getCompletionStatuses(user, habitName, dates),
+            (async () => {
+                const completionData = await completionService.getCompletionStatuses(user, habitName, dates);
+                return formatGraphData(dates, completionData);
+            })()
+        ]);
 
         console.log("Completion data received:", completionData); // Debug log
 
@@ -135,7 +143,6 @@ async function loadHabitData(user, habitName) {
         updatePeriodNavigation(view, viewDate);
         updateStats(stats);
 
-        const graphData = formatGraphData(dates, completionData);
         await trendsGraph.render(graphData.labels, graphData.data, view);
 
         elements.habitInfo.innerHTML = "";
