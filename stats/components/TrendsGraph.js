@@ -34,19 +34,37 @@ class TrendsGraph {
 
         const options = {
             series: [{
-                name: 'Completions',
-                data: data
+                name: 'Habit Value',
+                data: data // Show actual values instead of just completed status
             }],
             chart: {
                 type: 'bar',
                 height: 350,
                 background: 'transparent',
-                fontFamily: 'roca, sans-serif'
+                fontFamily: 'Inter, sans-serif',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 300,
+                    animateGradually: { enabled: false },
+                    dynamicAnimation: { enabled: true }
+                },
+                toolbar: { show: false }
             },
             xaxis: {
                 categories: labels
             },
-            // ...rest of chart options...
+            yaxis: {
+                title: {
+                    text: 'Habit Value'
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: (value) => value > 0 ? value : 'No Data'
+                }
+            },
+            colors: ['#606C38']
         };
 
         if (this.chart) {

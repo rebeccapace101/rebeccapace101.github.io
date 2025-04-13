@@ -36,6 +36,7 @@ elements.habitStats.appendChild(elements.habitPercentage);
  * @returns {string|null} - The previously selected habit, if available.
  */
 function updateHabitDropdown(habits) {
+    console.log("Updating habit dropdown with habits:", habits); // Debug log
     elements.habitDropdown.innerHTML = "<option value=''>Select a Habit</option>";
     if (!habits || habits.length === 0) {
         elements.habitDropdown.innerHTML = "<option value=''>No habits found</option>";
@@ -105,16 +106,20 @@ function setupEventListeners(user) {
 async function loadHabitData(user, habitName) {
     if (!habitName) {
         console.error('No habit selected');
+        elements.habitInfo.innerHTML = "Please select a habit.";
         return;
     }
 
+    console.log("Loading data for habit:", habitName); // Debug log
     elements.habitInfo.innerHTML = "Loading habit data...";
     try {
-        const view = document.querySelector('input[name="view"]:checked').value;
+        const view = document.querySelector('input[name="view"]:checked')?.value || 'week';
         const viewDate = getOffsetDate(currentOffset, view);
 
         const dates = habitService.getDatesForView(viewDate, view);
         const completionData = await completionService.getCompletionStatuses(user, habitName, dates);
+
+        console.log("Completion data received:", completionData); // Debug log
 
         calendar.initialize(view);
         calendar.updateData(completionData, viewDate, view);
@@ -194,7 +199,7 @@ function updatePeriodNavigation(view, currentDate) {
 /**
  * Formats data for the graph component.
  * @param {Array<Date>} dates - The list of dates.
- * @param {Map<string, boolean>} completionData - The completion data for the dates.
+ * @param {Map<string, Object>} completionData - The completion data for the dates.
  * @returns {Object} - The formatted graph data.
  */
 function formatGraphData(dates, completionData) {
@@ -204,7 +209,12 @@ function formatGraphData(dates, completionData) {
     dates.forEach(date => {
         const dateStr = formatDate(date);
         labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-        data.push(completionData.get(dateStr) === true ? 1 : 0);
+        const status = completionData.get(dateStr);
+        if (typeof status === 'object' && status.value > 0) {
+            data.push(status.value); // Use the actual value if it exists
+        } else {
+            data.push(status === true ? 1 : 0); // Default to 1 for completed, 0 otherwise
+        }
     });
 
     return { labels, data };
@@ -212,31 +222,42 @@ function formatGraphData(dates, completionData) {
 
 // Initialize the application on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("Initializing stats page..."); // Debug log
     resetView();
     auth.onAuthStateChanged(async user => {
         if (user) {
             try {
-                elements.habitDropdown.innerHTML = "<option value=''>Loading habits...</option>";
                 const habits = await habitService.fetchHabits(user.uid);
-
+                console.log("Fetched habits:", habits); // Debug log
                 if (habits && habits.length > 0) {
                     const selectedHabit = updateHabitDropdown(habits);
+                    setupEventListeners(user);
                     if (selectedHabit) {
-                        setupEventListeners(user);
                         await loadHabitData(user, selectedHabit);
                     }
                 } else {
-                    elements.habitDropdown.innerHTML = "<option value=''>No habits found</option>";
-                    elements.habitInfo.innerHTML = "Please create some habits first.";
+                    displayNoHabitsMessage();
                 }
             } catch (error) {
                 console.error("Error during initialization:", error);
-                elements.habitDropdown.innerHTML = "<option value=''>Error loading habits</option>";
-                elements.habitInfo.innerHTML = "Error loading data. Please refresh.";
+                displayErrorMessage();
             }
         } else {
-            elements.habitDropdown.innerHTML = "<option value=''>Please log in</option>";
-            elements.habitInfo.innerHTML = "Please log in to view habits.";
+            displayLoginMessage();
         }
     });
 });
+
+function displayNoHabitsMessage() {
+    elements.habitDropdown.innerHTML = "<option value=''>No habits found</option>";
+    elements.habitInfo.innerHTML = "Please create some habits first.";
+}
+
+function displayErrorMessage() {
+    elements.habitDropdown.innerHTML = "<option value=''>Error loading habits</option>";
+    elements.habitInfo.innerHTML = "Error loading data. Please refresh.";
+}
+
+function displayLoginMessage() {
+    elements.habitDropdown.innerHTML = "<option value=''>Please log in</option>";
+}

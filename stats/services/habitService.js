@@ -56,13 +56,10 @@ export async function getHabitCompletion(userId, habitName, date) {
         } else if (typeof data.data === "number") {
             value = data.data; // Use the number directly
         }
-
-        console.log("Parsed value as integer:", value); // Log the parsed value
-
-        // Return habit name and value if value > 0
         if (value > 0) {
-            return { habitName, value };
+            return { completed: true, habitName, value }; // Return habitName and value for display
         }
+        console.log("Parsed value as integer:", value); // Log the parsed value
 
         return (
             data?.completed === true ||

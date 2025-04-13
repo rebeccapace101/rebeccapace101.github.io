@@ -34,10 +34,11 @@ export async function getCompletionStatuses(user, habitName, dates) {
             const completionData = await getHabitCompletion(user.uid, habitName, dateStr);
 
             // If completionData contains a numeric value, include habit name and value
-            if (completionData && typeof completionData === "object" && completionData.value > 0) {
+            if (completionData && typeof completionData === "object" && (completionData.value > 0 || completionData.completed)) {
                 results.set(dateStr, {
                     habitName,
-                    value: completionData.value
+                    value: completionData.value,
+                    completed: true
                 });
             } else {
                 results.set(dateStr, completionData);

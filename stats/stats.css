@@ -29,41 +29,8 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.navbar ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 20px;
-}
-
-.nav-btn {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.nav-btn:hover {
-  background-color: var(--secondary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 8px rgba(0, 0, 0, 0.2);
-}
-
-.nav-btn.active {
-  background-color: var(--secondary-color);
-  color: white;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'roca', sans-serif;
   margin: 0;
   background-color: var(--background);
   color: var(--text-color);
@@ -73,6 +40,7 @@ body {
 
 main {
   padding: 2rem;
+  margin-top: 80px; /* Adjust to match navbar height */
 }
 
 main .container {
@@ -181,6 +149,7 @@ main .container .content-wrapper .stats-section .calendar-container {
 .calendar-container td {
     transition: all 0.3s ease;
     position: relative;
+    overflow: hidden; /* Ensure no background layers are visible */
 }
 
 .calendar-container .completed::after {
@@ -211,48 +180,138 @@ main .container .content-wrapper .stats-section .calendar-container {
 
 .calendar-container table {
     width: 100%;
-    border-spacing: 8px;
+    border-spacing: 12px; /* Increase spacing between cells */
     border-collapse: separate;
+    table-layout: fixed; /* Ensure cells are evenly spaced */
 }
 
 .calendar-container td {
-    width: 60px;
-    height: 60px;
+    width: 14.28%; /* Ensure 7 cells fit in a row for the week/month view */
+    height: 80px;
     text-align: center;
     vertical-align: middle;
     border-radius: 12px;
     font-weight: 500;
     position: relative;
     transition: all 0.3s ease;
-    background-color: #f5f5f5; /* Default grey background */
+    background: linear-gradient(145deg, #f0f0f0, #d9d9d9); /* Subtle gradient */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.5); /* Cleaner, darker shadow */
     cursor: pointer;
     border: 2px solid transparent;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    overflow: hidden; /* Ensure no background layers are visible */
 }
 
 /* Completed day styling */
 .calendar-container td.completed {
-    background-color: #A7C957 !important; /* Green background */
-    color: #2C4001 !important; /* Dark green text */
-    border: 2px solid #86A046 !important; /* Green border */
-    box-shadow: 0 4px 12px rgba(167, 201, 87, 0.2) !important; /* Subtle shadow */
-    transform: scale(1.02); /* Slight scaling effect */
+    background: linear-gradient(145deg, #A7C957, #86A046); /* Green gradient */
+    color: #2C4001;
+    border: 2px solid #86A046;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4); /* Cleaner, darker shadow */
+    transform: scale(1.02);
+    overflow: hidden; /* Hide grey background */
 }
 
 /* Incomplete day styling */
 .calendar-container td.incomplete {
-    background-color: #E63946 !important; /* Red background */
-    color: white !important; /* White text */
-    border: 2px solid #C1292F !important; /* Red border */
-    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2) !important; /* Subtle shadow */
-    transform: scale(1.02); /* Slight scaling effect */
+    background: linear-gradient(145deg, #E63946, #C1292F); /* Red gradient */
+    color: white;
+    border: 2px solid #C1292F;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4); /* Cleaner, darker shadow */
+    transform: scale(1.02);
+    overflow: hidden; /* Hide grey background */
+}
+
+/* Future day styling */
+.calendar-container td.custom-calendar-date--disabled {
+    background: linear-gradient(145deg, #f5f5f5, #e0e0e0); /* Light grey gradient */
+    color: #a0a0a0;
+    border: 2px solid #d0d0d0;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.5); /* Cleaner, darker shadow */
 }
 
 /* Hover effect for all cells */
 .calendar-container td:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.4); /* Slightly darker hover shadow */
     z-index: 1;
+}
+
+/* Completed day styling */
+.calendar-container td.completed {
+    background: linear-gradient(145deg, #A7C957, #86A046); /* Green gradient */
+    color: #2C4001;
+    border: 2px solid #86A046;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4); /* Cleaner, darker shadow */
+    transform: scale(1.02);
+    overflow: hidden; /* Hide grey background */
+}
+
+/* Incomplete day styling */
+.calendar-container td.incomplete {
+    background: linear-gradient(145deg, #E63946, #C1292F); /* Red gradient */
+    color: white;
+    border: 2px solid #C1292F;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4); /* Cleaner, darker shadow */
+    transform: scale(1.02);
+    overflow: hidden; /* Hide grey background */
+}
+
+/* Future day styling */
+.calendar-container td.custom-calendar-date--disabled {
+    background: linear-gradient(145deg, #f5f5f5, #e0e0e0); /* Light grey gradient */
+    color: #a0a0a0;
+    border: 2px solid #d0d0d0;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.5); /* Cleaner, darker shadow */
+}
+
+/* Hover effect for all cells */
+.calendar-container td:hover {
+    transform: scale(1.05);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.4); /* Slightly darker hover shadow */
+    z-index: 1;
+}
+
+/* Today styling */
+.calendar-container td.today {
+    background: linear-gradient(145deg, #f0f0f0, #d9d9d9); /* Match default gradient */
+    color: inherit;
+    border: 2px solid #d0d0d0;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 8px rgba(255, 255, 255, 0.7);
+    transform: none;
+}
+
+/* Empty cell styling */
+.empty-cell {
+    background: transparent;
+    pointer-events: none;
+    box-shadow: none;
+}
+
+/* Week and Month View Cell Styling */
+.week-view-cell, .month-view-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    font-size: 0.8rem;
+    overflow: hidden;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+/* Habit Name and Value Styling */
+.week-view-cell .habit-name, .month-view-cell .habit-name {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.week-view-cell .habit-value, .month-view-cell .habit-value {
+    font-size: 0.6rem;
+    color: #555;
 }
 
 /* Day status styling with increased specificity */
@@ -376,4 +435,39 @@ main .graph-container .content-wrapper .trends-section {
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
   padding: 1rem;
+}
+
+.custom-calendar-date {
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.week-view-cell, .month-view-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    font-size: 0.8rem;
+    overflow: hidden;
+}
+
+.week-view-cell .habit-name, .month-view-cell .habit-name {
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.week-view-cell .habit-value, .month-view-cell .habit-value {
+    font-size: 0.6rem;
+    color: #555;
+}
+
+.empty-cell {
+    background-color: transparent;
+    pointer-events: none;
 }
