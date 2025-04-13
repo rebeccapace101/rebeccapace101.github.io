@@ -1,0 +1,96 @@
+:root {
+    --nav-bg: rgba(255, 255, 255, 0.92);
+    --nav-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    --primary: #2D5A27;
+    --primary-light: #3E7A37;
+    --primary-dark: #1B4332;
+    --accent: #40916C;
+    --accent-light: #52B788;
+    --text-light: #FFFFFF;
+    --nav-radius: 28px;
+    --btn-radius: 16px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar {
+    background-color: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 14px 32px;
+    border-radius: var(--nav-radius);
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    box-shadow: var(--nav-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: var(--transition);
+}
+
+.navbar:hover {
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 12px;
+}
+
+.nav-btn {
+    background-color: transparent;
+    color: var(--primary-dark);
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: var(--btn-radius);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: var(--transition);
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--text-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 90, 39, 0.2);
+}
+
+.nav-btn.active {
+    background-color: var(--primary);
+    color: var(--text-light);
+    box-shadow: 0 4px 12px rgba(45, 90, 39, 0.15);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 12px 20px;
+        width: 90%;
+        max-width: 400px;
+    }
+
+    .navbar ul {
+        gap: 8px;
+    }
+
+    .nav-btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (hover: hover) {
+    .nav-btn:hover {
+        background-color: var(--primary-light);
+        color: var(--text-light);
+    }
+}
