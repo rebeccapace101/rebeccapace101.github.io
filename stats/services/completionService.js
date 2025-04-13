@@ -11,7 +11,7 @@ import { getHabitCompletion } from './habitService.js';
  * @param {Object} user - The authenticated user object.
  * @param {string} habitName - The name of the habit.
  * @param {Array<Date>} dates - The range of dates to check.
- * @returns {Map<string, boolean>} - A map of date strings to completion statuses.
+ * @returns {Map<string, Object>} - A map of date strings to completion statuses.
  */
 export async function getCompletionStatuses(user, habitName, dates) {
     if (!user || !habitName || !dates) {
@@ -54,7 +54,7 @@ export async function getCompletionStatuses(user, habitName, dates) {
 
 /**
  * Calculates completion statistics for a habit.
- * @param {Map<string, boolean>} completionData - The completion data.
+ * @param {Map<string, Object>} completionData - The completion data.
  * @param {Array<Date>} dates - The range of dates.
  * @returns {Object} - The calculated statistics.
  */
@@ -66,7 +66,8 @@ export function calculateCompletionStats(completionData, dates) {
         if (!isFutureDate(date)) {
             totalDays++;
             const dateStr = formatDate(date);
-            if (completionData.get(dateStr)) {
+            const status = completionData.get(dateStr);
+            if (status && typeof status === "object" && status.completed) {
                 completedDays++;
             }
         }

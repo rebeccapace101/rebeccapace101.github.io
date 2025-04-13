@@ -50,24 +50,15 @@ export async function getHabitCompletion(userId, habitName, date) {
         const data = habitDocSnap.data();
         console.log("Fetched data:", data); // Debug log
 
-        let value = 0;
-        if (typeof data.data === "string") {
-            value = parseInt(data.data, 10); // Parse the string as an integer
-        } else if (typeof data.data === "number") {
-            value = data.data; // Use the number directly
+        if (typeof data.data === "string" && isNaN(Number(data.data))) {
+            return { completed: true, habitName, value: data.data }; // Handle string values as completed
+        } else if (data.completed === true || data.data === true || data.value === true) {
+            return { completed: true, habitName, value: "Completed" }; // Handle boolean true
+        } else if (typeof data.data === "number" || !isNaN(Number(data.data))) {
+            return { completed: true, habitName, value: data.data }; // Handle numeric values
         }
-        if (value > 0) {
-            return { completed: true, habitName, value }; // Return habitName and value for display
-        }
-        console.log("Parsed value as integer:", value); // Log the parsed value
 
-        return (
-            data?.completed === true ||
-            data?.data === true ||
-            data?.data === 1 ||
-            data?.value === true ||
-            data?.value === 1
-        );
+        return false; // Default to not completed
     } catch (error) {
         console.error("Error fetching habit completion:", error);
         throw error;

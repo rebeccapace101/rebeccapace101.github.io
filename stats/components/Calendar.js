@@ -120,23 +120,19 @@ export default class Calendar {
 
             // Determine completion status
             let isCompleted = false;
-            let habitName = '';
-            let habitValue = '';
+            let displayText = '';
             if (typeof status === "object" && (status.completed || status.value > 0)) {
                 isCompleted = true;
-                habitName = status.habitName || '';
-                habitValue = status.value || '';
-            } else {
-                isCompleted = status === true;
+                displayText = status.value > 0 ? `${status.habitName || ''}: ${status.value}` : "Complete";
+            } else if (status === true) {
+                isCompleted = true;
+                displayText = "Complete";
+            } else if (status === false) {
+                displayText = "Not Completed";
+            } else if (typeof status === "string" && isNaN(Number(status))) {
+                isCompleted = true;
+                displayText = `${status.habitName || ''}: ${status}`;
             }
-
-            // Helper function to get ordinal suffix
-            const getOrdinalSuffix = (day) => {
-                if (day % 10 === 1 && day !== 11) return `the ${day}st`;
-                if (day % 10 === 2 && day !== 12) return `the ${day}nd`;
-                if (day % 10 === 3 && day !== 13) return `the ${day}rd`;
-                return `the ${day}th`;
-            };
 
             // Set cell content
             td.innerHTML = `
@@ -145,11 +141,10 @@ export default class Calendar {
                 }; color: ${
                     isFuture ? 'inherit' : isCompleted ? '#2C4001' : 'white'
                 }; font-size: 0.8rem; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; width: 100%;">
-                    ${isFuture ? '<div class="future-day">Future Day</div>' : isCompleted ? `
-                        <div class="habit-name" style="font-size: 0.7rem;">${habitName}</div>
-                        <div class="habit-value" style="font-size: 0.6rem;">${habitValue}</div>
+                    ${isFuture ? '<div class="future-day">Future Day</div>' : isCompleted || displayText ? `
+                        <div class="completion-status">${displayText}</div>
                     ` : `
-                        <div class="no-data" style="font-size: 0.7rem;">No Data for ${getOrdinalSuffix(date.getDate())}</div>
+                        <div class="no-data">No Data</div>
                     `}
                 </div>
             `;

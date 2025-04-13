@@ -122,7 +122,14 @@ async function loadHabitData(user, habitName) {
         console.log("Completion data received:", completionData); // Debug log
 
         calendar.initialize(view);
-        calendar.updateData(completionData, viewDate, view);
+        calendar.updateData(completionData, viewDate, view, (status) => {
+            if (status === true) {
+                return "Completed ✅"; // Display "Completed ✅" for true values in both day and week views
+            } else if (typeof status === 'object' && status.value > 0) {
+                return status.value; // Use the actual value if it exists
+            }
+            return ""; // Default to an empty string for other cases
+        });
 
         const stats = completionService.calculateCompletionStats(completionData, dates);
         updatePeriodNavigation(view, viewDate);
@@ -210,10 +217,15 @@ function formatGraphData(dates, completionData) {
         const dateStr = formatDate(date);
         labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
         const status = completionData.get(dateStr);
+
         if (typeof status === 'object' && status.value > 0) {
             data.push(status.value); // Use the actual value if it exists
+        } else if (status === true || (typeof status === 'string' && isNaN(Number(status)))) {
+            data.push(1); // Treat true or non-numeric strings as completed
+        } else if (typeof status === 'object' && typeof status.value === 'string' && status.value !== 'false') {
+            data.push(1); // Treat any string other than "false" as completed
         } else {
-            data.push(status === true ? 1 : 0); // Default to 1 for completed, 0 otherwise
+            data.push(0); // Default to 0 for other cases
         }
     });
 
