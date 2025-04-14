@@ -22,6 +22,7 @@ async function fetchTodayHabits(user) {
     const todayDate = getTodayDate();
     const date = new Date();
     const dayOfWeek = date.getDay();
+    console.log("date: " + todayDate);
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     let habitList = "<h2>Today's Habits</h2><ul>";
 
@@ -33,13 +34,26 @@ async function fetchTodayHabits(user) {
         if (userDocSnap.exists() && userDocSnap.data().habits) {
             const habits = userDocSnap.data().habits;
 
-            for (const element of habits) {
+            for (const element of habits) { //for each habit for this day of week
+                console.log(element);
                 const habitDocRef = doc(db, "habitData", user.uid, element, todayDate);
-                const habitDocSnap = await getDoc(habitDocRef);  // Make sure to await here
+                console.log(todayDate);
+                const habitDocSnap = await getDoc(habitDocRef);
 
                 if (habitDocSnap.exists()) {
-                    const completed = habitDocSnap.data().completed;
-                    habitList += `<li>${element}: ${completed ? "✅" : "❌"}</li>`;
+                    const inputDocRef = doc(db, "habitData", user.uid, element, "input");
+                    const inputDocSnap = await getDoc(inputDocRef);
+
+                    const inputType = inputDocSnap.data().inputtype;
+
+                    if (inputType == "checkbox") {
+                        const completed = habitDocSnap.data().data;
+                        habitList += `<li>${element}: ${completed ? "✅" : "❌"}</li>`;
+                    } else {
+                        const userData = habitDocSnap.data().data;
+                        habitList += `<li>${element}: ${userData}</li>`;
+                    }
+
                 } else {
                     habitList += `<li>${element}: No data found</li>`;
                 }

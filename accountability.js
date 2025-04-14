@@ -324,8 +324,7 @@ onAuthStateChanged(auth, async (user) => {
                     document.querySelectorAll('.partnerName').forEach(el => {
                         el.textContent = name;
                     });
-
-                    await fetchTodayHabits(user);
+                    await fetchTodayHabits(partner);
 
                 }
             } else {
@@ -514,41 +513,52 @@ const submitReportFunc = async () => {
 submitReport.addEventListener('click', submitReportFunc);
 
 
-
-async function fetchTodayHabits(user) {
+async function fetchTodayHabits(partnerId) {
     todaySummary.innerHTML = "Loading...";
     const todayDate = getTodayDate();
     const date = new Date();
     const dayOfWeek = date.getDay();
+    console.log("date: " + todayDate);
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    let habitList = "<ul>";
+    let habitList = "<h2>Today's Habits</h2><ul>";
 
     try {
 
-        const userDocRef = doc(db, "habits", user.uid, days[dayOfWeek], "habits");
+        const userDocRef = doc(db, "habits", partnerId, days[dayOfWeek], "habits");
         const userDocSnap = await getDoc(userDocRef);
 
-        if (userDocSnap.exists()) {
+        if (userDocSnap.exists() && userDocSnap.data().habits) {
             const habits = userDocSnap.data().habits;
-            if (habits && habits.length > 0) {
-                for (const element of habits) {
-                    const habitDocRef = doc(db, "habitData", user.uid, element, todayDate);
-                    const habitDocSnap = await getDoc(habitDocRef);
 
-                    if (habitDocSnap.exists()) {
-                        const completed = habitDocSnap.data().completed;
+            for (const element of habits) { //for each habit for this day of week
+                console.log(element);
+                const habitDocRef = doc(db, "habitData", partnerId, element, todayDate);
+                console.log(todayDate);
+                const habitDocSnap = await getDoc(habitDocRef);
+
+                if (habitDocSnap.exists()) {
+                    const inputDocRef = doc(db, "habitData", partnerId, element, "input");
+                    const inputDocSnap = await getDoc(inputDocRef);
+
+                    const inputType = inputDocSnap.data().inputtype;
+
+                    if (inputType == "checkbox") {
+                        const completed = habitDocSnap.data().data;
                         habitList += `<li>${element}: ${completed ? "✅" : "❌"}</li>`;
                     } else {
-                        habitList += `<li>${element}: No data found</li>`;
+                        const userData = habitDocSnap.data().data;
+                        habitList += `<li>${element}: ${userData}</li>`;
                     }
-                }
-            } else {
-                habitList += "<li>No habits found for today.</li>";
-            }
-        } else {
-            habitList += "<li>No habits found for today.</li>";
-        }
 
+                } else {
+                    habitList += `<li>${element}: No data found</li>`;
+                }
+            }
+
+
+        } else {
+            habitList += "<li>No habits found.</li>";
+        }
     } catch (error) {
         console.error("Error fetching today's habits:", error);
         habitList += "<li>Error loading habits.</li>";
@@ -557,6 +567,3 @@ async function fetchTodayHabits(user) {
     habitList += "</ul>";
     todaySummary.innerHTML = habitList;
 }
-
-
-
