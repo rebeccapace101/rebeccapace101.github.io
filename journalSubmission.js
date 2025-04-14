@@ -34,6 +34,25 @@ const journalSubmission = async () => {
                 });
 
                 console.log("Journal entry saved for today.");
+
+                const confirmation = document.createElement('div');
+                confirmation.textContent = "Journal Submitted!";
+                confirmation.style.position = "fixed";
+                confirmation.style.top = "20px";
+                confirmation.style.right = "20px";
+                confirmation.style.padding = "10px 20px";
+                confirmation.style.backgroundColor = "#8C9474";
+                confirmation.style.color = "white";
+                confirmation.style.borderRadius = "10px";
+                confirmation.style.boxShadow = "2px 2px 10px rgba(0,0,0,0.3)";
+                confirmation.style.zIndex = "2000";
+                document.body.appendChild(confirmation);
+
+                setTimeout(() => {
+                    confirmation.remove();
+                }, 3000);
+
+
             } catch (error) {
                 console.error("Error adding journal entry:", error);
             }
@@ -42,6 +61,7 @@ const journalSubmission = async () => {
         }
     });
 };
+
 
 // Function to load the journal entry if it exists for today
 const loadJournalEntry = async () => {
