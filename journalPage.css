@@ -58,6 +58,43 @@ h1 {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+/* scroll section */
+#habitsBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 85%;
+    width: 100%;
+    position: relative;
+  }
+  
+  .habit-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    background-color: rgb(177, 194, 158); /* Match the background of #habits */
+    padding: 10px;
+    z-index: 10;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  #habitsScrollArea {
+    overflow-y: auto;
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+  }
+
+
 .nav-btn:hover {
     background-color: #B8B29E;
     /* Slightly darker green on hover */
