@@ -52,7 +52,7 @@ onAuthStateChanged(auth, async (user) => {
                     console.warn(`No input type found for habit: ${habitName}`);
                     continue;
                 }
-                
+
                 //inputType = input type of habit to add to page
                 const inputType = inputTypeDoc.data().inputtype;
                 console.log(`Habit ${habitName} input type: ${inputType}`);
@@ -72,26 +72,26 @@ onAuthStateChanged(auth, async (user) => {
                     submittedText.style.color = "#4a704a";
                     submittedText.style.fontWeight = "bold";
                     habitContainer.appendChild(submittedText);
-                }else {
+                } else {
                     // Not yet submitted — render label + input
                     const label = document.createElement("label");
                     label.textContent = habitName;
                     label.htmlFor = habitName;
                     label.id = habitName + "id";
-                
+
                     const inputField = document.createElement("input");
                     inputField.type = inputType;
                     inputField.id = habitName;
                     if (inputType !== "checkbox") inputField.value = "";
-                
+
                     inputField.addEventListener("input", () => {
                         dirtyHabits.add(habitName);
-                      });
-                      if (inputType === "checkbox") {
+                    });
+                    if (inputType === "checkbox") {
                         inputField.addEventListener("change", () => {
-                          dirtyHabits.add(habitName);
+                            dirtyHabits.add(habitName);
                         });
-                      }
+                    }
 
                     habitContainer.appendChild(label);
                     habitContainer.appendChild(inputField);
@@ -194,17 +194,17 @@ const sendHabits = async () => {
             submittedText.style.textAlign = "center";
             submittedText.style.color = "#4a704a";
             submittedText.style.fontWeight = "bold";
-            
+
             // ✅ Assign parent container just once
             const habitContainer = inputField.parentElement;
-            
+
             // ✅ Remove child elements cleanly
             if (labelField) labelField.remove();
             if (inputField) inputField.remove();
-            
+
             // ✅ Append submitted message
             habitContainer.appendChild(submittedText);
-            
+
         }
 
 

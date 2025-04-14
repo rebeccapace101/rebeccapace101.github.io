@@ -297,6 +297,7 @@ onAuthStateChanged(auth, async (user) => {
                     if (messageData.partnerUpdate == "removed") {
                         updateMessage.innerHTML = "Your partner removed you as their accountability partner.";
                         acceptedPopup.style.display = "block";
+                        partnerpic.style.display = "none";
 
                         await setDoc(messagesRef, { partnerUpdate: null }, { merge: true });
                     }
@@ -448,8 +449,8 @@ const removePartnerFunc = async () => {
 
     const partnerMessages = doc(db, "messages", partnerId);
     await setDoc(partnerMessages, { partnerUpdate: "removed" }, { merge: true }); //notify the partner of the removal
-    await setDoc(userRef, { partner: null }), { merge: true }; //remove partner
-    await setDoc(partnerDoc, { partner: null }, { merge: true }); //remove self from partner's db
+    await updateDoc(userRef, { partner: null }); //remove partner
+    await updateDoc(partnerDoc, { partner: null }); //remove self from partner's db
     alert("You have successfully removed your accountability partner");
     location.reload();
 }
