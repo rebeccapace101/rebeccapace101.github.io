@@ -10,7 +10,9 @@ import {
 const db = getFirestore(app);
 const auth = getAuth(app);
 //sets habits as the box to add stuff inside of
-const parentElement = document.getElementById('habitsBox');
+const parentElement = document.getElementById('habitsScrollArea');
+
+const dirtyHabits = new Set();
 
 // Function to get the current date in Chicago timezone
 const getChicagoDate = () => {
@@ -50,34 +52,50 @@ onAuthStateChanged(auth, async (user) => {
                     console.warn(`No input type found for habit: ${habitName}`);
                     continue;
                 }
+                
                 //inputType = input type of habit to add to page
                 const inputType = inputTypeDoc.data().inputtype;
                 console.log(`Habit ${habitName} input type: ${inputType}`);
-                //creates inputField for the webpage display
-                const inputField = document.createElement("input");
-                //update field for webpage
-                inputField.type = inputType;
-                //update name for webpage
-                inputField.id = habitName;
-                if (inputType !== "checkbox") inputField.value = ""; // Avoid default text in inputs
 
-                //add habit on screen (label for html)
-                const label = document.createElement("label");
-                //label text = habit
-                label.textContent = habitName;
-                //Associate the label with the input (for accessibility and clicking purposes)
-                label.htmlFor = habitName;
-                //give label id for some reason? I guess as primary key?
-                label.id = habitName + "id";
+                const todayKey = date.toISOString().split('T')[0];
+                const submissionDocRef = doc(db, "habitData", user.uid, habitName, todayKey);
+                const submissionDoc = await getDoc(submissionDocRef);
 
-
-                // Create a container div
                 const habitContainer = document.createElement("div");
-                habitContainer.className = "habit-item"; // You can style this in CSS
+                habitContainer.className = "habit-item";
 
-                // Add label and input inside the div
-                habitContainer.appendChild(label);
-                habitContainer.appendChild(inputField);
+                if (submissionDoc.exists()) {
+                    //Already submitted — show 'Submitted'
+                    const submittedText = document.createElement("p");
+                    submittedText.textContent = `${habitName}: Submitted`;
+                    submittedText.style.textAlign = "center";
+                    submittedText.style.color = "#4a704a";
+                    submittedText.style.fontWeight = "bold";
+                    habitContainer.appendChild(submittedText);
+                }else {
+                    // Not yet submitted — render label + input
+                    const label = document.createElement("label");
+                    label.textContent = habitName;
+                    label.htmlFor = habitName;
+                    label.id = habitName + "id";
+                
+                    const inputField = document.createElement("input");
+                    inputField.type = inputType;
+                    inputField.id = habitName;
+                    if (inputType !== "checkbox") inputField.value = "";
+                
+                    inputField.addEventListener("input", () => {
+                        dirtyHabits.add(habitName);
+                      });
+                      if (inputType === "checkbox") {
+                        inputField.addEventListener("change", () => {
+                          dirtyHabits.add(habitName);
+                        });
+                      }
+
+                    habitContainer.appendChild(label);
+                    habitContainer.appendChild(inputField);
+                }
 
                 // Add the habit container to habitsBox
                 parentElement.appendChild(habitContainer);
@@ -128,6 +146,7 @@ const habitSubmitted = async () => {
 
 submitted.addEventListener('click', habitSubmitted);
 
+
 // Habit submission
 const submitHabits = document.getElementById("submitHabits");
 
@@ -143,6 +162,8 @@ const sendHabits = async () => {
         const habits = habitsDoc.data()?.habits || [];
 
         for (const habitName of habits) {
+            if (!dirtyHabits.has(habitName)) continue;
+
             const inputField = document.getElementById(habitName);
             const labelField = document.getElementById(habitName + "id");
 
@@ -168,14 +189,42 @@ const sendHabits = async () => {
                 data: userInput
             }, { merge: true });
 
-            inputField.style.display = "none";
-            labelField.style.display = "none";
+            const submittedText = document.createElement("p");
+            submittedText.textContent = `${habitName}: Submitted`;
+            submittedText.style.textAlign = "center";
+            submittedText.style.color = "#4a704a";
+            submittedText.style.fontWeight = "bold";
+            
+            // ✅ Assign parent container just once
+            const habitContainer = inputField.parentElement;
+            
+            // ✅ Remove child elements cleanly
+            if (labelField) labelField.remove();
+            if (inputField) inputField.remove();
+            
+            // ✅ Append submitted message
+            habitContainer.appendChild(submittedText);
+            
         }
 
-        submitHabits.style.display = "none";
-        const confirmation = document.createElement('p');
+
+        const confirmation = document.createElement('div');
         confirmation.textContent = "Habits Submitted!";
-        parentElement.appendChild(confirmation);
+        confirmation.style.position = "fixed";
+        confirmation.style.top = "20px";
+        confirmation.style.right = "20px";
+        confirmation.style.padding = "10px 20px";
+        confirmation.style.backgroundColor = "#8C9474";
+        confirmation.style.color = "white";
+        confirmation.style.borderRadius = "10px";
+        confirmation.style.boxShadow = "2px 2px 10px rgba(0,0,0,0.3)";
+        confirmation.style.zIndex = "2000";
+        document.body.appendChild(confirmation);
+
+        setTimeout(() => {
+            confirmation.remove();
+        }, 3000);
+
     });
 };
 
