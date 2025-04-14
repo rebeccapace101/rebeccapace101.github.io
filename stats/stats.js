@@ -36,6 +36,7 @@ elements.habitStats.appendChild(elements.habitPercentage);
  * @returns {string|null} - The previously selected habit, if available.
  */
 function updateHabitDropdown(habits) {
+    console.log("Updating habit dropdown with habits:", habits); // Debug log
     elements.habitDropdown.innerHTML = "<option value=''>Select a Habit</option>";
     if (!habits || habits.length === 0) {
         elements.habitDropdown.innerHTML = "<option value=''>No habits found</option>";
@@ -105,25 +106,43 @@ function setupEventListeners(user) {
 async function loadHabitData(user, habitName) {
     if (!habitName) {
         console.error('No habit selected');
+        elements.habitInfo.innerHTML = "Please select a habit.";
         return;
     }
 
+    console.log("Loading data for habit:", habitName); // Debug log
     elements.habitInfo.innerHTML = "Loading habit data...";
     try {
-        const view = document.querySelector('input[name="view"]:checked').value;
+        const view = document.querySelector('input[name="view"]:checked')?.value || 'week';
         const viewDate = getOffsetDate(currentOffset, view);
 
         const dates = habitService.getDatesForView(viewDate, view);
-        const completionData = await completionService.getCompletionStatuses(user, habitName, dates);
+
+        // Use threading to fetch completion data and calculate stats concurrently
+        const [completionData, graphData] = await Promise.all([
+            completionService.getCompletionStatuses(user, habitName, dates),
+            (async () => {
+                const completionData = await completionService.getCompletionStatuses(user, habitName, dates);
+                return formatGraphData(dates, completionData);
+            })()
+        ]);
+
+        console.log("Completion data received:", completionData); // Debug log
 
         calendar.initialize(view);
-        calendar.updateData(completionData, viewDate, view);
+        calendar.updateData(completionData, viewDate, view, (status) => {
+            if (status === true) {
+                return "Completed ✅"; // Display "Completed ✅" for true values in both day and week views
+            } else if (typeof status === 'object' && status.value > 0) {
+                return status.value; // Use the actual value if it exists
+            }
+            return ""; // Default to an empty string for other cases
+        });
 
         const stats = completionService.calculateCompletionStats(completionData, dates);
         updatePeriodNavigation(view, viewDate);
         updateStats(stats);
 
-        const graphData = formatGraphData(dates, completionData);
         await trendsGraph.render(graphData.labels, graphData.data, view);
 
         elements.habitInfo.innerHTML = "";
@@ -194,7 +213,7 @@ function updatePeriodNavigation(view, currentDate) {
 /**
  * Formats data for the graph component.
  * @param {Array<Date>} dates - The list of dates.
- * @param {Map<string, boolean>} completionData - The completion data for the dates.
+ * @param {Map<string, Object>} completionData - The completion data for the dates.
  * @returns {Object} - The formatted graph data.
  */
 function formatGraphData(dates, completionData) {
@@ -204,7 +223,17 @@ function formatGraphData(dates, completionData) {
     dates.forEach(date => {
         const dateStr = formatDate(date);
         labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-        data.push(completionData.get(dateStr) === true ? 1 : 0);
+        const status = completionData.get(dateStr);
+
+        if (typeof status === 'object' && status.value > 0) {
+            data.push(status.value); // Use the actual value if it exists
+        } else if (status === true || (typeof status === 'string' && isNaN(Number(status)))) {
+            data.push(1); // Treat true or non-numeric strings as completed
+        } else if (typeof status === 'object' && typeof status.value === 'string' && status.value !== 'false') {
+            data.push(1); // Treat any string other than "false" as completed
+        } else {
+            data.push(0); // Default to 0 for other cases
+        }
     });
 
     return { labels, data };
@@ -212,31 +241,42 @@ function formatGraphData(dates, completionData) {
 
 // Initialize the application on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("Initializing stats page..."); // Debug log
     resetView();
     auth.onAuthStateChanged(async user => {
         if (user) {
             try {
-                elements.habitDropdown.innerHTML = "<option value=''>Loading habits...</option>";
                 const habits = await habitService.fetchHabits(user.uid);
-
+                console.log("Fetched habits:", habits); // Debug log
                 if (habits && habits.length > 0) {
                     const selectedHabit = updateHabitDropdown(habits);
+                    setupEventListeners(user);
                     if (selectedHabit) {
-                        setupEventListeners(user);
                         await loadHabitData(user, selectedHabit);
                     }
                 } else {
-                    elements.habitDropdown.innerHTML = "<option value=''>No habits found</option>";
-                    elements.habitInfo.innerHTML = "Please create some habits first.";
+                    displayNoHabitsMessage();
                 }
             } catch (error) {
                 console.error("Error during initialization:", error);
-                elements.habitDropdown.innerHTML = "<option value=''>Error loading habits</option>";
-                elements.habitInfo.innerHTML = "Error loading data. Please refresh.";
+                displayErrorMessage();
             }
         } else {
-            elements.habitDropdown.innerHTML = "<option value=''>Please log in</option>";
-            elements.habitInfo.innerHTML = "Please log in to view habits.";
+            displayLoginMessage();
         }
     });
 });
+
+function displayNoHabitsMessage() {
+    elements.habitDropdown.innerHTML = "<option value=''>No habits found</option>";
+    elements.habitInfo.innerHTML = "Please create some habits first.";
+}
+
+function displayErrorMessage() {
+    elements.habitDropdown.innerHTML = "<option value=''>Error loading habits</option>";
+    elements.habitInfo.innerHTML = "Error loading data. Please refresh.";
+}
+
+function displayLoginMessage() {
+    elements.habitDropdown.innerHTML = "<option value=''>Please log in</option>";
+}

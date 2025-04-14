@@ -11,7 +11,7 @@ import { getHabitCompletion } from './habitService.js';
  * @param {Object} user - The authenticated user object.
  * @param {string} habitName - The name of the habit.
  * @param {Array<Date>} dates - The range of dates to check.
- * @returns {Map<string, boolean>} - A map of date strings to completion statuses.
+ * @returns {Map<string, Object>} - A map of date strings to completion statuses.
  */
 export async function getCompletionStatuses(user, habitName, dates) {
     if (!user || !habitName || !dates) {
@@ -26,7 +26,7 @@ export async function getCompletionStatuses(user, habitName, dates) {
     for (const date of dates) {
         const dateStr = formatDate(date);
         if (isFutureDate(date)) {
-            results.set(dateStr, 'future');
+            results.set(dateStr, { completed: false, value: 0 }); // Ensure future days are marked as 0
             continue;
         }
 
@@ -34,10 +34,11 @@ export async function getCompletionStatuses(user, habitName, dates) {
             const completionData = await getHabitCompletion(user.uid, habitName, dateStr);
 
             // If completionData contains a numeric value, include habit name and value
-            if (completionData && typeof completionData === "object" && completionData.value > 0) {
+            if (completionData && typeof completionData === "object" && (completionData.value > 0 || completionData.completed)) {
                 results.set(dateStr, {
                     habitName,
-                    value: completionData.value
+                    value: completionData.value,
+                    completed: true
                 });
             } else {
                 results.set(dateStr, completionData);
@@ -53,7 +54,7 @@ export async function getCompletionStatuses(user, habitName, dates) {
 
 /**
  * Calculates completion statistics for a habit.
- * @param {Map<string, boolean>} completionData - The completion data.
+ * @param {Map<string, Object>} completionData - The completion data.
  * @param {Array<Date>} dates - The range of dates.
  * @returns {Object} - The calculated statistics.
  */
@@ -65,7 +66,8 @@ export function calculateCompletionStats(completionData, dates) {
         if (!isFutureDate(date)) {
             totalDays++;
             const dateStr = formatDate(date);
-            if (completionData.get(dateStr)) {
+            const status = completionData.get(dateStr);
+            if (status && typeof status === "object" && status.completed) {
                 completedDays++;
             }
         }
