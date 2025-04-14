@@ -191,19 +191,21 @@ const sendHabits = async () => {
 
             const submittedText = document.createElement("p");
             submittedText.textContent = `${habitName}: Submitted`;
+            //submittedText.style.backgroundColor = "black";
             submittedText.style.textAlign = "center";
-            submittedText.style.color = "#4a704a";
+            submittedText.style.color = "#659287";
             submittedText.style.fontWeight = "bold";
 
-            // ✅ Assign parent container just once
+            // Assign parent container just once
             const habitContainer = inputField.parentElement;
 
-            // ✅ Remove child elements cleanly
+            // Remove child elements cleanly
             if (labelField) labelField.remove();
             if (inputField) inputField.remove();
 
-            // ✅ Append submitted message
+            //Append submitted message
             habitContainer.appendChild(submittedText);
+            habitContainer.style.backgroundColor = "#d0e8d0";
 
         }
 
