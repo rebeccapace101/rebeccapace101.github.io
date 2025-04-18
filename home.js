@@ -71,7 +71,6 @@ async function fetchTodayHabits(user) {
     habitList += "</ul>";
     todaySummary.innerHTML = habitList;
 }
-
 async function fetchHighestStreak(user) {
     highestStreakContainer.innerHTML = "Loading...";
     let longestStreak = 0;
@@ -83,19 +82,44 @@ async function fetchHighestStreak(user) {
 
         if (userDocSnap.exists() && userDocSnap.data().namesOfHabits) {
             const habitNames = userDocSnap.data().namesOfHabits;
+
             for (const habitName of habitNames) {
+                console.log("checking: " + habitName);
                 const habitCollectionRef = collection(db, "habitData", user.uid, habitName);
                 const habitDocs = await getDocs(habitCollectionRef);
                 let streak = 0, maxStreak = 0;
 
-                habitDocs.forEach((doc) => {
-                    if (doc.data().completed) {
-                        streak++;
-                        maxStreak = Math.max(maxStreak, streak);
-                    } else {
-                        streak = 0;
+                for (const habitDoc of habitDocs.docs) {
+                    if (habitDoc.id !== "input") {
+                        const inputDocRef = doc(db, "habitData", user.uid, habitName, "input");
+                        const inputDocSnap = await getDoc(inputDocRef);
+
+                        let inputType = "checkbox"; // default fallback
+                        if (inputDocSnap.exists()) {
+                            const inputData = inputDocSnap.data();
+                            if (inputData && inputData.inputtype) {
+                                inputType = inputData.inputtype;
+                            } else {
+                                console.warn(`No inputtype field in input doc for ${habitName}`);
+                            }
+                        } else {
+                            console.warn(`No input doc found for ${habitName}`);
+                        }
+
+                        const data = habitDoc.data().data;
+                        if (inputType === "checkbox") {
+                            if (data === true) {
+                                streak++;
+                                maxStreak = Math.max(maxStreak, streak);
+                            } else {
+                                streak = 0;
+                            }
+                        } else {
+                            streak++;
+                            maxStreak = Math.max(maxStreak, streak);
+                        }
                     }
-                });
+                }
 
                 if (maxStreak > longestStreak) {
                     longestStreak = maxStreak;
@@ -109,6 +133,7 @@ async function fetchHighestStreak(user) {
 
     highestStreakContainer.innerHTML = `<h2>Longest Streak</h2><p>${topHabit}: ${longestStreak} days 🔥</p>`;
 }
+
 
 const loadJournalEntry = async (userId) => {
     const todayDate = getTodayDate();
