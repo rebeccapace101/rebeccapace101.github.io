@@ -95,6 +95,19 @@ onAuthStateChanged(auth, async (user) => {
 
                     habitContainer.appendChild(label);
                     habitContainer.appendChild(inputField);
+                    const buttonContainer = document.createElement("div");
+                    buttonContainer.className = "habit-buttons";
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.classList.add("edit-button");
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.classList.add("delete-button");
+
+                    buttonContainer.appendChild(editButton);
+                    buttonContainer.appendChild(deleteButton);
+                    habitContainer.appendChild(buttonContainer);
                 }
 
                 // Add the habit container to habitsBox

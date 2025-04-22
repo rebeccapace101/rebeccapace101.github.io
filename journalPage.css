@@ -69,6 +69,26 @@ h1 {
     position: relative;
   }
   
+  .habit-buttons {
+    display: flex;
+    justify-content: flex-end; /* aligns buttons to the right */
+    gap: 10px;                 /* spacing between buttons */
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #ccc; /* visual separation */
+    flex-wrap: wrap;           /* wrap if container gets too small */
+}
+
+.edit-button {
+    width: 3vw;
+    font-size: 12px;
+}
+
+.delete-button {
+    width: 4vw;
+    font-size: 12px;
+}
+
   .habit-controls {
     display: flex;
     justify-content: center;
