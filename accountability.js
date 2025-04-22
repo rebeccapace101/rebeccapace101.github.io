@@ -1,5 +1,5 @@
 import { app } from './init.mjs';
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 const auth = getAuth();
 const db = getFirestore(app);
@@ -14,6 +14,8 @@ const partnerMessage = document.getElementById("partnerMessage");
 const requestPic = document.getElementById("request-pic");
 const updateMessage = document.getElementById("updateMessage");
 const todaySummary = document.getElementById("today-summary");
+const highestStreakContainer = document.getElementById("highest-streak");
+
 
 
 const acceptedPopup = document.getElementById("acceptedPopup");
@@ -326,6 +328,8 @@ onAuthStateChanged(auth, async (user) => {
                         el.textContent = name;
                     });
                     await fetchTodayHabits(partner);
+                    await fetchHighestStreak(partner);
+
 
                 }
             } else {
@@ -567,4 +571,70 @@ async function fetchTodayHabits(partnerId) {
 
     habitList += "</ul>";
     todaySummary.innerHTML = habitList;
+}
+
+
+//fetching highest streak
+
+async function fetchHighestStreak(user) {
+    highestStreakContainer.innerHTML = "Loading...";
+    let longestStreak = 0;
+    let topHabit = "";
+
+    try {
+        const userDocRef = doc(db, "habitData", user);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists() && userDocSnap.data().namesOfHabits) {
+            const habitNames = userDocSnap.data().namesOfHabits;
+
+            for (const habitName of habitNames) {
+                console.log("checking: " + habitName);
+                const habitCollectionRef = collection(db, "habitData", user, habitName);
+                const habitDocs = await getDocs(habitCollectionRef);
+                let streak = 0, maxStreak = 0;
+
+                for (const habitDoc of habitDocs.docs) {
+                    if (habitDoc.id !== "input") {
+                        const inputDocRef = doc(db, "habitData", user, habitName, "input");
+                        const inputDocSnap = await getDoc(inputDocRef);
+
+                        let inputType = "checkbox"; // default fallback
+                        if (inputDocSnap.exists()) {
+                            const inputData = inputDocSnap.data();
+                            if (inputData && inputData.inputtype) {
+                                inputType = inputData.inputtype;
+                            } else {
+                                console.warn(`No inputtype field in input doc for ${habitName}`);
+                            }
+                        } else {
+                            console.warn(`No input doc found for ${habitName}`);
+                        }
+
+                        const data = habitDoc.data().data;
+                        if (inputType === "checkbox") {
+                            if (data === true) {
+                                streak++;
+                                maxStreak = Math.max(maxStreak, streak);
+                            } else {
+                                streak = 0;
+                            }
+                        } else {
+                            streak++;
+                            maxStreak = Math.max(maxStreak, streak);
+                        }
+                    }
+                }
+
+                if (maxStreak > longestStreak) {
+                    longestStreak = maxStreak;
+                    topHabit = habitName;
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching highest streak:", error);
+    }
+
+    highestStreakContainer.innerHTML = `<p>${topHabit}: ${longestStreak} days 🔥</p>`;
 }
