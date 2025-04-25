@@ -65,6 +65,26 @@ export async function getHabitCompletion(userId, habitName, date) {
     }
 }
 
+/**
+ * Fetches the array of habits for a specific user and day of week.
+ * @param {string} userId
+ * @param {string} dayName - e.g. "Monday"
+ * @returns {Promise<Array<string>>}
+ */
+export async function getHabitsForDay(userId, dayName) {
+    try {
+        const docRef = doc(db, "habits", userId, dayName, "habits");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists() && Array.isArray(docSnap.data().habits)) {
+            return docSnap.data().habits;
+        }
+        return [];
+    } catch (e) {
+        console.error(`Error fetching habits for ${dayName}:`, e);
+        return [];
+    }
+}
+
 export function getDatesForView(viewDate, view) {
     try {
         console.log('Getting dates for:', { view, viewDate }); // Debug log

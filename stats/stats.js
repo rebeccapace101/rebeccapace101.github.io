@@ -115,10 +115,17 @@ async function loadHabitData(user, habitName) {
     try {
         const view = document.querySelector('input[name="view"]:checked')?.value || 'week';
         const viewDate = getOffsetDate(currentOffset, view);
-
         const dates = habitService.getDatesForView(viewDate, view);
 
-        // Use threading to fetch completion data and calculate stats concurrently
+        // --- NEW: Fetch tracked habits mapping for all weekdays ---
+        const daysOfWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        const trackedHabitsMapping = {};
+        for (const day of daysOfWeek) {
+            const dayDoc = await habitService.getHabitsForDay(user.uid, day);
+            trackedHabitsMapping[day] = Array.isArray(dayDoc) ? dayDoc : [];
+        }
+        // ---------------------------------------------------------
+
         const [completionData, graphData] = await Promise.all([
             completionService.getCompletionStatuses(user, habitName, dates),
             (async () => {
@@ -130,18 +137,17 @@ async function loadHabitData(user, habitName) {
         console.log("Completion data received:", completionData); // Debug log
 
         calendar.initialize(view);
-        calendar.updateData(completionData, viewDate, view, (status) => {
-            if (status === true) {
-                return "Completed ✅"; // Display "Completed ✅" for true values in both day and week views
-            } else if (typeof status === 'object' && status.value > 0) {
-                return status.value; // Use the actual value if it exists
-            }
-            return ""; // Default to an empty string for other cases
-        });
+        calendar.updateData(
+            completionData,
+            viewDate,
+            view,
+            habitName,
+            trackedHabitsMapping // Pass mapping here
+        );
 
         const stats = completionService.calculateCompletionStats(completionData, dates);
         updatePeriodNavigation(view, viewDate);
-        updateStats(stats);
+        updateStats(stats, dates, completionData, habitName, trackedHabitsMapping);
 
         await trendsGraph.render(graphData.labels, graphData.data, view);
 
@@ -176,15 +182,48 @@ function handlePeriodNavigation(direction, user) {
 /**
  * Updates the stats display with calculated statistics.
  * @param {Object} stats - The calculated statistics.
+ * @param {Array<Date>} dates - The list of dates in the current view.
+ * @param {Map<string, Object>} completionData - The completion data for the dates.
+ * @param {string} habitName - The selected habit.
+ * @param {Object} trackedHabitsMapping - Mapping of day name to array of tracked habits.
  */
-function updateStats(stats) {
+function updateStats(stats, dates, completionData, habitName, trackedHabitsMapping) {
+    // Only count days where the habit is tracked and not in the future
+    const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    let trackedTotal = 0;
+    let trackedCompleted = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    dates.forEach(date => {
+        // Skip future days
+        if (date > today) return;
+        const dayName = weekdays[date.getDay()];
+        const trackedArr = trackedHabitsMapping && trackedHabitsMapping[dayName];
+        const isTracked = Array.isArray(trackedArr) && trackedArr.includes(habitName);
+        if (isTracked) {
+            trackedTotal++;
+            const dateStr = formatDate(date);
+            const status = completionData.get(dateStr);
+            if (
+                (typeof status === "object" && (status.completed || status.value > 0)) ||
+                status === true ||
+                (typeof status === "string" && isNaN(Number(status)))
+            ) {
+                trackedCompleted++;
+            }
+        }
+    });
+
+    const percentage = trackedTotal === 0 ? 0 : Math.round((trackedCompleted / trackedTotal) * 100);
+
     elements.habitPercentage.innerHTML = `
-        <div>Completion Rate: ${stats.percentage}%</div>
-        <div class="fraction-display">${stats.completed}/${stats.total} days completed</div>
+        <div>Completion Rate: ${percentage}%</div>
+        <div class="fraction-display">${trackedCompleted}/${trackedTotal} days completed</div>
     `;
     elements.habitPercentage.style.color =
-        stats.percentage >= 70 ? '#198754' :
-        stats.percentage >= 40 ? '#cc8a00' : '#dc3545';
+        percentage >= 70 ? '#198754' :
+        percentage >= 40 ? '#cc8a00' : '#dc3545';
 }
 
 /**
