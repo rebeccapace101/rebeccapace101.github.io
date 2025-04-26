@@ -407,27 +407,32 @@ const addAccountabilityPartner = async () => {
         const userData = userSnap.data();
         const userPrivacy = userData.privacy;
 
-
-        const currentMessagesRef = doc(db, "messages", user.uid);
-        const currentUserSnap = await getDoc(currentMessagesRef);
-        const currentUserMessages = currentUserSnap.data();
-
-        if (userPrivacy == "public") {
-
-            if (userData.partner != null) { //if they already have a partner
-                errorMessage.innerHTML = "This user already has a partner!";
-            }
-            else { //if they are public and don't have a partner, let the user send the request
-                await setDoc(mDoc, { outGoingRequest: userId }, { merge: true }); //add message to log
-                await setDoc(partnerMDoc, { inComingRequest: user.uid }, { merge: true }); //add message to prospective partner log
-                errorMessage.innerHTML = "";
-                userNameDisplay.innerHTML = "Partner request sent! Once the user accepts, you'll be notified.";
-                addPartner.style.display = "none";
-                profilePic.style.display = "none";
-            }
-
+        if (userId == user.uid) {
+            alert("You can't add yourself as an accountability partner");
         } else {
-            errorMessage.innerHTML = "This user is not public.";
+
+
+            const currentMessagesRef = doc(db, "messages", user.uid);
+            const currentUserSnap = await getDoc(currentMessagesRef);
+            const currentUserMessages = currentUserSnap.data();
+
+            if (userPrivacy == "public") {
+
+                if (userData.partner != null) { //if they already have a partner
+                    errorMessage.innerHTML = "This user already has a partner!";
+                }
+                else { //if they are public and don't have a partner, let the user send the request
+                    await setDoc(mDoc, { outGoingRequest: userId }, { merge: true }); //add message to log
+                    await setDoc(partnerMDoc, { inComingRequest: user.uid }, { merge: true }); //add message to prospective partner log
+                    errorMessage.innerHTML = "";
+                    userNameDisplay.innerHTML = "Partner request sent! Once the user accepts, you'll be notified.";
+                    addPartner.style.display = "none";
+                    profilePic.style.display = "none";
+                }
+
+            } else {
+                errorMessage.innerHTML = "This user is not public.";
+            }
         }
 
     } else {
