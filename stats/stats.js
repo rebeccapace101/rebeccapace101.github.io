@@ -133,10 +133,10 @@ function setupEventListeners(user) {
 
 /**
  * Fetches the oldest completion date for a specific habit using concurrent chunked processing.
- * Ensures each date is only searched once.
+ * Ensures each date is only searched once and checks if there are 7 or more completed days.
  * @param {Object} user - The authenticated user object.
  * @param {string} habitName - The name of the habit.
- * @returns {Promise<string|null>} - The oldest completion date in 'YYYY-MM-DD' format, or null if not found.
+ * @returns {Promise<{oldestDate: string|null, completedDays: number}>} - The oldest completion date and total completed days.
  */
 async function getOldestCompletionDate(user, habitName) {
     try {
@@ -187,13 +187,20 @@ async function getOldestCompletionDate(user, habitName) {
         results.forEach((chunkResults) => completedDates.push(...chunkResults));
         if (completedDates.length > 0) {
             completedDates.sort((a, b) => a - b); // Sort by oldest date
-            return formatDate(completedDates[0]); // Return the oldest date in 'YYYY-MM-DD' format
+            const oldestDate = formatDate(completedDates[0]);
+
+            // Log if there are 7 or more completed days
+            if (completedDates.length >= 7) {
+                console.log(`Achievement unlocked: A Week's Worth! Total completed days: ${completedDates.length}`);
+            }
+
+            return { oldestDate, completedDays: completedDates.length };
         }
 
-        return null;
+        return { oldestDate: null, completedDays: 0 };
     } catch (error) {
         console.error(`Error fetching oldest completion date for habit "${habitName}":`, error);
-        return null;
+        return { oldestDate: null, completedDays: 0 };
     }
 }
 
@@ -416,18 +423,37 @@ async function loadAchievements(user, habitName) {
     achievementsContainer.innerHTML = "<p>Loading achievements...</p>";
 
     try {
-        // Fetch the oldest completion date
-        const oldestCompletionDate = await getOldestCompletionDate(user, habitName);
+        // Fetch the oldest completion date and total completed days
+        const { oldestDate, completedDays } = await getOldestCompletionDate(user, habitName);
 
         // Build the achievements list
         const achievements = [
             {
                 key: "firstCompletion",
                 title: "First Completion",
-                description: oldestCompletionDate
-                    ? `Completed on ${oldestCompletionDate}`
+                description: oldestDate
+                    ? `Completed on ${oldestDate}`
                     : "Not Achieved Yet!",
-                isCompleted: !!oldestCompletionDate,
+                isCompleted: !!oldestDate,
+                icon: "🏆", // Trophy icon for first completion
+            },
+            {
+                key: "aWeeksWorth",
+                title: "A Week's Worth",
+                description: completedDays >= 7
+                    ? `Completed ${completedDays} days!`
+                    : `Only ${completedDays} days completed so far.`,
+                isCompleted: completedDays >= 7,
+                icon: "📅", // Calendar icon for a week's worth
+            },
+            {
+                key: "aMonthsWorth",
+                title: "A Month's Worth",
+                description: completedDays >= 30
+                    ? `Completed ${completedDays} days!`
+                    : `Only ${completedDays} days completed so far.`,
+                isCompleted: completedDays >= 30,
+                icon: "📆", // Calendar icon for a month's worth
             },
         ];
 
@@ -438,6 +464,7 @@ async function loadAchievements(user, habitName) {
                 <div class="achievement ${
                     achievement.isCompleted ? "completed" : "incomplete"
                 }">
+                    <span class="icon">${achievement.icon}</span>
                     <h3>${achievement.title}</h3>
                     <p>${achievement.description}</p>
                 </div>
