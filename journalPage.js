@@ -3,7 +3,7 @@ import {
     getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import {
-    getFirestore, doc, setDoc, arrayUnion, getDoc
+    getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove    
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Initialize Firebase
@@ -43,23 +43,31 @@ onAuthStateChanged(auth, async (user) => {
         console.log("Retrieved habits:", habits);
         //Loop over each habit name.
         for (const habitName of habits) {
+             // Log the loop entry
+            console.log("🔄 Iteration for habit:", habitName);
             try {
                 //For each habit, get the input type from the habitData collection
+                //Fetch the input-type doc
                 const inputDoc = doc(db, "habitData", user.uid, habitName, "input");
                 const inputTypeDoc = await getDoc(inputDoc);
+                console.log("   input-type exists?", inputTypeDoc.exists()); //debug console log
+            
 
                 if (!inputTypeDoc.exists()) {
                     console.warn(`No input type found for habit: ${habitName}`);
-                    continue;
+                    //continue;
                 }
 
-                //inputType = input type of habit to add to page
-                const inputType = inputTypeDoc.data().inputtype;
+                // Pick up the saved type, or fall back to "checkbox" if missing
+                const inputType = inputTypeDoc.exists()
+                    ? inputTypeDoc.data().inputtype
+                     : "checkbox";
                 console.log(`Habit ${habitName} input type: ${inputType}`);
 
                 const todayKey = date.toISOString().split('T')[0];
                 const submissionDocRef = doc(db, "habitData", user.uid, habitName, todayKey);
                 const submissionDoc = await getDoc(submissionDocRef);
+                console.log("   submission exists?", submissionDoc.exists()); //debug console log
 
                 const habitContainer = document.createElement("div");
                 habitContainer.className = "habit-item";
@@ -100,6 +108,10 @@ onAuthStateChanged(auth, async (user) => {
                     const editButton = document.createElement("button");
                     editButton.textContent = "Edit";
                     editButton.classList.add("edit-button");
+                    //connect edit button to handleEdit function
+                    editButton.addEventListener("click", () => 
+                        handleEdit(user.uid, habitName, habitContainer)
+                      );
 
                     const deleteButton = document.createElement("button");
                     deleteButton.textContent = "Delete";
@@ -112,11 +124,13 @@ onAuthStateChanged(auth, async (user) => {
 
                 // Add the habit container to habitsBox
                 parentElement.appendChild(habitContainer);
+                console.log("   ✅ Appended container for", habitName); //append check
 
                 //line break
                 parentElement.appendChild(document.createElement("br"));
             } catch (error) {
                 console.error(`Error fetching input type for ${habitName}:`, error);
+                console.error("   ❌ Error in rendering", habitName, error);
             }
         }
     } else {
@@ -244,6 +258,83 @@ const sendHabits = async () => {
 };
 
 submitHabits.addEventListener('click', sendHabits);
+
+//handleEdit function
+async function handleEdit(uid, habitName, container) {
+    const todayKey = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+    ).toISOString().split('T')[0];
+    // Fetch the habit’s input-type
+  const inputSnap = await getDoc(
+    doc(db, "habitData", uid, habitName, "input")
+  );
+  //defaults checkbox if there isnt an input that can be found
+  const inputType = inputSnap.exists()
+    ? inputSnap.data().inputtype
+    : "checkbox";
+
+    //create dropdown
+    const typeSelect = document.createElement("select");
+    const types = ["checkbox", "range", "text", "number"];
+    types.forEach(type => {
+      const opt = document.createElement("option");
+      opt.value = type;
+      opt.textContent = type[0].toUpperCase() + type.slice(1);  // e.g. “Checkbox”
+      if (type === inputType) opt.selected = true;
+      typeSelect.append(opt);
+    });
+
+// Fetch any existing submission for today
+  const subRef = doc(db, "habitData", uid, habitName, todayKey);
+  const subSnap = await getDoc(subRef);
+  //if no submission is found, default to empty
+  const existing = subSnap.exists() ? subSnap.data().data : "";
+
+  // Clear out the old UI for previous habit
+  container.innerHTML = "";
+
+  // Build a label + pre-filled input
+  const nameInput = document.createElement("input"); //instead of auto input label maybe open textbox?
+  nameInput.type = "text";
+  nameInput.value = habitName; // display old name still
+  nameInput.id = habitName + "-edit-name"; // optional, if you need an ID
+
+  const input = document.createElement("input"); //instead of existing texbox? drop down menu?
+  input.type = inputType;
+  input.id = habitName;
+  if (inputType === "checkbox") {
+    input.checked = Boolean(existing);
+  } else {
+    input.value = existing;
+  }
+
+  //Add a Save button
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "Save";
+
+  saveBtn.addEventListener("click", async () => {
+    const newHabitType = typeSelect.value;
+    const newHabitName = nameInput.value.trim();
+    // update the input‐type record:
+    await setDoc(
+      doc(db, "habitData", uid, habitName, "input"),
+      { inputtype: newHabitType },
+      { merge: true }
+    );
+  
+    // rename the habit in your habits array as before…
+    await updateDoc(doc(db, "habits", uid, days[dayOfWeek], "habits"),
+    { habits: arrayRemove(habitName) });
+    await updateDoc(doc(db, "habits", uid, days[dayOfWeek], "habits"),
+    { habits: arrayUnion(newHabitName) });
+  
+    // (optional) move any existing daily docs…
+  
+    window.location.reload();
+  });
+  // Put them back into the container
+  container.append(nameInput, input, typeSelect, saveBtn);
+}
 
 // Pop-up handlers
 const newHabit = document.getElementById("newHabit");
