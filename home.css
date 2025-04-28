@@ -1,17 +1,5 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: url('circle.jpg') no-repeat center center/cover;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding-top: 100px;
-    background-color: #FFFBF0;
-}
-
 .header {
-    background-color: #8C9474;
+    background-color: #8dac6d;
     width: 80%;
     max-width: 1200px;
     border-radius: 20px;
@@ -51,8 +39,10 @@ h1 {
 }
 
 /* Unified styling for all three sections */
-.left-container, .center-container, .right-container {
-    background-color: #8C9474;
+.left-container,
+.center-container,
+.right-container {
+    background-color: #8dac6d;
     border-radius: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     padding: 20px;
@@ -64,27 +54,31 @@ h1 {
     min-height: 200px;
     text-align: center;
 }
+
 .left-container {
-    background-color: #8C9474; /* Matching theme */
+    background-color: #8dac6d;
+    /* Matching theme */
     border-radius: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     padding: 25px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Align text to the left */
+    align-items: flex-start;
+    /* Align text to the left */
     justify-content: center;
     width: 30%;
     min-height: 250px;
-    text-align: left; /* Ensure text remains left-aligned */
+    text-align: left;
+    /* Ensure text remains left-aligned */
     color: white;
     font-size: 1rem;
-    line-height: 1.6; /* Improve text readability */
+    line-height: 1.6;
+    /* Improve text readability */
     word-wrap: break-word;
 }
 
 .left-container h2 {
     font-size: 1.6rem;
-    font-weight: bold;
     margin-bottom: 15px;
     text-align: left;
 }
@@ -120,7 +114,9 @@ h1 {
         align-items: center;
     }
 
-    .left-container, .center-container, .right-container {
+    .left-container,
+    .center-container,
+    .right-container {
         width: 90%;
         align-items: center;
         text-align: center;
@@ -142,6 +138,8 @@ h2 {
     color: white;
     font-size: 1.5rem;
     margin-bottom: 10px;
+    font-weight: bold;
+
 }
 
 p {
@@ -149,28 +147,6 @@ p {
     font-size: 1rem;
 }
 
-/* Button Styling */
-button {
-    background-color: #CFCAB2;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-button:hover {
-    background-color: #CFCAB0;
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
-}
-
-button:active {
-    transform: scale(0.98);
-}
 
 /* Responsive adjustments */
 @media (max-width: 900px) {
@@ -179,7 +155,9 @@ button:active {
         align-items: center;
     }
 
-    .left-container, .center-container, .right-container {
+    .left-container,
+    .center-container,
+    .right-container {
         width: 90%;
     }
 }

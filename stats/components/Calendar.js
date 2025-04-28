@@ -36,7 +36,7 @@ export default class Calendar {
         return this.table;
     }
 
-    updateData(completionData, viewDate, view) {
+    updateData(completionData, viewDate, view, selectedHabit, trackedHabitsMapping) {
         if (!this.table) return;
 
         // Clear existing rows
@@ -50,7 +50,7 @@ export default class Calendar {
         if (view === 'day') {
             this.renderDayView(completionData, viewDate);
         } else {
-            this.renderCalendarView(completionData, viewDate, view, currentDate);
+            this.renderCalendarView(completionData, viewDate, view, currentDate, selectedHabit, trackedHabitsMapping);
         }
     }
 
@@ -94,10 +94,11 @@ export default class Calendar {
                          'custom-calendar-date--failed');
     }
 
-    renderCalendarView(completionData, viewDate, view, currentDate) {
+    renderCalendarView(completionData, viewDate, view, currentDate, selectedHabit, trackedHabitsMapping) {
         const dates = getDatesForView(viewDate, view);
         let currentRow = this.table.insertRow();
         let dayCount = 0;
+        const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
         if (view === 'month') {
             const firstDayOfMonth = dates[0].getDay();
@@ -114,40 +115,50 @@ export default class Calendar {
             const isFuture = isFutureDate(date);
             const status = completionData.get(dateStr);
             const isToday = formatDate(date) === formatDate(currentDate);
-
             const td = currentRow.insertCell();
             td.classList.add('custom-calendar-date');
 
-            // Determine completion status
-            let isCompleted = false;
-            let displayText = '';
-            if (typeof status === "object" && (status.completed || status.value > 0)) {
-                isCompleted = true;
-                displayText = status.value > 0 ? `${status.habitName || ''}: ${status.value}` : "Complete";
-            } else if (status === true) {
-                isCompleted = true;
-                displayText = "Complete";
-            } else if (status === false) {
-                displayText = "Not Completed";
-            } else if (typeof status === "string" && isNaN(Number(status))) {
-                isCompleted = true;
-                displayText = `${status.habitName || ''}: ${status}`;
+            const dayName = weekdays[date.getDay()];
+            // Check if the habit is tracked on this specific day
+            if (trackedHabitsMapping && Object.prototype.hasOwnProperty.call(trackedHabitsMapping, dayName) &&
+                !trackedHabitsMapping[dayName].includes(selectedHabit)) {
+                td.innerHTML = `
+                    <div style="background-color: #ccc; color: #333; font-size: 0.8rem;
+                        display: flex; flex-direction: column; justify-content: center;
+                        align-items: center; height: 100%; width: 100%;">
+                        Not Tracked ${dayName}
+                    </div>
+                `;
+            } else {
+                let isCompleted = false;
+                let displayText = '';
+                if (typeof status === "object" && (status.completed || status.value > 0)) {
+                    isCompleted = true;
+                    displayText = status.value > 0 ? `${status.habitName || ''}: ${status.value}` : "Complete";
+                } else if (status === true) {
+                    isCompleted = true;
+                    displayText = "Complete";
+                } else if (status === false) {
+                    displayText = "Not Completed";
+                } else if (typeof status === "string" && isNaN(Number(status))) {
+                    isCompleted = true;
+                    displayText = `${status.habitName || ''}: ${status}`;
+                }
+                td.innerHTML = `
+                    <div class="month-view-cell" style="background-color: ${
+                        isFuture ? 'transparent' : isCompleted ? '#A7C957' : '#E63946'
+                    }; color: ${
+                        isFuture ? 'inherit' : isCompleted ? '#2C4001' : 'white'
+                    }; font-size: 0.8rem; display: flex; flex-direction: column;
+                    justify-content: center; align-items: center; height: 100%; width: 100%;">
+                        ${isFuture ? '<div class="future-day">Future Day</div>' : isCompleted || displayText ? `
+                            <div class="completion-status">${displayText}</div>
+                        ` : `
+                            <div class="no-data">No Data</div>
+                        `}
+                    </div>
+                `;
             }
-
-            // Set cell content
-            td.innerHTML = `
-                <div class="month-view-cell" style="background-color: ${
-                    isFuture ? 'transparent' : isCompleted ? '#A7C957' : '#E63946'
-                }; color: ${
-                    isFuture ? 'inherit' : isCompleted ? '#2C4001' : 'white'
-                }; font-size: 0.8rem; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; width: 100%;">
-                    ${isFuture ? '<div class="future-day">Future Day</div>' : isCompleted || displayText ? `
-                        <div class="completion-status">${displayText}</div>
-                    ` : `
-                        <div class="no-data">No Data</div>
-                    `}
-                </div>
-            `;
 
             if (isToday) {
                 td.classList.add('today');

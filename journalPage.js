@@ -15,9 +15,14 @@ const parentElement = document.getElementById('habitsScrollArea');
 const dirtyHabits = new Set();
 
 // Function to get the current date in Chicago timezone
-const getChicagoDate = () => {
-    const chicagoTime = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
-    return new Date(chicagoTime);
+const getChicagoDate = (dateStr = null) => {
+    if (dateStr) {
+        const [year, month, day] = dateStr.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    } else {
+        const chicagoTime = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+        return new Date(chicagoTime);
+    }
 };
 
 // Replace `new Date()` with `getChicagoDate()` where applicable
@@ -346,3 +351,82 @@ const closeWindow = () => popUp.style.display = "none";
 
 closePopup.addEventListener('click', closeWindow);
 newHabit.addEventListener('click', callNewHabits);
+
+// code for scrolling through journal entries
+
+const leftArrow = document.getElementById("leftArrow");
+const rightArrow = document.getElementById("rightArrow");
+const journalInput = document.getElementById('myTextbox');
+const dateLabel = document.getElementById("dateLabel");
+
+
+
+const getTodayDate = () => {
+    const today = getChicagoDate();
+    return today.toISOString().split('T')[0];
+};
+
+let currentDate = getTodayDate();
+
+const updateDate = (offset) => {
+    const dateObj = getChicagoDate(currentDate);
+    dateObj.setDate(dateObj.getDate() + offset);
+    currentDate = dateObj.toISOString().split('T')[0];
+    return currentDate;
+};
+
+const goLeft = async () => {
+    journalInput.readOnly = true;
+    const newDate = updateDate(-1);
+    await loadJournalEntry(newDate);
+    updateDateLabel(newDate);
+    journalInput.readOnly = false;
+};
+
+const goRight = async () => {
+    const today = getTodayDate();
+
+    const nextDateObj = getChicagoDate(currentDate);
+    nextDateObj.setDate(nextDateObj.getDate() + 1);
+    const nextDate = nextDateObj.toISOString().split('T')[0];
+
+    if (nextDate > today) return;
+
+    const newDate = updateDate(1);
+    journalInput.readOnly = true;
+    await loadJournalEntry(newDate);
+    updateDateLabel(newDate);
+    journalInput.readOnly = false;
+};
+
+const updateDateLabel = (dateStr) => {
+    const date = getChicagoDate(dateStr);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateLabel.textContent = date.toLocaleDateString('en-US', options);
+};
+
+const loadJournalEntry = async (selectedDate) => {
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const journalRef = doc(db, "journals", user.uid, "journalEntry", selectedDate);
+            try {
+                const docSnap = await getDoc(journalRef);
+                if (docSnap.exists()) {
+                    journalInput.value = docSnap.data().text;
+                    console.log("Loaded journal entry for", selectedDate);
+                } else {
+                    journalInput.value = "No journal entry for this day.";
+                    console.log("No journal entry found for", selectedDate);
+                }
+            } catch (error) {
+                console.error("Error loading journal entry:", error);
+            }
+        }
+    });
+};
+
+leftArrow.addEventListener('click', goLeft);
+rightArrow.addEventListener('click', goRight);
+
+updateDateLabel(currentDate);
+loadJournalEntry(currentDate);
