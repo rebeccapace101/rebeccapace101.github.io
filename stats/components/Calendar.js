@@ -119,15 +119,14 @@ export default class Calendar {
             td.classList.add('custom-calendar-date');
 
             const dayName = weekdays[date.getDay()];
-            const trackedArr = trackedHabitsMapping && trackedHabitsMapping[dayName];
-            const isTracked = Array.isArray(trackedArr) && trackedArr.includes(selectedHabit);
-
-            if (!isTracked) {
+            // Check if the habit is tracked on this specific day
+            if (trackedHabitsMapping && Object.prototype.hasOwnProperty.call(trackedHabitsMapping, dayName) &&
+                !trackedHabitsMapping[dayName].includes(selectedHabit)) {
                 td.innerHTML = `
                     <div style="background-color: #ccc; color: #333; font-size: 0.8rem;
                         display: flex; flex-direction: column; justify-content: center;
                         align-items: center; height: 100%; width: 100%;">
-                        Isn't Tracked ${dayName}
+                        Not Tracked ${dayName}
                     </div>
                 `;
             } else {

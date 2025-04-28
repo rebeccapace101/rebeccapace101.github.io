@@ -195,26 +195,52 @@ function updateStats(stats, dates, completionData, habitName, trackedHabitsMappi
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    dates.forEach(date => {
-        // Skip future days
-        if (date > today) return;
+    // Special handling for day view: only one date
+    if (dates.length === 1) {
+        const date = dates[0];
         const dayName = weekdays[date.getDay()];
         const trackedArr = trackedHabitsMapping && trackedHabitsMapping[dayName];
         const isTracked = Array.isArray(trackedArr) && trackedArr.includes(habitName);
+
         if (isTracked) {
-            trackedTotal++;
+            trackedTotal = 1; // Always set to 1 for tracked habits
             const dateStr = formatDate(date);
             const status = completionData.get(dateStr);
-            if (
+
+            trackedCompleted = (status && (
                 (typeof status === "object" && (status.completed || status.value > 0)) ||
                 status === true ||
                 (typeof status === "string" && isNaN(Number(status)))
-            ) {
-                trackedCompleted++;
-            }
+            )) ? 1 : 0;
+        } else {
+            trackedTotal = 0;
+            trackedCompleted = 0;
         }
-    });
+    } else {
+        // Week/Month view handling
+        // ...existing code for week/month views...
+        dates.forEach(date => {
+            // Skip future days
+            if (date > today) return;
+            const dayName = weekdays[date.getDay()];
+            const trackedArr = trackedHabitsMapping && trackedHabitsMapping[dayName];
+            const isTracked = Array.isArray(trackedArr) && trackedArr.includes(habitName);
+            if (isTracked) {
+                trackedTotal++;
+                const dateStr = formatDate(date);
+                const status = completionData.get(dateStr);
+                if (
+                    (typeof status === "object" && (status.completed || status.value > 0)) ||
+                    status === true ||
+                    (typeof status === "string" && isNaN(Number(status)))
+                ) {
+                    trackedCompleted++;
+                }
+            }
+        });
+    }
 
+    console.log(`Stats calculation result: ${trackedCompleted}/${trackedTotal}`);
     const percentage = trackedTotal === 0 ? 0 : Math.round((trackedCompleted / trackedTotal) * 100);
 
     elements.habitPercentage.innerHTML = `
