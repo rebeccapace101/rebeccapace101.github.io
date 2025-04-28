@@ -1,0 +1,70 @@
+/* font imports */
+@import url('https://fonts.googleapis.com/css2?family=Contrail+One&family=Schibsted+Grotesk:wght@400;700&display=swap');
+
+/* root variables */
+:root {
+    /* color variables */
+    --green: #8dac6d;
+    --darkergreen: #617d44;
+    --accent: #e05b6d;
+    --greygreen: #eeefec;
+
+    /* font variables */
+    --font-heading: 'Contrail One', sans-serif;
+    --font-body: "Schibsted Grotesk", sans-serif;
+}
+
+.container {
+    margin-top: 80px;
+    background-color: rgba(140, 172, 109, 0.4);
+    /* semi-transparent background */
+    backdrop-filter: blur(10px);
+    /* Apply the blur effect */
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
+    padding: 30px;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Optional: slight border for better contrast */
+}
+
+h1 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 48px;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+body {
+    margin: 0;
+    font-weight: 400;
+    font-family: var(--font-body), sans-serif;
+    background: url('circle.jpg') no-repeat center center/cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 100px;
+    background-color: var(--greygreen);
+    position: relative;
+}
+
+
+button {
+    padding: 8px 12px;
+    margin: 2px;
+    border: none;
+    font-family: var(--font-body), sans-serif;
+    background-color: var(--darkergreen);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: var(--accent);
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+}
