@@ -10,6 +10,28 @@ import * as completionService from './services/completionService.js';
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { getOffsetDate, formatDate, getWeekNumber } from './utils/dateUtils.js';
 
+/**
+ * Determines if a habit is completed based on its status.
+ * @param {*} status - The completion status from the database.
+ * @returns {boolean} - Whether the habit is completed.
+ */
+function isHabitCompleted(status) {
+    if (!status) return false;
+
+    return (
+        // Object with completed flag or positive value
+        (typeof status === "object" && (status.completed || status.value > 0)) ||
+        // Direct boolean true
+        status === true ||
+        // String but not a number (text counts as completed)
+        (typeof status === "string" && isNaN(Number(status))) ||
+        // Object with string value that's not "false"
+        (typeof status === "object" &&
+         typeof status.value === "string" &&
+         status.value !== "false")
+    );
+}
+
 const calendar = new Calendar('habit-calendar');
 const trendsGraph = new TrendsGraph('trendsGraph');
 const auth = getAuth();
@@ -73,6 +95,17 @@ function setupEventListeners(user) {
         if (selectedHabit) {
             localStorage.setItem('selectedHabit', selectedHabit);
             await loadHabitData(user, selectedHabit);
+
+            // Log the oldest completion date for the selected habit
+            const oldestCompletionDate = await getOldestCompletionDate(user, selectedHabit);
+            if (oldestCompletionDate) {
+                console.log(`Oldest completion date for habit "${selectedHabit}": ${oldestCompletionDate}`);
+            } else {
+                console.log(`No completion data found for habit "${selectedHabit}".`);
+            }
+
+            // Load achievements for the selected habit
+            await loadAchievements(user, selectedHabit);
         } else {
             localStorage.removeItem('selectedHabit');
             resetView();
@@ -97,6 +130,82 @@ function setupEventListeners(user) {
         loadHabitData(user, elements.habitDropdown.value);
     });
 }
+
+/**
+ * Fetches the oldest completion date for a specific habit using concurrent chunked processing.
+ * Ensures each date is only searched once and checks if there are 7 or more completed days.
+ * @param {Object} user - The authenticated user object.
+ * @param {string} habitName - The name of the habit.
+ * @returns {Promise<{oldestDate: string|null, completedDays: number}>} - The oldest completion date and total completed days.
+ */
+async function getOldestCompletionDate(user, habitName) {
+    try {
+        const today = new Date();
+        const pastDate = new Date();
+        pastDate.setDate(today.getDate() - 90); // Check the last 90 days
+
+        const dates = [];
+        for (let d = new Date(pastDate); d <= today; d.setDate(d.getDate() + 1)) {
+            dates.push(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+        }
+
+        const chunkSize = 30; // Process 30 days at a time
+        const chunks = [];
+        for (let i = 0; i < dates.length; i += chunkSize) {
+            chunks.push(dates.slice(i, i + chunkSize));
+        }
+
+        const processedDates = new Set(); // Track processed dates
+        const completedDates = [];
+
+        // Process all chunks concurrently
+        const chunkPromises = chunks.map(async (chunk) => {
+            const filteredChunk = chunk.filter(
+                (date) => !processedDates.has(date.toISOString())
+            ); // Exclude already processed dates
+
+            if (filteredChunk.length === 0) return []; // Skip empty chunks
+
+            const completionData = await completionService.getCompletionStatuses(
+                user,
+                habitName,
+                filteredChunk
+            );
+
+            // Mark dates as processed
+            filteredChunk.forEach((date) => processedDates.add(date.toISOString()));
+
+            // Filter completed dates in this chunk
+            return Array.from(completionData.entries())
+                .filter(([dateStr, status]) => isHabitCompleted(status))
+                .map(([dateStr]) => new Date(dateStr));
+        });
+
+        const results = await Promise.all(chunkPromises);
+
+        // Flatten the results and find the oldest date
+        results.forEach((chunkResults) => completedDates.push(...chunkResults));
+        if (completedDates.length > 0) {
+            completedDates.sort((a, b) => a - b); // Sort by oldest date
+            const oldestDate = formatDate(completedDates[0]);
+
+            // Log if there are 7 or more completed days
+            if (completedDates.length >= 7) {
+                console.log(`Achievement unlocked: A Week's Worth! Total completed days: ${completedDates.length}`);
+            }
+
+            return { oldestDate, completedDays: completedDates.length };
+        }
+
+        return { oldestDate: null, completedDays: 0 };
+    } catch (error) {
+        console.error(`Error fetching oldest completion date for habit "${habitName}":`, error);
+        return { oldestDate: null, completedDays: 0 };
+    }
+}
+
+// Ensure isHabitCompleted is exported for use in the worker
+export { isHabitCompleted };
 
 /**
  * Loads habit data and updates the UI components.
@@ -304,6 +413,71 @@ function formatGraphData(dates, completionData) {
     return { labels, data };
 }
 
+/**
+ * Fetches and displays achievements for the user.
+ * @param {Object} user - The authenticated user object.
+ * @param {string} habitName - The name of the selected habit.
+ */
+async function loadAchievements(user, habitName) {
+    const achievementsContainer = document.getElementById("achievements");
+    achievementsContainer.innerHTML = "<p>Loading achievements...</p>";
+
+    try {
+        // Fetch the oldest completion date and total completed days
+        const { oldestDate, completedDays } = await getOldestCompletionDate(user, habitName);
+
+        // Build the achievements list
+        const achievements = [
+            {
+                key: "firstCompletion",
+                title: "First Completion",
+                description: oldestDate
+                    ? `Completed on ${oldestDate}`
+                    : "Not Achieved Yet!",
+                isCompleted: !!oldestDate,
+                icon: "🏆", // Trophy icon for first completion
+            },
+            {
+                key: "aWeeksWorth",
+                title: "A Week's Worth",
+                description: completedDays >= 7
+                    ? `Completed ${completedDays} days!`
+                    : `Only ${completedDays} days completed so far.`,
+                isCompleted: completedDays >= 7,
+                icon: "📅", // Calendar icon for a week's worth
+            },
+            {
+                key: "aMonthsWorth",
+                title: "A Month's Worth",
+                description: completedDays >= 30
+                    ? `Completed ${completedDays} days!`
+                    : `Only ${completedDays} days completed so far.`,
+                isCompleted: completedDays >= 30,
+                icon: "📆", // Calendar icon for a month's worth
+            },
+        ];
+
+        // Generate HTML for achievements
+        achievementsContainer.innerHTML = achievements
+            .map(
+                (achievement) => `
+                <div class="achievement ${
+                    achievement.isCompleted ? "completed" : "incomplete"
+                }">
+                    <span class="icon">${achievement.icon}</span>
+                    <h3>${achievement.title}</h3>
+                    <p>${achievement.description}</p>
+                </div>
+            `
+            )
+            .join("");
+    } catch (error) {
+        console.error("Error loading achievements:", error);
+        achievementsContainer.innerHTML =
+            "<p>Error loading achievements. Please try again later.</p>";
+    }
+}
+
 // Initialize the application on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Initializing stats page..."); // Debug log
@@ -318,6 +492,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     setupEventListeners(user);
                     if (selectedHabit) {
                         await loadHabitData(user, selectedHabit);
+                        // Load achievements for the initially selected habit
+                        await loadAchievements(user, selectedHabit);
+                    } else {
+                        // If no habit is selected, clear achievements
+                        document.getElementById("achievements").innerHTML = "<p>Select a habit to view achievements.</p>";
                     }
                 } else {
                     displayNoHabitsMessage();
