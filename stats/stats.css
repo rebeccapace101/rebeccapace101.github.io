@@ -471,3 +471,57 @@ main .graph-container .content-wrapper .trends-section {
     background-color: transparent;
     pointer-events: none;
 }
+
+/* Achievements Section */
+
+.achievements-container {
+    margin-top: 2rem;
+    background: var(--background);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+}
+
+.achievements-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.achievement {
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background-color: #fff;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.achievement.completed {
+    border-color: #86A046;
+    background-color: #A7C957;
+    color: #2C4001;
+}
+
+.achievement.incomplete {
+    border-color: #a0a0a0; /* Grey border */
+    background-color: #e0e0e0; /* Light grey background */
+    color: #606060; /* Muted text color */
+}
+
+.achievement h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.achievement p {
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+}
+
+/* Hover effect for achievements */
+.achievement:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
