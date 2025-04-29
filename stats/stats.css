@@ -1,110 +1,89 @@
 /* Google Font Import */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Contrail+One&family=Schibsted+Grotesk:wght@400;700&display=swap');
 
 :root {
-  --primary-color: #8C9474;
-  --secondary-color: #606C38;
-  --background: #FFFBF0;
-  --text-color: #283618;
-  --muted-text: #606C38;
-  --border-color: rgba(140, 148, 116, 0.2);
-  --shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  --radius: 12px;
-}
-
-/* Navbar Styles */
-.navbar {
-  background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  padding: 12px 30px;
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  border-radius: 25px;
-  position: fixed;
-  top: 25px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-body {
-  font-family: 'roca', sans-serif;
-  margin: 0;
-  background-color: var(--background);
-  color: var(--text-color);
+    --primary-color: #8dac6d;
+    --secondary-color: #e05b6d;
+    --darkergreen: #617d44;
+    --background: #eeefec;
+    --text-color: #eeefec;
+    --muted-text: #eeefec;
+    --border-color: 617d44;
+    --shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    --radius: 12px;
 }
 
 /* MAIN LAYOUT */
 
 main {
-  padding: 2rem;
-  margin-top: 80px; /* Adjust to match navbar height */
+    padding: 2rem;
+    margin-top: 80px;
+    /* Adjust to match navbar height */
 }
 
 main .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: var(--background);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--primary-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+
 }
 
 /* CONTENT SECTION */
 
 main .container .content-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 main .container .content-wrapper .section-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  border-bottom: 2px solid var(--border-color);
-  padding-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
 }
 
 /* SELECT WRAPPER */
 
 main .container .content-wrapper .select-wrapper {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
 main .container .content-wrapper .select-wrapper .styled-select {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  background-color: #fff;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: border-color 0.3s;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background-color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.3s;
 }
 
 main .container .content-wrapper .select-wrapper .styled-select:hover {
-  border-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 /* VIEW CONTROLS */
 
 main .container .content-wrapper .view-controls {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 main .container .content-wrapper .view-controls label {
-  font-weight: 500;
-  color: var(--muted-text);
+    font-weight: 500;
+    color: var(--muted-text);
 }
 
 main .container .content-wrapper .view-controls input[type="radio"] {
-  accent-color: var(--primary-color);
+    accent-color: var(--primary-color);
 }
 
 /* STATS SECTION */
@@ -116,12 +95,14 @@ main .container .content-wrapper .stats-section {
 }
 
 main .container .content-wrapper .stats-section .info-panel {
-    display: none; /* Hide the info panel */
+    display: none;
+    /* Hide the info panel */
 }
 
 main .container .content-wrapper .stats-section .calendar-container {
     width: 100%;
-    max-width: 800px; /* Increased max-width since we have more space */
+    max-width: 800px;
+    /* Increased max-width since we have more space */
     margin: 0 auto;
     background-color: #fff;
     padding: 2rem;
@@ -149,7 +130,8 @@ main .container .content-wrapper .stats-section .calendar-container {
 .calendar-container td {
     transition: all 0.3s ease;
     position: relative;
-    overflow: hidden; /* Ensure no background layers are visible */
+    overflow: hidden;
+    /* Ensure no background layers are visible */
 }
 
 .calendar-container .completed::after {
@@ -180,13 +162,16 @@ main .container .content-wrapper .stats-section .calendar-container {
 
 .calendar-container table {
     width: 100%;
-    border-spacing: 12px; /* Increase spacing between cells */
+    border-spacing: 12px;
+    /* Increase spacing between cells */
     border-collapse: separate;
-    table-layout: fixed; /* Ensure cells are evenly spaced */
+    table-layout: fixed;
+    /* Ensure cells are evenly spaced */
 }
 
 .calendar-container td {
-    width: 14.28%; /* Ensure 7 cells fit in a row for the week/month view */
+    width: 14.28%;
+    /* Ensure 7 cells fit in a row for the week/month view */
     height: 80px;
     text-align: center;
     vertical-align: middle;
@@ -194,87 +179,109 @@ main .container .content-wrapper .stats-section .calendar-container {
     font-weight: 500;
     position: relative;
     transition: all 0.3s ease;
-    background: linear-gradient(145deg, #f0f0f0, #d9d9d9); /* Subtle gradient */
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.5); /* Cleaner, darker shadow */
+    background: linear-gradient(145deg, #f0f0f0, #d9d9d9);
+    /* Subtle gradient */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.5);
+    /* Cleaner, darker shadow */
     cursor: pointer;
     border: 2px solid transparent;
     font-size: 1rem;
-    overflow: hidden; /* Ensure no background layers are visible */
+    overflow: hidden;
+    /* Ensure no background layers are visible */
 }
 
 /* Completed day styling */
 .calendar-container td.completed {
-    background: linear-gradient(145deg, #A7C957, #86A046); /* Green gradient */
+    background: linear-gradient(145deg, #A7C957, #86A046);
+    /* Green gradient */
     color: #2C4001;
     border: 2px solid #86A046;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4); /* Cleaner, darker shadow */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4);
+    /* Cleaner, darker shadow */
     transform: scale(1.02);
-    overflow: hidden; /* Hide grey background */
+    overflow: hidden;
+    /* Hide grey background */
 }
 
 /* Incomplete day styling */
 .calendar-container td.incomplete {
-    background: linear-gradient(145deg, #E63946, #C1292F); /* Red gradient */
+    background: linear-gradient(145deg, #E63946, #C1292F);
+    /* Red gradient */
     color: white;
     border: 2px solid #C1292F;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4); /* Cleaner, darker shadow */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4);
+    /* Cleaner, darker shadow */
     transform: scale(1.02);
-    overflow: hidden; /* Hide grey background */
+    overflow: hidden;
+    /* Hide grey background */
 }
 
 /* Future day styling */
 .calendar-container td.custom-calendar-date--disabled {
-    background: linear-gradient(145deg, #f5f5f5, #e0e0e0); /* Light grey gradient */
+    background: linear-gradient(145deg, #f5f5f5, #e0e0e0);
+    /* Light grey gradient */
     color: #a0a0a0;
     border: 2px solid #d0d0d0;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.5); /* Cleaner, darker shadow */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.5);
+    /* Cleaner, darker shadow */
 }
 
 /* Hover effect for all cells */
 .calendar-container td:hover {
     transform: scale(1.05);
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.4); /* Slightly darker hover shadow */
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.4);
+    /* Slightly darker hover shadow */
     z-index: 1;
 }
 
 /* Completed day styling */
 .calendar-container td.completed {
-    background: linear-gradient(145deg, #A7C957, #86A046); /* Green gradient */
+    background: linear-gradient(145deg, #A7C957, #86A046);
+    /* Green gradient */
     color: #2C4001;
     border: 2px solid #86A046;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4); /* Cleaner, darker shadow */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4);
+    /* Cleaner, darker shadow */
     transform: scale(1.02);
-    overflow: hidden; /* Hide grey background */
+    overflow: hidden;
+    /* Hide grey background */
 }
 
 /* Incomplete day styling */
 .calendar-container td.incomplete {
-    background: linear-gradient(145deg, #E63946, #C1292F); /* Red gradient */
+    background: linear-gradient(145deg, #E63946, #C1292F);
+    /* Red gradient */
     color: white;
     border: 2px solid #C1292F;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4); /* Cleaner, darker shadow */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.4);
+    /* Cleaner, darker shadow */
     transform: scale(1.02);
-    overflow: hidden; /* Hide grey background */
+    overflow: hidden;
+    /* Hide grey background */
 }
 
 /* Future day styling */
 .calendar-container td.custom-calendar-date--disabled {
-    background: linear-gradient(145deg, #f5f5f5, #e0e0e0); /* Light grey gradient */
+    background: linear-gradient(145deg, #f5f5f5, #e0e0e0);
+    /* Light grey gradient */
     color: #a0a0a0;
     border: 2px solid #d0d0d0;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.5); /* Cleaner, darker shadow */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2), -3px -3px 6px rgba(255, 255, 255, 0.5);
+    /* Cleaner, darker shadow */
 }
 
 /* Hover effect for all cells */
 .calendar-container td:hover {
     transform: scale(1.05);
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.4); /* Slightly darker hover shadow */
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.4);
+    /* Slightly darker hover shadow */
     z-index: 1;
 }
 
 /* Today styling */
 .calendar-container td.today {
-    background: linear-gradient(145deg, #f0f0f0, #d9d9d9); /* Match default gradient */
+    background: linear-gradient(145deg, #f0f0f0, #d9d9d9);
+    /* Match default gradient */
     color: inherit;
     border: 2px solid #d0d0d0;
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 8px rgba(255, 255, 255, 0.7);
@@ -289,7 +296,8 @@ main .container .content-wrapper .stats-section .calendar-container {
 }
 
 /* Week and Month View Cell Styling */
-.week-view-cell, .month-view-cell {
+.week-view-cell,
+.month-view-cell {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -303,13 +311,15 @@ main .container .content-wrapper .stats-section .calendar-container {
 }
 
 /* Habit Name and Value Styling */
-.week-view-cell .habit-name, .month-view-cell .habit-name {
+.week-view-cell .habit-name,
+.month-view-cell .habit-name {
     font-size: 0.7rem;
     font-weight: bold;
     color: #333;
 }
 
-.week-view-cell .habit-value, .month-view-cell .habit-value {
+.week-view-cell .habit-value,
+.month-view-cell .habit-value {
     font-size: 0.6rem;
     color: #555;
 }
@@ -383,58 +393,58 @@ td.incomplete {
 /* PERIOD NAVIGATION */
 
 main .container .content-wrapper .stats-section .period-navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
 }
 
 main .container .content-wrapper .stats-section .period-navigation .nav-button {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: background-color 0.3s;
+    background-color: var(--darkergreen);
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 main .container .content-wrapper .stats-section .period-navigation .nav-button:hover {
-  background-color: var(--secondary-color);
+    background-color: var(--secondary-color);
 }
 
 main .container .content-wrapper .stats-section .period-navigation .period-label {
-  font-weight: 600;
-  color: var(--text-color);
+    font-weight: 600;
+    color: var(--text-color);
 }
 
 /* GRAPH SECTION */
 
 main .graph-container {
-  margin-top: 2rem;
-  background: var(--background);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 2rem;
+    margin-top: 2rem;
+    background: var(--primary-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
 }
 
 main .graph-container .content-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 main .graph-container .content-wrapper .section-title {
-  font-size: 1.5rem;
-  font-weight: 600;
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 main .graph-container .content-wrapper .trends-section {
-  min-height: 300px;
-  background-color: var(--background);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 1rem;
+    min-height: 300px;
+    background-color: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1rem;
 }
 
 .custom-calendar-date {
@@ -446,7 +456,8 @@ main .graph-container .content-wrapper .trends-section {
     box-sizing: border-box;
 }
 
-.week-view-cell, .month-view-cell {
+.week-view-cell,
+.month-view-cell {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -457,12 +468,14 @@ main .graph-container .content-wrapper .trends-section {
     overflow: hidden;
 }
 
-.week-view-cell .habit-name, .month-view-cell .habit-name {
+.week-view-cell .habit-name,
+.month-view-cell .habit-name {
     font-size: 0.7rem;
     font-weight: bold;
 }
 
-.week-view-cell .habit-value, .month-view-cell .habit-value {
+.week-view-cell .habit-value,
+.month-view-cell .habit-value {
     font-size: 0.6rem;
     color: #555;
 }
@@ -566,6 +579,7 @@ main .graph-container .content-wrapper .trends-section {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -573,10 +587,25 @@ main .graph-container .content-wrapper .trends-section {
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 10px rgba(134, 160, 70, 0.5);
     }
+
     50% {
         box-shadow: 0 0 20px rgba(134, 160, 70, 0.8);
     }
+}
+
+main .graph-container,
+main .achievements-container {
+    max-width: 1200px;
+    margin: 2rem auto 0 auto;
+}
+
+.section-title,
+.period-label,
+.achievement h3 {
+    font-family: 'Contrail One', cursive;
 }

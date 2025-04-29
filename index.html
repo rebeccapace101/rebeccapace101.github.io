@@ -3,60 +3,238 @@
 
 <head>
     <script src="landing.js" defer></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Momentum - Business Solutions</title>
-    <link rel="stylesheet" href="landing.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Momentum</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Contrail+One&family=Schibsted+Grotesk:wght@400;700&display=swap');
+
+        :root {
+            --green: #8dac6d;
+            --darkergreen: #617d44;
+            --accent: #e05b6d;
+            --greygreen: #eeefec;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Schibsted Grotesk', sans-serif;
+            background-color: var(--green);
+            /* Set background color to green */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            /* Make text white */
+            overflow-x: hidden;
+        }
+
+        /* Logo with a white circle around it */
+        .logo {
+            position: absolute;
+            top: 130px;
+            /* Adjust logo position */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: auto;
+            border-radius: 50%;
+            /* Makes the logo circular */
+            background-color: white;
+            /* White circle */
+            padding: 25px;
+            /* More space around the logo inside the circle */
+
+        }
+
+        .header {
+            margin-top: 330px;
+            /* Increased margin to prevent overlap with logo */
+            text-align: center;
+
+        }
+
+        .btn {
+            background-color: var(--accent);
+            /* Pink color */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            font-family: 'Schibsted Grotesk', sans-serif;
+        }
+
+        .btn:hover {
+            background-color: var(--darkergreen);
+            /* Dark green on hover */
+            transform: scale(1.1);
+        }
+
+        .btn:active {
+            background-color: var(--accent);
+        }
+
+        /* Login Button positioned back to top-right corner */
+        .login-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            /* Pink color */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            font-family: 'Schibsted Grotesk', sans-serif;
+        }
+
+        .login-btn:hover {
+            background-color: var(--darkergreen);
+            /* Dark green on hover */
+            transform: scale(1.1);
+        }
+
+        .login-btn:active {
+            background-color: var(--accent);
+        }
+
+        .content {
+            text-align: center;
+            animation: fadeIn 1.5s ease-out;
+            padding: 100px 50px 50px;
+            /* increased space around the title */
+        }
+
+        .title {
+            font-family: 'Contrail One', cursive;
+            font-size: 60px;
+            color: white;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-transform: uppercase;
+            animation: fadeInText 1.5s ease-out;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: white;
+            font-weight: 400;
+            animation: fadeInText 2s ease-out;
+        }
+
+        .info-section {
+            background-color: white;
+            padding: 50px;
+            max-width: 800px;
+            margin-top: 60px;
+            /* Increased margin between content and info-section */
+            margin-bottom: 60px;
+            /* Increased bottom margin */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeInText 1.5s ease-out;
+        }
+
+        .info-title {
+            font-family: 'Contrail One', cursive;
+            font-size: 40px;
+            color: var(--darkergreen);
+            margin-bottom: 20px;
+        }
+
+        .info-text {
+            font-size: 18px;
+            color: var(--darkergreen);
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+                /* Start with element below */
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                /* End at the original position */
+            }
+        }
+
+        @keyframes fadeInText {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+                /* Start slightly lower */
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                /* End at the original position */
+            }
+        }
+
+        @keyframes riseUp {
+            0% {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <header class="navbar">
-        <div class="container">
-            <a class="logo">Momentum</a>
-            <button id="signInButton" class="btn-signup">Sign Up/Log In</button>
-            <button id="signOutButton" class="btn-signup">Log Out</button>
-            <script type="module" src="login.mjs"></script>
-        </div>
-    </header>
 
-    <section class="hero fade-in">
-        <div class="container">
-            <h2>Welcome to <em>Momentum</em></h2>
-            <p>Small steps fuel unstoppable progress—keep your habits in motion.</p>
+    <!-- Transparent Logo with White Circle Around It -->
+    <img src="logo.png" alt="Momentum Logo" class="logo"> <!-- Replace with your logo path -->
 
-        </div>
-    </section>
-    <section class="hero2 fade-in">
-        <div class="hero2-left">
-            <h2>Momentum is a habit tracker app designed to help users build and maintain positive routines. With an
-                intuitive interface and seamless progress tracking, Momentum keeps users motivated by providing visual
-                streaks, reminders, and personalized insights.</h2>
-        </div>
-        <div class="hero2-right"></div>
-    </section>
-    <section class="hero3 fade-in">
-        <div class="hero3-left"></div> <!-- Image on the left now -->
-        <div class="hero3-right">
-            <h2>The Journal function allows you to easily track your daily thoughts, progress, and reflections. With a clean, intuitive interface, you can quickly jot down what’s on your mind, set goals, and look back at past entries to see how far you've come. Whether it's for personal growth, productivity, or just a way to unwind, the Journal keeps all your moments organized and accessible. Plus, it syncs with your habits to help you connect your daily actions with your broader goals. It’s your personal space to reflect and grow, all in one place.</h2>
-        </div>
-    </section>
-    <section>
-        <section class="hero4 fade-in">
-            <div class="hero4-left">
-                <h2>the statistics feature tracks your habit streaks and visualizes your progress through graphs. It
-                    helps you see how consistent you've been over time, making it easier to stay motivated. The graphs
-                    provide a clear view of your achievements, showing trends and patterns in your habits, so you can
-                    celebrate milestones and identify areas for improvement.</h2>
-            </div>
-            <div class="hero4-right"></div>
-        </section>
-    </section>
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Momentum. All rights reserved.</p>
-        </div>
-    </footer>
+    <!-- Login Button positioned back to top-right corner -->
+    <button id="signInButton" class="login-btn">Sign Up/Log In</button>
+    <button id="signOutButton" class="login-btn">Log Out</button>
+    <script type="module" src="login.mjs"></script>
+
+
+    <div class="header">
+        <h1 class="title">Welcome to Momentum</h1>
+        <p class="subtitle">Small steps fuel unstoppable progress—keep your habits in motion.</p>
+    </div>
+
+    <div class="info-section">
+        <h2 class="info-title">What is Momentum?</h2>
+        <p class="info-text">
+            Momentum is a powerful app designed to help you track and manage your habits, set personal goals, and stay
+            motivated along your journey. Whether you're working on self-improvement or building new habits, Momentum
+            provides you with the tools and community support to stay on track and celebrate your achievements.
+        </p>
+        <p class="info-text">
+            With easy-to-use features, you can add concerns, track your progress, and resolve them as you make progress.
+            Start building momentum today and take control of your goals!
+        </p>
+    </div>
+
 </body>
 
 </html>

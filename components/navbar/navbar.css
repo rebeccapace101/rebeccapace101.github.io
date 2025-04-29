@@ -71,6 +71,12 @@
     border-color: rgba(255, 255, 255, 0.1);
 }
 
+/* We can add special styling for the admin link if needed */
+.nav-btn[data-page="admin"] {
+    /* Optional: add a subtle indicator that this is an admin link */
+    border-left: 3px solid #ff6b6b;
+}
+
 @media (max-width: 768px) {
     .navbar {
         padding: 12px 20px;
@@ -85,12 +91,5 @@
     .nav-btn {
         padding: 10px 16px;
         font-size: 14px;
-    }
-}
-
-@media (hover: hover) {
-    .nav-btn:hover {
-        background-color: var(--primary-light);
-        color: var(--text-light);
     }
 }
