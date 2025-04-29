@@ -471,3 +471,112 @@ main .graph-container .content-wrapper .trends-section {
     background-color: transparent;
     pointer-events: none;
 }
+
+/* Achievements Section */
+
+.achievements-container {
+    margin-top: 2rem;
+    background: var(--background);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.achievements-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.achievement {
+    padding: 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
+    background-color: #fff;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+    text-align: center;
+    width: 250px;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement.completed {
+    border-color: #86A046;
+    background: linear-gradient(145deg, #A7C957, #86A046);
+    color: #2C4001;
+    animation: pulse 1.5s infinite;
+}
+
+.achievement.incomplete {
+    border-color: #a0a0a0;
+    background: linear-gradient(145deg, #e0e0e0, #cfcfcf);
+    color: #606060;
+}
+
+.achievement h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.achievement p {
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.achievement .icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    color: inherit;
+    transition: transform 0.3s;
+}
+
+.achievement.completed .icon {
+    color: #fff;
+    transform: scale(1.2);
+}
+
+.achievement.incomplete .icon {
+    color: #a0a0a0;
+}
+
+.achievement:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.achievement.completed:hover {
+    background: linear-gradient(145deg, #86A046, #A7C957);
+}
+
+.achievement.incomplete:hover {
+    background: linear-gradient(145deg, #dcdcdc, #bfbfbf);
+}
+
+/* Fun animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(134, 160, 70, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(134, 160, 70, 0.8);
+    }
+}

@@ -3,7 +3,7 @@ import {
     getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import {
-    getFirestore, doc, setDoc, arrayUnion, getDoc
+    getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove    
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Initialize Firebase
@@ -15,9 +15,14 @@ const parentElement = document.getElementById('habitsScrollArea');
 const dirtyHabits = new Set();
 
 // Function to get the current date in Chicago timezone
-const getChicagoDate = () => {
-    const chicagoTime = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
-    return new Date(chicagoTime);
+const getChicagoDate = (dateStr = null) => {
+    if (dateStr) {
+        const [year, month, day] = dateStr.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    } else {
+        const chicagoTime = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+        return new Date(chicagoTime);
+    }
 };
 
 // Replace `new Date()` with `getChicagoDate()` where applicable
@@ -43,23 +48,31 @@ onAuthStateChanged(auth, async (user) => {
         console.log("Retrieved habits:", habits);
         //Loop over each habit name.
         for (const habitName of habits) {
+             // Log the loop entry
+            console.log("🔄 Iteration for habit:", habitName);
             try {
                 //For each habit, get the input type from the habitData collection
+                //Fetch the input-type doc
                 const inputDoc = doc(db, "habitData", user.uid, habitName, "input");
                 const inputTypeDoc = await getDoc(inputDoc);
+                console.log("   input-type exists?", inputTypeDoc.exists()); //debug console log
+            
 
                 if (!inputTypeDoc.exists()) {
                     console.warn(`No input type found for habit: ${habitName}`);
-                    continue;
+                    //continue;
                 }
 
-                //inputType = input type of habit to add to page
-                const inputType = inputTypeDoc.data().inputtype;
+                // Pick up the saved type, or fall back to "checkbox" if missing
+                const inputType = inputTypeDoc.exists()
+                    ? inputTypeDoc.data().inputtype
+                     : "checkbox";
                 console.log(`Habit ${habitName} input type: ${inputType}`);
 
                 const todayKey = date.toISOString().split('T')[0];
                 const submissionDocRef = doc(db, "habitData", user.uid, habitName, todayKey);
                 const submissionDoc = await getDoc(submissionDocRef);
+                console.log("   submission exists?", submissionDoc.exists()); //debug console log
 
                 const habitContainer = document.createElement("div");
                 habitContainer.className = "habit-item";
@@ -95,15 +108,34 @@ onAuthStateChanged(auth, async (user) => {
 
                     habitContainer.appendChild(label);
                     habitContainer.appendChild(inputField);
+                    const buttonContainer = document.createElement("div");
+                    buttonContainer.className = "habit-buttons";
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.classList.add("edit-button");
+                    //connect edit button to handleEdit function
+                    editButton.addEventListener("click", () => 
+                        handleEdit(user.uid, habitName, habitContainer)
+                      );
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.classList.add("delete-button");
+
+                    buttonContainer.appendChild(editButton);
+                    buttonContainer.appendChild(deleteButton);
+                    habitContainer.appendChild(buttonContainer);
                 }
 
                 // Add the habit container to habitsBox
                 parentElement.appendChild(habitContainer);
+                console.log("   ✅ Appended container for", habitName); //append check
 
                 //line break
                 parentElement.appendChild(document.createElement("br"));
             } catch (error) {
                 console.error(`Error fetching input type for ${habitName}:`, error);
+                console.error("   ❌ Error in rendering", habitName, error);
             }
         }
     } else {
@@ -232,6 +264,83 @@ const sendHabits = async () => {
 
 submitHabits.addEventListener('click', sendHabits);
 
+//handleEdit function
+async function handleEdit(uid, habitName, container) {
+    const todayKey = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+    ).toISOString().split('T')[0];
+    // Fetch the habit’s input-type
+  const inputSnap = await getDoc(
+    doc(db, "habitData", uid, habitName, "input")
+  );
+  //defaults checkbox if there isnt an input that can be found
+  const inputType = inputSnap.exists()
+    ? inputSnap.data().inputtype
+    : "checkbox";
+
+    //create dropdown
+    const typeSelect = document.createElement("select");
+    const types = ["checkbox", "range", "text", "number"];
+    types.forEach(type => {
+      const opt = document.createElement("option");
+      opt.value = type;
+      opt.textContent = type[0].toUpperCase() + type.slice(1);  // e.g. “Checkbox”
+      if (type === inputType) opt.selected = true;
+      typeSelect.append(opt);
+    });
+
+// Fetch any existing submission for today
+  const subRef = doc(db, "habitData", uid, habitName, todayKey);
+  const subSnap = await getDoc(subRef);
+  //if no submission is found, default to empty
+  const existing = subSnap.exists() ? subSnap.data().data : "";
+
+  // Clear out the old UI for previous habit
+  container.innerHTML = "";
+
+  // Build a label + pre-filled input
+  const nameInput = document.createElement("input"); //instead of auto input label maybe open textbox?
+  nameInput.type = "text";
+  nameInput.value = habitName; // display old name still
+  nameInput.id = habitName + "-edit-name"; // optional, if you need an ID
+
+  const input = document.createElement("input"); //instead of existing texbox? drop down menu?
+  input.type = inputType;
+  input.id = habitName;
+  if (inputType === "checkbox") {
+    input.checked = Boolean(existing);
+  } else {
+    input.value = existing;
+  }
+
+  //Add a Save button
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "Save";
+
+  saveBtn.addEventListener("click", async () => {
+    const newHabitType = typeSelect.value;
+    const newHabitName = nameInput.value.trim();
+    // update the input‐type record:
+    await setDoc(
+      doc(db, "habitData", uid, habitName, "input"),
+      { inputtype: newHabitType },
+      { merge: true }
+    );
+  
+    // rename the habit in your habits array as before…
+    await updateDoc(doc(db, "habits", uid, days[dayOfWeek], "habits"),
+    { habits: arrayRemove(habitName) });
+    await updateDoc(doc(db, "habits", uid, days[dayOfWeek], "habits"),
+    { habits: arrayUnion(newHabitName) });
+  
+    // (optional) move any existing daily docs…
+  
+    window.location.reload();
+  });
+  // Put them back into the container
+  container.append(nameInput, input, typeSelect, saveBtn);
+}
+
 // Pop-up handlers
 const newHabit = document.getElementById("newHabit");
 const popUp = document.getElementById("popupOverlay");
@@ -242,3 +351,82 @@ const closeWindow = () => popUp.style.display = "none";
 
 closePopup.addEventListener('click', closeWindow);
 newHabit.addEventListener('click', callNewHabits);
+
+// code for scrolling through journal entries
+
+const leftArrow = document.getElementById("leftArrow");
+const rightArrow = document.getElementById("rightArrow");
+const journalInput = document.getElementById('myTextbox');
+const dateLabel = document.getElementById("dateLabel");
+
+
+
+const getTodayDate = () => {
+    const today = getChicagoDate();
+    return today.toISOString().split('T')[0];
+};
+
+let currentDate = getTodayDate();
+
+const updateDate = (offset) => {
+    const dateObj = getChicagoDate(currentDate);
+    dateObj.setDate(dateObj.getDate() + offset);
+    currentDate = dateObj.toISOString().split('T')[0];
+    return currentDate;
+};
+
+const goLeft = async () => {
+    journalInput.readOnly = true;
+    const newDate = updateDate(-1);
+    await loadJournalEntry(newDate);
+    updateDateLabel(newDate);
+    journalInput.readOnly = false;
+};
+
+const goRight = async () => {
+    const today = getTodayDate();
+
+    const nextDateObj = getChicagoDate(currentDate);
+    nextDateObj.setDate(nextDateObj.getDate() + 1);
+    const nextDate = nextDateObj.toISOString().split('T')[0];
+
+    if (nextDate > today) return;
+
+    const newDate = updateDate(1);
+    journalInput.readOnly = true;
+    await loadJournalEntry(newDate);
+    updateDateLabel(newDate);
+    journalInput.readOnly = false;
+};
+
+const updateDateLabel = (dateStr) => {
+    const date = getChicagoDate(dateStr);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateLabel.textContent = date.toLocaleDateString('en-US', options);
+};
+
+const loadJournalEntry = async (selectedDate) => {
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const journalRef = doc(db, "journals", user.uid, "journalEntry", selectedDate);
+            try {
+                const docSnap = await getDoc(journalRef);
+                if (docSnap.exists()) {
+                    journalInput.value = docSnap.data().text;
+                    console.log("Loaded journal entry for", selectedDate);
+                } else {
+                    journalInput.value = "No journal entry for this day.";
+                    console.log("No journal entry found for", selectedDate);
+                }
+            } catch (error) {
+                console.error("Error loading journal entry:", error);
+            }
+        }
+    });
+};
+
+leftArrow.addEventListener('click', goLeft);
+rightArrow.addEventListener('click', goRight);
+
+updateDateLabel(currentDate);
+loadJournalEntry(currentDate);

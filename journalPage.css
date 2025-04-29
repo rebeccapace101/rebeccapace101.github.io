@@ -67,23 +67,68 @@ h1 {
     height: 85%;
     width: 100%;
     position: relative;
-  }
-  
-  .habit-controls {
+}
+
+.habit-buttons {
+    display: flex;
+    justify-content: flex-end;
+    /* aligns buttons to the right */
+    gap: 10px;
+    /* spacing between buttons */
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #ccc;
+    /* visual separation */
+    flex-wrap: wrap;
+    /* wrap if container gets too small */
+}
+
+.take-a-moment-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+    /* Added this */
+}
+
+.arrow-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.moment-title {
+    margin: 0;
+}
+
+.edit-button {
+    width: 3vw;
+    font-size: 12px;
+}
+
+.delete-button {
+    width: 4vw;
+    font-size: 12px;
+}
+
+.habit-controls {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin-bottom: 10px;
     position: sticky;
     top: 0;
-    background-color: rgb(177, 194, 158); /* Match the background of #habits */
+    background-color: rgb(177, 194, 158);
+    /* Match the background of #habits */
     padding: 10px;
     z-index: 10;
     width: 100%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  #habitsScrollArea {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#habitsScrollArea {
     overflow-y: auto;
     flex-grow: 1;
     width: 100%;
@@ -92,7 +137,7 @@ h1 {
     align-items: center;
     gap: 10px;
     padding: 10px;
-  }
+}
 
 
 .nav-btn:hover {
@@ -210,6 +255,14 @@ h1 {
 
 #submitHabits {
     width: 80%;
+
+    margin-bottom: 0;
+}
+
+#submitBtn {
+    position: relative;
+    top: -20px;
+    /* Moves the button up */
 }
 
 #habitsBox {
