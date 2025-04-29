@@ -3,7 +3,7 @@ import {
     getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import {
-    getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove    
+    getFirestore, doc, setDoc, getDoc, updateDoc, getDocs, collection, deleteDoc, arrayUnion, arrayRemove    
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Initialize Firebase
@@ -318,28 +318,59 @@ async function handleEdit(uid, habitName, container) {
   saveBtn.textContent = "Save";
 
   saveBtn.addEventListener("click", async () => {
-    const newHabitType = typeSelect.value;
-    const newHabitName = nameInput.value.trim();
-    // update the input‐type record:
-    await setDoc(
-      doc(db, "habitData", uid, habitName, "input"),
-      { inputtype: newHabitType },
-      { merge: true }
-    );
+    try {
+      const oldName     = habitName;
+      const newName     = nameInput.value.trim();
+      const newType     = typeSelect.value;
+      const todayKey    = date.toISOString().split("T")[0];
+      const uid         = auth.currentUser.uid;
   
-    // rename the habit in your habits array as before…
-    await updateDoc(doc(db, "habits", uid, days[dayOfWeek], "habits"),
-    { habits: arrayRemove(habitName) });
-    await updateDoc(doc(db, "habits", uid, days[dayOfWeek], "habits"),
-    { habits: arrayUnion(newHabitName) });
+      // 1) Persist the updated input-type under the NEW name
+      await setDoc(
+        doc(db, "habitData", uid, newName, "input"),
+        { inputtype: newType },
+        { merge: true }
+      );
   
-    // (optional) move any existing daily docs…
+      // 2) Move ALL existing docs (input + submissions) from oldName → newName
+      const oldColl = collection(db, "habitData", uid, oldName);
+      const snaps   = await getDocs(oldColl);
+      for (const snap of snaps.docs) {
+        const id   = snap.id;        // e.g. "input" or "2025-04-29"
+        const data = snap.data();
+        // write under newName
+        await setDoc(
+          doc(db, "habitData", uid, newName, id),
+          data,
+          { merge: true }
+        );
+        // delete the old
+        await deleteDoc(doc(db, "habitData", uid, oldName, id));
+      }
   
-    window.location.reload();
+      // 3) Rename in every day's habits array
+      for (const day of days) {
+        const dayRef = doc(db, "habits", uid, day, "habits");
+        await updateDoc(dayRef, { habits: arrayRemove(oldName) });
+        await updateDoc(dayRef, { habits: arrayUnion(newName) });
+      }
+  
+      // 4) Rename in your master list of habit names
+      const masterRef = doc(db, "habitData", uid);
+      await updateDoc(masterRef, { namesOfHabits: arrayRemove(oldName) });
+      await updateDoc(masterRef, { namesOfHabits: arrayUnion(newName) });
+
+  
+      // 6) Reload to reflect the “Submitted” state and refreshed names/UI
+      window.location.reload();
+  
+    } catch (err) {
+      console.error("Error saving edited habit:", err);
+    }
   });
-  // Put them back into the container
+
   container.append(nameInput, input, typeSelect, saveBtn);
-}
+}  //  CLOSE handleEdit 
 
 // Pop-up handlers
 const newHabit = document.getElementById("newHabit");
