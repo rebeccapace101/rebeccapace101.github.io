@@ -3,7 +3,7 @@ import {
     getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import {
-    getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove    
+    getFirestore, doc, setDoc, getDoc, updateDoc, getDocs, collection, deleteDoc, arrayUnion, arrayRemove
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
 // Initialize Firebase
@@ -48,7 +48,7 @@ onAuthStateChanged(auth, async (user) => {
         console.log("Retrieved habits:", habits);
         //Loop over each habit name.
         for (const habitName of habits) {
-             // Log the loop entry
+            // Log the loop entry
             console.log("🔄 Iteration for habit:", habitName);
             try {
                 //For each habit, get the input type from the habitData collection
@@ -56,7 +56,7 @@ onAuthStateChanged(auth, async (user) => {
                 const inputDoc = doc(db, "habitData", user.uid, habitName, "input");
                 const inputTypeDoc = await getDoc(inputDoc);
                 console.log("   input-type exists?", inputTypeDoc.exists()); //debug console log
-            
+
 
                 if (!inputTypeDoc.exists()) {
                     console.warn(`No input type found for habit: ${habitName}`);
@@ -66,7 +66,7 @@ onAuthStateChanged(auth, async (user) => {
                 // Pick up the saved type, or fall back to "checkbox" if missing
                 const inputType = inputTypeDoc.exists()
                     ? inputTypeDoc.data().inputtype
-                     : "checkbox";
+                    : "checkbox";
                 console.log(`Habit ${habitName} input type: ${inputType}`);
 
                 const todayKey = date.toISOString().split('T')[0];
@@ -110,17 +110,24 @@ onAuthStateChanged(auth, async (user) => {
                     habitContainer.appendChild(inputField);
                     const buttonContainer = document.createElement("div");
                     buttonContainer.className = "habit-buttons";
+
+                    //EDIT BUTTON
                     const editButton = document.createElement("button");
                     editButton.textContent = "Edit";
                     editButton.classList.add("edit-button");
                     //connect edit button to handleEdit function
-                    editButton.addEventListener("click", () => 
+                    editButton.addEventListener("click", () =>
                         handleEdit(user.uid, habitName, habitContainer)
-                      );
+                    );
 
+                    //DELETE BUTTON
                     const deleteButton = document.createElement("button");
                     deleteButton.textContent = "Delete";
                     deleteButton.classList.add("delete-button");
+                    //connect delete button to handleDelete function
+                    deleteButton.addEventListener("click", () =>
+                        handleDelete(user.uid, habitName, habitContainer)
+                    );
 
                     buttonContainer.appendChild(editButton);
                     buttonContainer.appendChild(deleteButton);
@@ -264,82 +271,153 @@ const sendHabits = async () => {
 
 submitHabits.addEventListener('click', sendHabits);
 
-//handleEdit function
+//OPEN EDIT HANDLER
 async function handleEdit(uid, habitName, container) {
     const todayKey = new Date(
-      new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
+        new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
     ).toISOString().split('T')[0];
     // Fetch the habit’s input-type
-  const inputSnap = await getDoc(
-    doc(db, "habitData", uid, habitName, "input")
-  );
-  //defaults checkbox if there isnt an input that can be found
-  const inputType = inputSnap.exists()
-    ? inputSnap.data().inputtype
-    : "checkbox";
+    const inputSnap = await getDoc(
+        doc(db, "habitData", uid, habitName, "input")
+    );
+    //defaults checkbox if there isnt an input that can be found
+    const inputType = inputSnap.exists()
+        ? inputSnap.data().inputtype
+        : "checkbox";
 
     //create dropdown
     const typeSelect = document.createElement("select");
     const types = ["checkbox", "range", "text", "number"];
     types.forEach(type => {
-      const opt = document.createElement("option");
-      opt.value = type;
-      opt.textContent = type[0].toUpperCase() + type.slice(1);  // e.g. “Checkbox”
-      if (type === inputType) opt.selected = true;
-      typeSelect.append(opt);
+        const opt = document.createElement("option");
+        opt.value = type;
+        opt.textContent = type[0].toUpperCase() + type.slice(1);  // e.g. “Checkbox”
+        if (type === inputType) opt.selected = true;
+        typeSelect.append(opt);
     });
 
-// Fetch any existing submission for today
-  const subRef = doc(db, "habitData", uid, habitName, todayKey);
-  const subSnap = await getDoc(subRef);
-  //if no submission is found, default to empty
-  const existing = subSnap.exists() ? subSnap.data().data : "";
+    // Fetch any existing submission for today
+    const subRef = doc(db, "habitData", uid, habitName, todayKey);
+    const subSnap = await getDoc(subRef);
+    //if no submission is found, default to empty
+    const existing = subSnap.exists() ? subSnap.data().data : "";
 
-  // Clear out the old UI for previous habit
-  container.innerHTML = "";
+    // Clear out the old UI for previous habit
+    container.innerHTML = "";
 
-  // Build a label + pre-filled input
-  const nameInput = document.createElement("input"); //instead of auto input label maybe open textbox?
-  nameInput.type = "text";
-  nameInput.value = habitName; // display old name still
-  nameInput.id = habitName + "-edit-name"; // optional, if you need an ID
+    // Build a label + pre-filled input
+    const nameInput = document.createElement("input"); //instead of auto input label maybe open textbox?
+    nameInput.type = "text";
+    nameInput.value = habitName; // display old name still
+    nameInput.id = habitName + "-edit-name"; // optional, if you need an ID
 
-  const input = document.createElement("input"); //instead of existing texbox? drop down menu?
-  input.type = inputType;
-  input.id = habitName;
-  if (inputType === "checkbox") {
-    input.checked = Boolean(existing);
-  } else {
-    input.value = existing;
-  }
+    const input = document.createElement("input"); //instead of existing texbox? drop down menu?
+    input.type = inputType;
+    input.id = habitName;
+    if (inputType === "checkbox") {
+        input.checked = Boolean(existing);
+    } else {
+        input.value = existing;
+    }
 
-  //Add a Save button
-  const saveBtn = document.createElement("button");
-  saveBtn.textContent = "Save";
+    //Add a Save button
+    const saveBtn = document.createElement("button");
+    saveBtn.textContent = "Save";
 
-  saveBtn.addEventListener("click", async () => {
-    const newHabitType = typeSelect.value;
-    const newHabitName = nameInput.value.trim();
-    // update the input‐type record:
-    await setDoc(
-      doc(db, "habitData", uid, habitName, "input"),
-      { inputtype: newHabitType },
-      { merge: true }
-    );
-  
-    // rename the habit in your habits array as before…
-    await updateDoc(doc(db, "habits", uid, days[dayOfWeek], "habits"),
-    { habits: arrayRemove(habitName) });
-    await updateDoc(doc(db, "habits", uid, days[dayOfWeek], "habits"),
-    { habits: arrayUnion(newHabitName) });
-  
-    // (optional) move any existing daily docs…
-  
-    window.location.reload();
-  });
-  // Put them back into the container
-  container.append(nameInput, input, typeSelect, saveBtn);
+    saveBtn.addEventListener("click", async () => {
+        try {
+            const oldName = habitName;
+            const newName = nameInput.value.trim();
+            const newType = typeSelect.value;
+            const todayKey = date.toISOString().split("T")[0];
+            const uid = auth.currentUser.uid;
+
+            // 1) Persist the updated input-type under the NEW name
+            await setDoc(
+                doc(db, "habitData", uid, newName, "input"),
+                { inputtype: newType },
+                { merge: true }
+            );
+
+            // 2) Move ALL existing docs (input + submissions) from oldName → newName
+            const oldColl = collection(db, "habitData", uid, oldName);
+            const snaps = await getDocs(oldColl);
+            for (const snap of snaps.docs) {
+                const id = snap.id;        // e.g. "input" or "2025-04-29"
+                const data = snap.data();
+                // write under newName
+                await setDoc(
+                    doc(db, "habitData", uid, newName, id),
+                    data,
+                    { merge: true }
+                );
+                // delete the old
+                await deleteDoc(doc(db, "habitData", uid, oldName, id));
+            }
+
+            // 3) Rename in every day's habits array
+            for (const day of days) {
+                const dayRef = doc(db, "habits", uid, day, "habits");
+                await updateDoc(dayRef, { habits: arrayRemove(oldName) });
+                await updateDoc(dayRef, { habits: arrayUnion(newName) });
+            }
+
+            // 4) Rename in your master list of habit names
+            const masterRef = doc(db, "habitData", uid);
+            await updateDoc(masterRef, { namesOfHabits: arrayRemove(oldName) });
+            await updateDoc(masterRef, { namesOfHabits: arrayUnion(newName) });
+
+
+            // 5) Reload to reflect the “Submitted” state and refreshed names/UI
+            window.location.reload();
+
+        } catch (err) {
+            console.error("Error saving edited habit:", err);
+        }
+    });
+
+    container.append(nameInput, input, typeSelect, saveBtn);
+}  //  CLOSE handleEdit 
+
+//START DELETE HANDLER
+async function handleDelete(uid, habitName, container) {
+
+    //find document 
+    //when delete button pressed, make extra popup, do you want to delete this recurring habit? (other button "yes")
+    //delete habit from firestore, and delete all stuff on screen (should happen automatically)
+
+    try {
+        // 1) Delete every document in habitData/{uid}/{habitName}:
+        const collRef = collection(db, "habitData", uid, habitName);
+        const snaps = await getDocs(collRef);
+        for (const snap of snaps.docs) {
+            await deleteDoc(
+                doc(db, "habitData", uid, habitName, snap.id)
+            );
+        }
+
+        for (const day of days) {
+            const dayRef = doc(db, "habits", uid, day, "habits");
+            await updateDoc(dayRef, {
+                habits: arrayRemove(habitName)
+            });
+        }
+
+        const masterRef = doc(db, "habitData", uid);
+        await updateDoc(masterRef, {
+            namesOfHabits: arrayRemove(habitName)
+        });
+
+
+        container.remove();
+
+        console.log(`Habit “${habitName}” fully deleted.`);
+    } catch (err) {
+        console.error("Error deleting habit fully:", err);
+    }
 }
+
+
 
 // Pop-up handlers
 const newHabit = document.getElementById("newHabit");

@@ -1,3 +1,15 @@
+:root {
+    /* color variables */
+    --green: #8dac6d;
+    --darkergreen: #617d44;
+    --accent: #e05b6d;
+    --greygreen: #eeefec;
+
+    /* font variables */
+    --font-heading: 'Contrail One', sans-serif;
+    --font-body: "Schibsted Grotesk", sans-serif;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -5,18 +17,37 @@ body {
     width: 100%;
 }
 
+/* Typography */
 h1 {
     transition: background-color 0.4s ease;
     box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.4);
     display: inline-block;
     border-radius: 20px;
     padding: 10px;
-    font-family: roca;
     font-size: larger;
 }
 
+
+button {
+    padding: 8px 12px;
+    margin: 2px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+}
+
+button:active {
+    box-shadow:
+        inset 1px 1px 2px rgba(0, 0, 0, 0.25),
+        inset -0.5px -0.5px 0.5px rgba(255, 255, 255, 0.15);
+}
+
+/* Navbar */
 .navbar {
-    background-color: #EDE9DD;
+    background-color: #ede9dd;
     padding: 10px 30px;
     display: flex;
     justify-content: center;
@@ -45,8 +76,7 @@ h1 {
 }
 
 .nav-btn {
-    background-color: #CFCAB2;
-    /* Default button color */
+    background-color: #cfcab2;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -58,74 +88,38 @@ h1 {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* scroll section */
+.nav-btn:hover {
+    background-color: #b8b29e;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.nav-btn.active {
+    background-color: #8c9474;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Main Layout */
+.container {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100vw;
+    height: 96vh;
+    margin-top: 80px;
+    background-color: var(--greygreen);
+    box-shadow: none;
+    border: none;
+}
+
+/* Habit Section */
 #habitsBox {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    gap: 10px;
     height: 85%;
-    width: 100%;
+    width: auto;
     position: relative;
-}
-
-.habit-buttons {
-    display: flex;
-    justify-content: flex-end;
-    /* aligns buttons to the right */
-    gap: 10px;
-    /* spacing between buttons */
-    margin-top: 12px;
-    padding-top: 8px;
-    border-top: 1px solid #ccc;
-    /* visual separation */
-    flex-wrap: wrap;
-    /* wrap if container gets too small */
-}
-
-.take-a-moment-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    position: relative;
-    /* Added this */
-}
-
-.arrow-button {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-.moment-title {
-    margin: 0;
-}
-
-.edit-button {
-    width: 3vw;
-    font-size: 12px;
-}
-
-.delete-button {
-    width: 4vw;
-    font-size: 12px;
-}
-
-.habit-controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    position: sticky;
-    top: 0;
-    background-color: rgb(177, 194, 158);
-    /* Match the background of #habits */
-    padding: 10px;
-    z-index: 10;
-    width: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #habitsScrollArea {
@@ -139,38 +133,23 @@ h1 {
     padding: 10px;
 }
 
-
-.nav-btn:hover {
-    background-color: #B8B29E;
-    /* Slightly darker green on hover */
-    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
-}
-
-.nav-btn.active {
-    background-color: #8C9474;
-    /* Highlight color for active page */
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
-}
-
-#addHabit {
-    width: 5vw;
-}
-
-.containerOther {
-    background-color: rgb(255, 230, 169);
+#habits {
     display: flex;
-    width: 30wh;
-    height: 33.5vh;
-    margin: 3%;
     flex-direction: column;
     align-items: center;
+    padding: 30px;
+    width: 70%;
+    height: 95%;
+    border-radius: 15px;
+    background-color: var(--green);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .habit-item {
-    background-color: rgb(255, 251, 240);
-    border-style: solid;
-    border-width: 11px;
-    border-color: #659287;
+    background-color: rgba(140, 172, 109, 0.4);
+    border: 11px solid var(--greygreen);
     border-radius: 12%;
     padding: 6%;
     height: 95px;
@@ -183,58 +162,59 @@ h1 {
     transition: background-color 0.4s ease;
 }
 
-.container {
-    margin-top: 80px;
-    /* Creates space below navbar */
-    justify-content: space-evenly;
-    margin: 0vh;
+.habit-controls {
     display: flex;
-    width: 100vw;
-    height: 96vh;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    padding: 10px;
+    z-index: 10;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.habitsMetrics,
-.journalSection {
-    padding-top: 80px;
-    /* Extends background behind navbar */
-}
-
-.typeField {
-    margin: 2%;
-}
-
-.daysField {
-    margin: 2%;
-}
-
-#inputtype {
-    padding: 2%;
-    margin: 2%;
-}
-
-.textCont {
+.habit-buttons {
     display: flex;
-    height: fit-content;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #ccc;
+    flex-wrap: wrap;
+}
+
+.take-a-moment-header {
+    display: flex;
     align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
 }
 
-#habitInput {
-    padding: 2%;
-    margin: 2%;
-    font-family: roca;
-    font-size: 14px;
+.arrow-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
-.addHabitButton {
-    margin: 2%;
+.edit-button,
+.delete-button {
+    font-size: 12px;
 }
 
-.habitsMetrics {
-    display: flex;
-    width: 50%;
-    justify-content: space-evenly;
-    height: 100%;
-    background-color: rgb(255, 251, 240);
+.edit-button {
+    width: 3vw;
+}
+
+.delete-button {
+    width: 4vw;
+}
+
+#addHabit {
+    width: 5vw;
 }
 
 #newHabit {
@@ -245,9 +225,7 @@ h1 {
     align-items: center;
     justify-content: center;
     line-height: 1;
-    /* Prevent weird text alignment */
     padding: 0;
-    /* Remove default padding */
     border: none;
     border-radius: 22px;
     transform: translate(0px, 0px);
@@ -255,66 +233,58 @@ h1 {
 
 #submitHabits {
     width: 80%;
-
     margin-bottom: 0;
 }
 
 #submitBtn {
     position: relative;
-    top: -20px;
-    /* Moves the button up */
+    margin-top: -7px;
 }
 
-#habitsBox {
+/* Form Inputs */
+.typeField,
+.daysField,
+.addHabitButton {
+    margin: 2%;
+}
+
+#inputtype,
+#habitInput {
+    padding: 2%;
+    margin: 2%;
+    font-size: 14px;
+}
+
+.textCont {
+    display: flex;
+    height: fit-content;
+    align-items: center;
+}
+
+/* Journal Section */
+.journalSection,
+#journalBox {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    /* ✅ Add this to center all children vertically */
-    gap: 10px;
-    /* Optional: space between buttons */
-    height: 85%;
-    width: auto;
-    position: relative;
-}
-
-#habits {
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4);
-    transition: background-color 0.4s ease;
+    background-color: var(--green);
     border-radius: 15px;
-    margin: 2.5%;
-    width: 70%;
-    height: 95%;
-    background-color: rgb(177, 194, 158);
+    padding: 30px;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .journalSection {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     width: 50%;
     height: 100%;
-    background-color: rgb(255, 230, 169);
 }
 
 #journalBox {
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
     width: 34vw;
-    /* Adjust size as needed */
     height: 66vh;
-    /* padding: 10px; */
-    background-color: rgb(101, 146, 135);
-    /*position: relative;*/
-    justify-content: center;
-    padding: 10px;
     text-align: center;
+    background-color: var(--darkergreen);
 }
 
 #textBoxContainer {
@@ -322,36 +292,6 @@ h1 {
     flex-direction: column;
     justify-content: space-around;
     background: red;
-}
-
-button {
-    padding: 8px 12px;
-    margin: 2px;
-    border: none;
-    border-radius: 5px;
-    font-family: 'roca', sans-serif;
-    font-size: 14px;
-    color: white;
-    background-color: rgb(222, 170, 121);
-    cursor: pointer;
-    transition: box-shadow 0.15s ease;
-    box-shadow:
-        -2px -2px 0 #e6b98a,
-        /* Top-left highlight */
-        2px 2px 0 #b58258,
-        /* Bottom-right shadow */
-        2px 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-button:active {
-    /* Pressed-in effect */
-    box-shadow:
-        inset 1px 1px 2px rgba(0, 0, 0, 0.25),
-        inset -0.5px -0.5px 0.5px rgba(255, 255, 255, 0.15);
-}
-
-button:hover {
-    background-color: #e6b98a
 }
 
 textarea {
@@ -362,42 +302,36 @@ textarea {
     padding: 10px;
     height: 56vh;
     width: 31vw;
-    background-color: rgb(255, 251, 240);
+    background-color: var(--greygreen);
     border: 2px solid #ccc;
     border-radius: 10px;
     font-size: 16px;
 }
 
+/* Popup */
 .popup-overlay {
     display: none;
-    /* Initially hidden */
     position: fixed;
-    /* Stay in place */
     z-index: 1;
-    /* Sit on top */
     left: 0;
     top: 0;
     width: 100%;
-    /* Full width */
     height: 100%;
-    /* Full height */
     background-color: rgba(0, 0, 0, 0.5);
-    /* Black background with opacity */
 }
 
 .popup {
     border-radius: 10px;
-    background-color: rgb(255, 251, 240);
-    /* White content background */
+    backdrop-filter: blur(10px);
+    /* Apply the blur effect */
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
     margin: 15% auto;
-    /* Center the popup */
     padding: 20px;
     border: 1px solid #888;
     width: 25%;
     height: fit-content;
-    /* Adjust as needed */
     position: relative;
-    /* For absolute positioning of close button */
+    color: white;
 }
 
 .close {
@@ -407,13 +341,4 @@ textarea {
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-}
-
-p {
-    font-family: roca;
-    color: white;
-}
-
-label {
-    font-family: roca;
 }

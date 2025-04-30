@@ -1,15 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Contrail+One&family=Schibsted+Grotesk:wght@400;700&display=swap');
+
+
 :root {
     --nav-bg: rgba(255, 255, 255, 0.92);
     --nav-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    --primary: #2D5A27;
-    --primary-light: #3E7A37;
-    --primary-dark: #1B4332;
-    --accent: #40916C;
-    --accent-light: #52B788;
-    --text-light: #FFFFFF;
+    --primary: #8dac6d;
+    --primary-light: #8dac6d;
+    --primary-dark: #617d44;
+    --accent: #e05b6d;
+    --accent-light: #e05b6d;
+    --text-light: #eeefec;
     --nav-radius: 28px;
     --btn-radius: 16px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-heading: 'Contrail One', sans-serif;
 }
 
 .navbar {
@@ -26,6 +30,8 @@
     box-shadow: var(--nav-shadow);
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: var(--transition);
+    font-family: var(--font-heading), sans-serif;
+    text-transform: uppercase;
 }
 
 .navbar:hover {
@@ -58,7 +64,7 @@
 }
 
 .nav-btn:hover {
-    background-color: var(--primary-light);
+    background-color: var(--accent);
     color: var(--text-light);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(45, 90, 39, 0.2);
@@ -69,6 +75,12 @@
     color: var(--text-light);
     box-shadow: 0 4px 12px rgba(45, 90, 39, 0.15);
     border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* We can add special styling for the admin link if needed */
+.nav-btn[data-page="admin"] {
+    /* Optional: add a subtle indicator that this is an admin link */
+    border-left: 3px solid #ff6b6b;
 }
 
 @media (max-width: 768px) {
@@ -85,12 +97,5 @@
     .nav-btn {
         padding: 10px 16px;
         font-size: 14px;
-    }
-}
-
-@media (hover: hover) {
-    .nav-btn:hover {
-        background-color: var(--primary-light);
-        color: var(--text-light);
     }
 }

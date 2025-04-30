@@ -7,12 +7,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Admin Page</title>
-    <script type="module" src="js/loadNavbar.js"></script>
+    <!-- Only need to include the navbar.js file -->
+    <script type="module" src="components/navbar/navbar.js"></script>
     <script type="module" src="./admin.js"></script>
+    <link rel="stylesheet" href="styles.css">
+
     <link rel="stylesheet" href="https://use.typekit.net/eyv8xbr.css">
 </head>
 
 <body>
+    <!-- Navbar will be loaded here dynamically -->
     <h1>Admin</h1>
     <div class="columns">
         <div class="column">
@@ -40,12 +44,12 @@
     <div class="popup-overlay" id="concernPopup">
         <div class="popup">
             <span class="close" id="closeConcernPopup">&times;</span>
-            <h1>Filed by: <span id="filedName"></span></h1>
-            <h1>Against: <span id="filedAgainst"></span></h1>
-            <h1><span id="concernMessage"></span></h1>
-            <button id="viewReporter">View Reporter Profile</button>
-            <button id="viewReported">View Reported Profile</button>
-            <button id="resolve">Resolve Concern</button>
+            <h2>Filed by: <span id="filedName"></span></h1>
+                <h2>Against: <span id="filedAgainst"></span></h1>
+                    <h2><span id="concernMessage"></span></h1>
+                        <button id="viewReporter">View Reporter Profile</button>
+                        <button id="viewReported">View Reported Profile</button>
+                        <button id="resolve">Resolve Concern</button>
         </div>
     </div>
 
