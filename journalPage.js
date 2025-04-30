@@ -110,6 +110,8 @@ onAuthStateChanged(auth, async (user) => {
                     habitContainer.appendChild(inputField);
                     const buttonContainer = document.createElement("div");
                     buttonContainer.className = "habit-buttons";
+
+                    //EDIT BUTTON
                     const editButton = document.createElement("button");
                     editButton.textContent = "Edit";
                     editButton.classList.add("edit-button");
@@ -118,9 +120,14 @@ onAuthStateChanged(auth, async (user) => {
                         handleEdit(user.uid, habitName, habitContainer)
                       );
 
+                    //DELETE BUTTON
                     const deleteButton = document.createElement("button");
                     deleteButton.textContent = "Delete";
                     deleteButton.classList.add("delete-button");
+                    //connect delete button to handleDelete function
+                    deleteButton.addEventListener("click", () =>
+                        handleDelete(user.uid, habitName, habitContainer)
+                    );
 
                     buttonContainer.appendChild(editButton);
                     buttonContainer.appendChild(deleteButton);
@@ -264,7 +271,7 @@ const sendHabits = async () => {
 
 submitHabits.addEventListener('click', sendHabits);
 
-//handleEdit function
+//OPEN EDIT HANDLER
 async function handleEdit(uid, habitName, container) {
     const todayKey = new Date(
       new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
@@ -361,7 +368,7 @@ async function handleEdit(uid, habitName, container) {
       await updateDoc(masterRef, { namesOfHabits: arrayUnion(newName) });
 
   
-      // 6) Reload to reflect the “Submitted” state and refreshed names/UI
+      // 5) Reload to reflect the “Submitted” state and refreshed names/UI
       window.location.reload();
   
     } catch (err) {
@@ -371,6 +378,46 @@ async function handleEdit(uid, habitName, container) {
 
   container.append(nameInput, input, typeSelect, saveBtn);
 }  //  CLOSE handleEdit 
+
+//START DELETE HANDLER
+async function handleDelete(uid, habitName, container) {
+
+    //find document 
+    //when delete button pressed, make extra popup, do you want to delete this recurring habit? (other button "yes")
+    //delete habit from firestore, and delete all stuff on screen (should happen automatically)
+
+    try {
+        // 1) Delete every document in habitData/{uid}/{habitName}:
+        const collRef = collection(db, "habitData", uid, habitName);
+        const snaps   = await getDocs(collRef);
+        for (const snap of snaps.docs) {
+          await deleteDoc(
+            doc(db, "habitData", uid, habitName, snap.id)
+          );
+        }
+    
+    for (const day of days) {
+        const dayRef = doc(db, "habits", uid, day, "habits");
+        await updateDoc(dayRef, {
+          habits: arrayRemove(habitName)
+        });
+      }
+  
+      const masterRef = doc(db, "habitData", uid);
+      await updateDoc(masterRef, {
+        namesOfHabits: arrayRemove(habitName)
+      });
+
+
+      container.remove();
+
+    console.log(`Habit “${habitName}” fully deleted.`);
+} catch (err) {
+  console.error("Error deleting habit fully:", err);
+}
+}
+
+
 
 // Pop-up handlers
 const newHabit = document.getElementById("newHabit");
