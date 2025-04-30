@@ -26,7 +26,7 @@ const sendMessage = async () => {
                 const todayDate = new Date();
                 const messageRef = doc(db, "chat", user.uid, "messages", todayDate);
                 
-                await setDoc(journalRef, {
+                await setDoc(messageRef, {
                     text: message,
                     date: todayDate
                 });
