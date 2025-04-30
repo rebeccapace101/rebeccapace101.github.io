@@ -311,70 +311,6 @@ async function handleEdit(uid, habitName, container) {
     nameInput.value = habitName; // display old name still
     nameInput.id = habitName + "-edit-name"; // optional, if you need an ID
 
-<<<<<<< Updated upstream
-  const input = document.createElement("input"); //instead of existing texbox? drop down menu?
-  input.type = inputType;
-  input.id = habitName;
-  if (inputType === "checkbox") {
-    input.checked = Boolean(existing);
-  } else {
-    input.value = existing;
-  }
-
-  //Add a Save button
-  const saveBtn = document.createElement("button");
-  saveBtn.textContent = "Save";
-
-  saveBtn.addEventListener("click", async () => {
-    try {
-      const oldName     = habitName;
-      const newName     = nameInput.value.trim();
-      const newType     = typeSelect.value;
-      const todayKey    = date.toISOString().split("T")[0];
-      const uid         = auth.currentUser.uid;
-  
-      // 1) Persist the updated input-type under the NEW name
-      await setDoc(
-        doc(db, "habitData", uid, newName, "input"),
-        { inputtype: newType },
-        { merge: true }
-      );
-  
-      // 2) Move ALL existing docs (input + submissions) from oldName → newName
-      const oldColl = collection(db, "habitData", uid, oldName);
-      const snaps   = await getDocs(oldColl);
-      for (const snap of snaps.docs) {
-        const id   = snap.id;        // e.g. "input" or "2025-04-29"
-        const data = snap.data();
-        // write under newName
-        await setDoc(
-          doc(db, "habitData", uid, newName, id),
-          data,
-          { merge: true }
-        );
-        // delete the old
-        await deleteDoc(doc(db, "habitData", uid, oldName, id));
-      }
-  
-      // 3) Rename in every day's habits array
-      for (const day of days) {
-        const dayRef = doc(db, "habits", uid, day, "habits");
-        await updateDoc(dayRef, { habits: arrayRemove(oldName) });
-        await updateDoc(dayRef, { habits: arrayUnion(newName) });
-      }
-  
-      // 4) Rename in your master list of habit names
-      const masterRef = doc(db, "habitData", uid);
-      await updateDoc(masterRef, { namesOfHabits: arrayRemove(oldName) });
-      await updateDoc(masterRef, { namesOfHabits: arrayUnion(newName) });
-
-  
-      // 5) Reload to reflect the “Submitted” state and refreshed names/UI
-      window.location.reload();
-  
-    } catch (err) {
-      console.error("Error saving edited habit:", err);
-=======
     const input = document.createElement("input"); //instead of existing texbox? drop down menu?
     input.type = inputType;
     input.id = habitName;
@@ -382,7 +318,6 @@ async function handleEdit(uid, habitName, container) {
         input.checked = Boolean(existing);
     } else {
         input.value = existing;
->>>>>>> Stashed changes
     }
 
     //Add a Save button
@@ -433,7 +368,7 @@ async function handleEdit(uid, habitName, container) {
             await updateDoc(masterRef, { namesOfHabits: arrayUnion(newName) });
 
 
-            // 6) Reload to reflect the “Submitted” state and refreshed names/UI
+            // 5) Reload to reflect the “Submitted” state and refreshed names/UI
             window.location.reload();
 
         } catch (err) {
@@ -454,32 +389,32 @@ async function handleDelete(uid, habitName, container) {
     try {
         // 1) Delete every document in habitData/{uid}/{habitName}:
         const collRef = collection(db, "habitData", uid, habitName);
-        const snaps   = await getDocs(collRef);
+        const snaps = await getDocs(collRef);
         for (const snap of snaps.docs) {
-          await deleteDoc(
-            doc(db, "habitData", uid, habitName, snap.id)
-          );
+            await deleteDoc(
+                doc(db, "habitData", uid, habitName, snap.id)
+            );
         }
-    
-    for (const day of days) {
-        const dayRef = doc(db, "habits", uid, day, "habits");
-        await updateDoc(dayRef, {
-          habits: arrayRemove(habitName)
+
+        for (const day of days) {
+            const dayRef = doc(db, "habits", uid, day, "habits");
+            await updateDoc(dayRef, {
+                habits: arrayRemove(habitName)
+            });
+        }
+
+        const masterRef = doc(db, "habitData", uid);
+        await updateDoc(masterRef, {
+            namesOfHabits: arrayRemove(habitName)
         });
-      }
-  
-      const masterRef = doc(db, "habitData", uid);
-      await updateDoc(masterRef, {
-        namesOfHabits: arrayRemove(habitName)
-      });
 
 
-      container.remove();
+        container.remove();
 
-    console.log(`Habit “${habitName}” fully deleted.`);
-} catch (err) {
-  console.error("Error deleting habit fully:", err);
-}
+        console.log(`Habit “${habitName}” fully deleted.`);
+    } catch (err) {
+        console.error("Error deleting habit fully:", err);
+    }
 }
 
 
