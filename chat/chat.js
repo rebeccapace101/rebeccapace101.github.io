@@ -23,7 +23,7 @@ const sendMessage = async () => {
             }
                 
             try {
-                const todayDate = new Date();
+                const todayDate = (new Date()).toString();
                 const messageRef = doc(db, "chat", user.uid, "messages", todayDate);
                 
                 await setDoc(messageRef, {
