@@ -69,17 +69,28 @@ const loadMessages = async () =>{
                 const partner=userData.partner;
 
                 //retrive messages from firebase
-                const chatRef=db.collection("chat");
-                const messageListAB=await chatRef.where("from", '==', user.uid).where('to', '==', partner);
-                const messageListBA=await chatRef.where("from", '==', partner).where('to', '==', user.uid);
+                const chatRef=collection(db, "chat");
+                /**const messageList=await chatRef.where(Filter.or(
+                    Filter.and(where("from", '==', user.uid), where('to', '==', partner)),
+                    Filter.and(where("from", '==', partner), where('to', '==', user.uid))
+                )).orderBy("date")*/
+                const messageListAB=await chatRef.where("from", '==', user.uid).where('to', '==', partner).get();
+                const messageListBA=await chatRef.where("from", '==', partner).where('to', '==', user.uid).get();
+                messageList=messageListAB+messageListBA
                 //join lists and sort by date
 
                 //add messages to message list
                 //for message in database where send and recive are from user and partner
-                const nextMessage=document.createElement('li');
-                nextMessage.textContent="" //will be the message loaded from database
-                showMessages.appendChild(nextMessage)
-                window.scrollTo(0, document.body.scrollHeight)
+                messageList.array.forEach(element => {
+                    const nextMessage=document.createElement('li');
+                    nextMessage.textContent="" //will be the message loaded from database
+                    showMessages.appendChild(nextMessage)
+                    window.scrollTo(0, document.body.scrollHeight)
+                });
+                //const nextMessage=document.createElement('li');
+                //nextMessage.textContent="" //will be the message loaded from database
+                //showMessages.appendChild(nextMessage)
+                //window.scrollTo(0, document.body.scrollHeight)
 
             } catch (error){
                 console.error("Error retriving messages:", error);
