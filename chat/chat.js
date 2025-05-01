@@ -59,8 +59,27 @@ const loadMessages = async () =>{
     onAuthStateChanged(auth, async (user) => {
         if(user){
             try{
-                //
-                
+                //for message list
+                const showMessages=document.getElementById("sentMessages");
+
+                //get user data, used later to retrive partner id
+                const userRef = doc(db, "users", user.uid)
+                const userSnap = await getDoc(userRef);
+                const userData = userSnap.data();
+                const partner=userData.partner;
+
+                //retrive messages from firebase
+                const chatRef=db.collection("chat");
+                const messageListAB=await chatRef.where("from", '==', user.uid).where('to', '==', partner);
+                const messageListBA=await chatRef.where("from", '==', partner).where('to', '==', user.uid);
+                //join lists and sort by date
+
+                //add messages to message list
+                //for message in database where send and recive are from user and partner
+                const nextMessage=document.createElement('li');
+                nextMessage.textContent="" //will be the message loaded from database
+                showMessages.appendChild(nextMessage)
+                window.scrollTo(0, document.body.scrollHeight)
 
             } catch (error){
                 console.error("Error retriving messages:", error);
