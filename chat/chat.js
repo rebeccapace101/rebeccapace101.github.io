@@ -70,13 +70,13 @@ const loadMessages = async () =>{
 
                 //retrive messages from firebase
                 const chatRef=collection(db, "chat");
-                /**const messageList=await chatRef.where(Filter.or(
-                    Filter.and(where("from", '==', user.uid), where('to', '==', partner)),
-                    Filter.and(where("from", '==', partner), where('to', '==', user.uid))
+                /**const messageList=await chatRef.where(or(
+                    and(where("from", '==', user.uid), where('to', '==', partner)),
+                    and(where("from", '==', partner), where('to', '==', user.uid))
                 )).orderBy("date")*/
                 const messageListAB=await chatRef.where("from", '==', user.uid).where('to', '==', partner).get();
                 const messageListBA=await chatRef.where("from", '==', partner).where('to', '==', user.uid).get();
-                messageList=messageListAB+messageListBA
+                //messageList=messageListAB+messageListBA
                 //join lists and sort by date
 
                 //add messages to message list
