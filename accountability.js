@@ -530,7 +530,7 @@ async function fetchTodayHabits(partnerId) {
     const dayOfWeek = date.getDay();
     console.log("date: " + todayDate);
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    let habitList = "<h2>Today's Habits</h2><ul>";
+    let habitList = "<h2></h2><ul>";
 
     try {
 
