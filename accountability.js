@@ -50,6 +50,30 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
+//to alert the user that their partner is no longer public
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        const userData = userSnap.data();
+        const partner = userData.partner;
+
+        const partnerRef = doc(db, "users")
+        const partnerSnap = await getDoc(userRef);
+        const partnerData = userSnap.data();
+
+        const partnerPrivacy = partnerData.privacy;
+        console.log(partnerPrivacy);
+
+        if (partnerPrivacy == "private") {
+            alert("Your partner is no longer a public user.");
+        }
+
+    } else {
+        console.log("User is signed out");
+    }
+});
+
 
 //code for showing a concern update popup
 
