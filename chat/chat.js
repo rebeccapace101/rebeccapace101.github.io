@@ -23,32 +23,21 @@ const sendMessage = async () => {
             }
                 
             try {
-                const todayDate = new Date();
+                const todayDate = (new Date()).toString();
                 const messageRef = doc(db, "chat", user.uid, "messages", todayDate);
                 
-                await setDoc(journalRef, {
+                await setDoc(messageRef, {
                     text: message,
                     date: todayDate
                 });
 
                 console.log("message sent")
 
-                const confirmation = document.createElement('div');
-                confirmation.textContent = "Journal Submitted!";
-                confirmation.style.position = "fixed";
-                confirmation.style.top = "20px";
-                confirmation.style.right = "20px";
-                confirmation.style.padding = "10px 20px";
-                confirmation.style.backgroundColor = "#8C9474";
-                confirmation.style.color = "white";
-                confirmation.style.borderRadius = "10px";
-                confirmation.style.boxShadow = "2px 2px 10px rgba(0,0,0,0.3)";
-                confirmation.style.zIndex = "2000";
-                document.body.appendChild(confirmation);
-
                 setTimeout(() => {
                     confirmation.remove();
                 }, 3000);
+
+                messageBox.value = ""
 
                 } catch (error) {
                     console.error("Error sending message:", error);
@@ -61,7 +50,9 @@ const sendMessage = async () => {
      });
 }
 
-const loadMessages = async () =>{}
+const loadMessages = async () =>{
+
+}
 
 // Load journal entry when the page refreshes
 window.addEventListener("load", loadMessages);
