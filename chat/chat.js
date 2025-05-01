@@ -23,22 +23,26 @@ const sendMessage = async () => {
             }
                 
             try {
+                //save message under send date
                 const todayDate = (new Date()).toString();
                 const messageRef = doc(db, "chat", todayDate);
 
+                //get user data, used later to retrive partner id
                 const userRef = doc(db, "users", user.uid)
                 const userSnap = await getDoc(userRef);
                 const userData = userSnap.data();
                 
+                //send message to db
                 await setDoc(messageRef, {
                     from: user.uid,
                     to: userData.partner,
                     text: message,
+                    date:todayDate,
                 });
 
-                console.log("message sent")
-
-                messageBox.value = ""
+                //confirmation of message sent
+                console.log("message sent");
+                messageBox.value = "";
 
                 } catch (error) {
                     console.error("Error sending message:", error);
@@ -52,7 +56,19 @@ const sendMessage = async () => {
 }
 
 const loadMessages = async () =>{
+    onAuthStateChanged(auth, async (user) => {
+        if(user){
+            try{
+                //
+                
 
+            } catch (error){
+                console.error("Error retriving messages:", error);
+            }
+        } else {
+            console.log("User is signed out.");
+        }
+    });
 }
 
 // Load journal entry when the page refreshes
