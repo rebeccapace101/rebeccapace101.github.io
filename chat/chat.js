@@ -24,18 +24,19 @@ const sendMessage = async () => {
                 
             try {
                 const todayDate = (new Date()).toString();
-                const messageRef = doc(db, "chat", user.uid, "messages", todayDate);
+                const messageRef = doc(db, "chat", todayDate);
+
+                const userRef = doc(db, "users", user.uid)
+                const userSnap = await getDoc(userRef);
+                const userData = userSnap.data();
                 
                 await setDoc(messageRef, {
+                    from: user.uid,
+                    to: userData.partner,
                     text: message,
-                    date: todayDate
                 });
 
                 console.log("message sent")
-
-                setTimeout(() => {
-                    confirmation.remove();
-                }, 3000);
 
                 messageBox.value = ""
 
