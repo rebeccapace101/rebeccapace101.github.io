@@ -9,6 +9,8 @@ const db = getFirestore(app);
 
 const concernsMessage = document.getElementById("concernsMessage");
 const resConcMessage = document.getElementById("resConcMessage");
+let currentViewedUserUID = null;
+
 
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -243,6 +245,7 @@ async function showUserProfilePopup(userData, title = "User Profile") {
     document.getElementById('emailView').textContent = userData.email || "N/A";
     document.getElementById('userIdView').textContent = userData.uid || "N/A";
     document.getElementById('privacyView').textContent = userData.privacy || "Not Set";
+    currentViewedUserUID = userData.uid;
 
     // Ensure 'concernPopup' is hidden before showing 'userProfilePopup'
     concernPopup.style.display = 'none'; // Hide concern popup
@@ -253,38 +256,38 @@ async function showUserProfilePopup(userData, title = "User Profile") {
         privacyPopup.style.display = 'block'; // Show privacy edit popup on top
     });
 
-    // Handle privacy change inside privacy edit popup
-    document.getElementById('confirmPrivacyChange').addEventListener('click', async () => {
-        const userRef = doc(db, "users", userData.uid); // Reference to user data
-        try {
-            await updateDoc(userRef, {
-                privacy: "private", // Set privacy to private
-                partner: null
-            });
-            // Update the privacy text in the user profile popup
-            document.getElementById('privacyView').textContent = "private";
-            alert("Privacy updated to private.");
-            const messageRef = doc(db, "messages", userData.uid);
-            await updateDoc(messageRef, { privacyChange: "changed" });
-
-            //set a lock on the user privacy
-            updateDoc(userRef, {
-                privacyLock: "set"
-            })
-
-            privacyPopup.style.display = 'none'; // Close privacy edit popup
-        } catch (error) {
-            console.error("Error updating privacy:", error);
-            alert("Failed to update privacy.");
-        }
-    });
-
     // Close the user profile popup
     document.getElementById('closeUserProfilePopup').addEventListener('click', () => {
         userProfilePopup.style.display = 'none';
         concernPopup.style.display = 'block'; // Reopen concern popup when closing profile
     });
 }
+
+
+document.getElementById('confirmPrivacyChange').addEventListener('click', async () => {
+    if (!currentViewedUserUID) return alert("No user selected.");
+
+    const userRef = doc(db, "users", currentViewedUserUID);
+    try {
+        await updateDoc(userRef, {
+            privacy: "private",
+            partner: null,
+            privacyLock: "set"
+        });
+
+        document.getElementById('privacyView').textContent = "private";
+        alert("Privacy updated to private.");
+
+        const messageRef = doc(db, "messages", currentViewedUserUID);
+        await updateDoc(messageRef, { privacyChange: "changed" });
+
+        document.getElementById('privacyEditPopup').style.display = 'none';
+    } catch (error) {
+        console.error("Error updating privacy:", error);
+        alert("Failed to update privacy.");
+    }
+});
+
 
 // Close privacy edit popup if user cancels
 document.getElementById('closePrivacyEditPopup').addEventListener('click', () => {

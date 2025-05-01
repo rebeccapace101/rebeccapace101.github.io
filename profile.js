@@ -21,7 +21,34 @@ const userId = document.getElementById("userId");
 
 changeUser.style.display = "none";
 
+//code for showing an admin privacy change 
 
+const closePrivacyPopup = document.getElementById("closePrivacyPopup");
+const privacyPopup = document.getElementById("privacyPopup");
+const privacyMessage = document.getElementById("privacyMessage");
+
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const messageRef = doc(db, "messages", user.uid);
+        const messageSnap = await getDoc(messageRef);
+
+        if (messageSnap.exists()) {
+            const messageData = messageSnap.data();
+            const privacyChange = messageData.privacyChange;
+            console.log(privacyChange);
+
+            if (privacyChange == "changed") {
+                privacyPopup.style.display = "block";
+                privacyMessage.innerHTML = "Due to user report, our admin have decided to no longer allow you to be a public user. If you would like to contest this decision, contact an admin."
+            }
+        } else {
+            console.warn("Message doc not found for user:", user.uid);
+        }
+    } else {
+        console.log("User is signed out");
+    }
+});
 
 //adding user information to the profile page
 onAuthStateChanged(auth, async (user) => {
@@ -59,6 +86,17 @@ onAuthStateChanged(auth, async (user) => {
         console.log("User is signed out");
     }
 });
+
+closePrivacyPopup.addEventListener('click', async () => {
+    const user = auth.currentUser;
+
+    const messageRef = doc(db, "messages", user.uid);
+    const messageSnap = await getDoc(messageRef);
+    const messageData = messageSnap.data();
+    await updateDoc(messageRef, { privacyChange: null }); //remove the update
+
+    privacyPopup.style.display = "none";
+})
 
 //for checking if the user is private or not
 /*

@@ -103,7 +103,6 @@ closeAcceptedPopup.addEventListener('click', async () => {
     acceptedPopup.style.display = "none";
 
 });
-
 //code for showing an admin privacy change 
 
 const closePrivacyPopup = document.getElementById("closePrivacyPopup");

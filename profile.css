@@ -117,6 +117,37 @@
     cursor: pointer;
 }
 
+.popup-overlay {
+    display: none;
+    /* Initially hidden */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black background with opacity */
+}
+
+.popup {
+    background-color: #fefefe;
+    /* White content background */
+    margin: 15% auto;
+    /* Center the popup */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* Adjust as needed */
+    position: relative;
+    /* For absolute positioning of close button */
+}
+
+
 body::before {
     content: '';
     position: absolute;
