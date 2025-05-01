@@ -58,14 +58,18 @@ onAuthStateChanged(auth, async (user) => {
         const userData = userSnap.data();
         const partner = userData.partner;
 
-        const partnerRef = doc(db, "users")
-        const partnerSnap = await getDoc(userRef);
-        const partnerData = userSnap.data();
+        console.log("id" + partner);
+        const partnerRef = doc(db, "users", partner)
+        const partnerSnap = await getDoc(partnerRef);
+        const partnerData = partnerSnap.data();
 
         const partnerPrivacy = partnerData.privacy;
-        console.log(partnerPrivacy);
+        console.log("partner" + partnerPrivacy);
 
         if (partnerPrivacy == "private") {
+
+            await updateDoc(userRef, { partner: null }); //remove partner
+            await updateDoc(partnerRef, { partner: null }); //remove self from partner's db
             alert("Your partner is no longer a public user.");
         }
 
