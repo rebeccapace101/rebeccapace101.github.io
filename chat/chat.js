@@ -3,8 +3,9 @@ import {
     getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import {
-    getFirestore, doc, setDoc, arrayUnion, getDoc, updateDoc, collection, addDoc, getDocs
+    getFirestore, doc, setDoc, arrayUnion, getDoc, updateDoc, collection, addDoc, getDocs, QueryCompositeFilterConstraint 
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
 
 // Initialize Firebase
 const db = getFirestore(app);
@@ -59,8 +60,30 @@ const loadMessages = async () =>{
     onAuthStateChanged(auth, async (user) => {
         if(user){
             try{
-                //
-                
+                //for message list
+                const showMessages=document.getElementById("sentMessages");
+
+                //get user data, used later to retrive partner id
+                const userRef = doc(db, "users", user.uid)
+                const userSnap = await getDoc(userRef);
+                const userData = userSnap.data();
+                const partner=userData.partner;
+
+                //retrive messages from firebase
+                const chatRef=collection(db, "chat");
+                //const messageList=chatRef.get();
+                const messageList=await chatRef.where(QueryCompositeFilterConstraint.or(
+                    QueryCompositeFilterConstraint.and(where("from", '==', user.uid), where('to', '==', partner)),
+                    QueryCompositeFilterConstraint.and(where("from", '==', partner), where('to', '==', user.uid))
+                )).orderBy("date")
+
+                //add messages to message list
+                messageList.array.forEach(element => {
+                    const nextMessage=document.createElement('li');
+                    nextMessage.textContent= element.text;
+                    showMessages.appendChild(nextMessage)
+                    window.scrollTo(0, document.body.scrollHeight)
+                });
 
             } catch (error){
                 console.error("Error retriving messages:", error);
