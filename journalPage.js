@@ -79,12 +79,33 @@ onAuthStateChanged(auth, async (user) => {
 
                 if (submissionDoc.exists()) {
                     //Already submitted — show 'Submitted'
+                   
+                    habitContainer.classList.add("submitted");
+                    habitContainer.style.backgroundColor = "#d0e8d0";
                     const submittedText = document.createElement("p");
-                    submittedText.textContent = `${habitName}: Submitted`;
-                    submittedText.style.textAlign = "center";
-                    submittedText.style.color = "#4a704a";
+                    submittedText.textContent  = `${habitName}: Submitted`;
+                    submittedText.style.textAlign  = "center";
+                    submittedText.style.color      = "#4a704a";
                     submittedText.style.fontWeight = "bold";
                     habitContainer.appendChild(submittedText);
+
+                    // 2) Button row
+                    const btns = document.createElement("div");
+                    btns.className = "habit-buttons";
+                    btns.style.justifyContent = "center";
+
+
+                    
+                    // • Delete submission
+                    const delSub = document.createElement("button");
+                    delSub.textContent = "Delete";
+                    delSub.classList.add("delete-button");
+                    delSub.addEventListener("click", () =>
+                        handleDelete(user.uid, habitName, habitContainer)
+                    );
+                    btns.appendChild(delSub);
+
+                    habitContainer.appendChild(btns);
                 } else {
                     // Not yet submitted — render label + input
                     const label = document.createElement("label");
@@ -242,8 +263,22 @@ const sendHabits = async () => {
             if (labelField) labelField.remove();
             if (inputField) inputField.remove();
 
+            const btnContainer = habitContainer.querySelector('.habit-buttons');
+            if (btnContainer) {
+                const editBtn = btnContainer.querySelector('.edit-button');
+                if (editBtn) editBtn.remove();
+                // (we leave the delete-button in place)
+            }
+
             //Append submitted message
-            habitContainer.appendChild(submittedText);
+
+            const submittedText2 = document.createElement("p");
+            submittedText2.textContent = `${habitName}: Submitted`;
+            submittedText2.style.textAlign = "center";
+            submittedText2.style.color = "#659287";
+            submittedText2.style.fontWeight = "bold";
+            habitContainer.appendChild(submittedText2);
+
             habitContainer.style.backgroundColor = "#d0e8d0";
 
         }
@@ -264,6 +299,7 @@ const sendHabits = async () => {
 
         setTimeout(() => {
             confirmation.remove();
+            window.location.reload();
         }, 3000);
 
     });
@@ -273,110 +309,54 @@ submitHabits.addEventListener('click', sendHabits);
 
 //OPEN EDIT HANDLER
 async function handleEdit(uid, habitName, container) {
-    const todayKey = new Date(
-        new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })
-    ).toISOString().split('T')[0];
-    // Fetch the habit’s input-type
-    const inputSnap = await getDoc(
-        doc(db, "habitData", uid, habitName, "input")
-    );
-    //defaults checkbox if there isnt an input that can be found
-    const inputType = inputSnap.exists()
-        ? inputSnap.data().inputtype
-        : "checkbox";
-
-    //create dropdown
-    const typeSelect = document.createElement("select");
-    const types = ["checkbox", "range", "text", "number"];
-    types.forEach(type => {
-        const opt = document.createElement("option");
-        opt.value = type;
-        opt.textContent = type[0].toUpperCase() + type.slice(1);  // e.g. “Checkbox”
-        if (type === inputType) opt.selected = true;
-        typeSelect.append(opt);
-    });
-
-    // Fetch any existing submission for today
-    const subRef = doc(db, "habitData", uid, habitName, todayKey);
-    const subSnap = await getDoc(subRef);
-    //if no submission is found, default to empty
-    const existing = subSnap.exists() ? subSnap.data().data : "";
-
-    // Clear out the old UI for previous habit
+    // 1) Compute today’s key just for consistency (though we won't touch submissions here)
+    const todayKey = getChicagoDate().toISOString().split("T")[0];
+  
+    // 2) Wipe out the existing label+input+buttons UI
     container.innerHTML = "";
-
-    // Build a label + pre-filled input
-    const nameInput = document.createElement("input"); //instead of auto input label maybe open textbox?
-    nameInput.type = "text";
-    nameInput.value = habitName; // display old name still
-    nameInput.id = habitName + "-edit-name"; // optional, if you need an ID
-
-    const input = document.createElement("input"); //instead of existing texbox? drop down menu?
-    input.type = inputType;
-    input.id = habitName;
-    if (inputType === "checkbox") {
-        input.checked = Boolean(existing);
-    } else {
-        input.value = existing;
-    }
-
-    //Add a Save button
+  
+    // 3) Create a single text input for the new name
+    const nameInput = document.createElement("input");
+    nameInput.type  = "text";
+    nameInput.value = habitName;
+    nameInput.style.width = "100%";
+    container.appendChild(nameInput);
+  
+    // 4) Add a Save button
     const saveBtn = document.createElement("button");
     saveBtn.textContent = "Save";
-
+    saveBtn.classList.add("edit-button");
+    container.appendChild(saveBtn);
+  
     saveBtn.addEventListener("click", async () => {
-        try {
-            const oldName = habitName;
-            const newName = nameInput.value.trim();
-            const newType = typeSelect.value;
-            const todayKey = date.toISOString().split("T")[0];
-            const uid = auth.currentUser.uid;
-
-            // 1) Persist the updated input-type under the NEW name
-            await setDoc(
-                doc(db, "habitData", uid, newName, "input"),
-                { inputtype: newType },
-                { merge: true }
-            );
-
-            // 2) Move ALL existing docs (input + submissions) from oldName → newName
-            const oldColl = collection(db, "habitData", uid, oldName);
-            const snaps = await getDocs(oldColl);
-            for (const snap of snaps.docs) {
-                const id = snap.id;        // e.g. "input" or "2025-04-29"
-                const data = snap.data();
-                // write under newName
-                await setDoc(
-                    doc(db, "habitData", uid, newName, id),
-                    data,
-                    { merge: true }
-                );
-                // delete the old
-                await deleteDoc(doc(db, "habitData", uid, oldName, id));
-            }
-
-            // 3) Rename in every day's habits array
-            for (const day of days) {
-                const dayRef = doc(db, "habits", uid, day, "habits");
-                await updateDoc(dayRef, { habits: arrayRemove(oldName) });
-                await updateDoc(dayRef, { habits: arrayUnion(newName) });
-            }
-
-            // 4) Rename in your master list of habit names
-            const masterRef = doc(db, "habitData", uid);
-            await updateDoc(masterRef, { namesOfHabits: arrayRemove(oldName) });
-            await updateDoc(masterRef, { namesOfHabits: arrayUnion(newName) });
-
-
-            // 5) Reload to reflect the “Submitted” state and refreshed names/UI
-            window.location.reload();
-
-        } catch (err) {
-            console.error("Error saving edited habit:", err);
+        const newName = nameInput.value.trim();
+        if (!newName || newName === habitName) return;
+      
+        // 1) Move ALL docs (including "input") from oldName → newName
+        const oldColl = collection(db, "habitData", uid, habitName);
+        const snaps   = await getDocs(oldColl);
+        for (const snap of snaps.docs) {
+          const id   = snap.id;
+          const data = snap.data();
+          await setDoc(doc(db, "habitData", uid, newName, id), data, { merge: true });
+          await deleteDoc(doc(db, "habitData", uid, habitName, id));
         }
-    });
-
-    container.append(nameInput, input, typeSelect, saveBtn);
+      
+        // 2) Update each day's habits array
+        for (const day of days) {
+          const dayRef = doc(db, "habits", uid, day, "habits");
+          await updateDoc(dayRef, { habits: arrayRemove(habitName) });
+          await updateDoc(dayRef, { habits: arrayUnion(newName) });
+        }
+      
+        // 3) Update master list
+        const masterRef = doc(db, "habitData", uid);
+        await updateDoc(masterRef, { namesOfHabits: arrayRemove(habitName) });
+        await updateDoc(masterRef, { namesOfHabits: arrayUnion(newName) });
+      
+        // 4) Finally reload to show the change
+        window.location.reload();
+      });
 }  //  CLOSE handleEdit 
 
 //START DELETE HANDLER
@@ -416,8 +396,7 @@ async function handleDelete(uid, habitName, container) {
         console.error("Error deleting habit fully:", err);
     }
 }
-
-
+  
 
 // Pop-up handlers
 const newHabit = document.getElementById("newHabit");

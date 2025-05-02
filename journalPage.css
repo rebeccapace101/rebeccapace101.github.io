@@ -147,16 +147,38 @@ button:active {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.habit-item label,
+.habit-item p {
+    display: block;               /* full‐width block */
+    width: 100%;                  /* exactly the container’s width */
+    margin: 0;
+    padding: 0;
+  
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    white-space: normal;
+    text-align: center;
+    font-size: clamp(12px, 15px, 15px);  /* your chosen size */
+}
+
+.habit-item.submitted .habit-buttons {
+    justify-content: center;   /* center all buttons horizontally */
+  }
+
 .habit-item {
+
+    flex-shrink: 0; 
     background-color: rgba(140, 172, 109, 0.4);
     border: 11px solid var(--greygreen);
     border-radius: 12%;
     padding: 6%;
-    height: 95px;
+    min-height: 80px;
     width: 120px;
+    height: auto;               /* now it can grow if text wraps */
+
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;   
     justify-content: center;
     box-shadow: 4px 4px 8px rgba(58, 74, 63, 0.4);
     transition: background-color 0.4s ease;
