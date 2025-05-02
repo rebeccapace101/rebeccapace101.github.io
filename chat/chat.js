@@ -5,6 +5,7 @@ import {
 import {
     getFirestore, doc, setDoc, arrayUnion, getDoc, updateDoc, collection, addDoc, getDocs, QueryCompositeFilterConstraint 
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+import {Filter} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js"
 
 
 // Initialize Firebase
@@ -72,9 +73,9 @@ const loadMessages = async () =>{
                 //retrive messages from firebase
                 const chatRef=collection(db, "chat");
                 //const messageList=chatRef.get();
-                const messageList=await chatRef.where(QueryCompositeFilterConstraint.or(
-                    QueryCompositeFilterConstraint.and(where("from", '==', user.uid), where('to', '==', partner)),
-                    QueryCompositeFilterConstraint.and(where("from", '==', partner), where('to', '==', user.uid))
+                const messageList=await chatRef.where(Filter.or(
+                    Filter.and(where("from", '==', user.uid), where('to', '==', partner)),
+                    Filter.and(where("from", '==', partner), where('to', '==', user.uid))
                 )).orderBy("date")
 
                 //add messages to message list
