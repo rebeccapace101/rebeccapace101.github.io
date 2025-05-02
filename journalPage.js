@@ -266,6 +266,7 @@ const sendHabits = async () => {
             const btnContainer = habitContainer.querySelector('.habit-buttons');
             if (btnContainer) {
                 const editBtn = btnContainer.querySelector('.edit-button');
+                btnContainer.style.justifyContent = 'center';
                 if (editBtn) editBtn.remove();
                 // (we leave the delete-button in place)
             }
@@ -326,6 +327,7 @@ async function handleEdit(uid, habitName, container) {
     const saveBtn = document.createElement("button");
     saveBtn.textContent = "Save";
     saveBtn.classList.add("edit-button");
+    saveBtn.style.alignSelf = "center";  
     container.appendChild(saveBtn);
   
     saveBtn.addEventListener("click", async () => {
