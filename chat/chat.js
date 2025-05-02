@@ -76,23 +76,14 @@ const loadMessages = async () =>{
                     QueryCompositeFilterConstraint.and(where("from", '==', user.uid), where('to', '==', partner)),
                     QueryCompositeFilterConstraint.and(where("from", '==', partner), where('to', '==', user.uid))
                 )).orderBy("date")
-                //const messageListAB=await chatRef.where("from", '==', user.uid).where('to', '==', partner).get();
-                //const messageListBA=await chatRef.where("from", '==', partner).where('to', '==', user.uid).get();
-                //messageList=messageListAB+messageListBA
-                //join lists and sort by date
 
                 //add messages to message list
-                //for message in database where send and recive are from user and partner
                 messageList.array.forEach(element => {
                     const nextMessage=document.createElement('li');
                     nextMessage.textContent= element.text;
                     showMessages.appendChild(nextMessage)
                     window.scrollTo(0, document.body.scrollHeight)
                 });
-                //const nextMessage=document.createElement('li');
-                //nextMessage.textContent="" //will be the message loaded from database
-                //showMessages.appendChild(nextMessage)
-                //window.scrollTo(0, document.body.scrollHeight)
 
             } catch (error){
                 console.error("Error retriving messages:", error);
