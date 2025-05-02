@@ -3,8 +3,9 @@ import {
     getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import {
-    getFirestore, doc, setDoc, arrayUnion, getDoc, updateDoc, collection, addDoc, getDocs
+    getFirestore, doc, setDoc, arrayUnion, getDoc, updateDoc, collection, addDoc, getDocs, QueryCompositeFilterConstraint 
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
 
 // Initialize Firebase
 const db = getFirestore(app);
@@ -70,12 +71,13 @@ const loadMessages = async () =>{
 
                 //retrive messages from firebase
                 const chatRef=collection(db, "chat");
-                /**const messageList=await chatRef.where(or(
-                    and(where("from", '==', user.uid), where('to', '==', partner)),
-                    and(where("from", '==', partner), where('to', '==', user.uid))
-                )).orderBy("date")*/
-                const messageListAB=await chatRef.where("from", '==', user.uid).where('to', '==', partner).get();
-                const messageListBA=await chatRef.where("from", '==', partner).where('to', '==', user.uid).get();
+                //const messageList=chatRef.get();
+                const messageList=await chatRef.where(QueryCompositeFilterConstraint.or(
+                    QueryCompositeFilterConstraint.and(where("from", '==', user.uid), where('to', '==', partner)),
+                    QueryCompositeFilterConstraint.and(where("from", '==', partner), where('to', '==', user.uid))
+                )).orderBy("date")
+                //const messageListAB=await chatRef.where("from", '==', user.uid).where('to', '==', partner).get();
+                //const messageListBA=await chatRef.where("from", '==', partner).where('to', '==', user.uid).get();
                 //messageList=messageListAB+messageListBA
                 //join lists and sort by date
 
@@ -83,7 +85,7 @@ const loadMessages = async () =>{
                 //for message in database where send and recive are from user and partner
                 messageList.array.forEach(element => {
                     const nextMessage=document.createElement('li');
-                    nextMessage.textContent="" //will be the message loaded from database
+                    nextMessage.textContent= element.text;
                     showMessages.appendChild(nextMessage)
                     window.scrollTo(0, document.body.scrollHeight)
                 });
